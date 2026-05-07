@@ -199,8 +199,12 @@ export default function App() {
                       className={`relative h-full w-full transition-all duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ${activeCard === program.title ? "[transform:rotateY(180deg)]" : ""} ${program.featured ? "sm:rotate-[-4deg]" : ""}`}
                     >
                       <div className="absolute inset-0 overflow-hidden rounded-lg border border-white/25 bg-black [backface-visibility:hidden]">
-                        <img src={program.image} alt="" className="h-full w-full object-cover opacity-75 transition duration-500 group-hover:scale-110 group-hover:opacity-90" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                        <img
+                        src={program.image}
+                        alt=""
+                        className="h-full w-full object-cover opacity-90 brightness-110 contrast-105 transition duration-500 group-hover:scale-110 group-hover:opacity-100"
+                      />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                         <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
                         <div className="relative flex h-full flex-col justify-end p-6 sm:p-7">
                           <Icon className="mb-4 h-10 w-10 text-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,.8)]" />
@@ -296,11 +300,7 @@ export default function App() {
             ))}
           </div>
           <a href="#contact" className="mt-7 inline-flex items-center gap-4 rounded-md border border-cyan-200/50 px-7 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10">Payment After Approval <ArrowRight className="h-4 w-4 text-orange-500" /></a>
-          <img
-            src={paymentShield}
-            alt="Secure payment shield"
-            className="pointer-events-none absolute bottom-4 right-4 hidden h-[160px] w-[160px] object-contain opacity-60 drop-shadow-[0_0_35px_rgba(0,140,255,.8)] sm:block xl:h-[200px] xl:w-[200px]"
-          />
+          
         </div>
       </section>
 
