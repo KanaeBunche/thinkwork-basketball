@@ -333,47 +333,96 @@ export default function App() {
         </div>
       </section>
 
-      {/* MEDIA */}
-      <section id="media" className="border-b border-cyan-400/10 bg-[#020812] px-4 py-14 sm:px-6 lg:px-8 xl:px-28">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="mb-8">
-            <p className="text-[13px] font-black uppercase text-orange-500">Media</p>
-            <h2 className="mt-1 text-[32px] font-black uppercase leading-none tracking-[-1px] sm:text-[42px]">Training In Action</h2>
-          </div>
+   {/* MEDIA */}
+<section
+  id="media"
+  className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28"
+>
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,132,255,.16),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(249,115,22,.12),transparent_30%)]" />
 
-          <div className="grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
-            <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-black shadow-[0_0_30px_rgba(0,132,255,.12)]">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-                className="h-[260px] w-full object-cover object-center sm:h-[380px] lg:h-[460px]"
-              >
-                <source src={trainingVideo} type="video/mp4" />
-              </video>
-            </div>
+  <div className="relative z-10 mx-auto max-w-[1600px]">
+    <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p className="text-[13px] font-black uppercase text-orange-500">
+          Media
+        </p>
 
-            <div className="grid grid-cols-2 gap-4">
-              {galleryImages.map((img, index) => (
-                <div
-                  key={index}
-                  className={`group overflow-hidden rounded-3xl border border-white/15 bg-black shadow-[0_0_20px_rgba(0,132,255,.08)] ${
-                    index === 0 ? "col-span-2 h-[190px] sm:h-[240px]" : "h-[150px] sm:h-[200px]"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`ThinkWork Basketball training ${index + 1}`}
-                    className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-105"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+        <h2 className="mt-2 text-[38px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px] lg:text-[62px]">
+          Training In Action
+        </h2>
+
+        <div className="mt-5 h-[2px] w-20 bg-orange-500" />
+
+        <p className="mt-5 max-w-[560px] text-base font-medium leading-7 text-white/75 sm:text-lg">
+          Real work. Real athletes. Real results. See training sessions,
+          behind-the-scenes moments, and player development in action.
+        </p>
+      </div>
+
+      <a
+        href="#contact"
+        className="inline-flex w-fit items-center justify-center gap-4 rounded-lg border border-orange-500 px-7 py-4 text-[12px] font-black uppercase tracking-wide text-white transition hover:bg-orange-500/10 sm:px-9"
+      >
+        View All Media <ArrowRight className="h-4 w-4 text-orange-500" />
+      </a>
+    </div>
+
+    <div className="grid gap-6 xl:grid-cols-[1.05fr_1.45fr]">
+      {/* FEATURE VIDEO */}
+      <div className="overflow-hidden rounded-3xl border border-white/15 bg-black shadow-[0_0_45px_rgba(0,132,255,.16)]">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          controls
+          className="h-[300px] w-full bg-black object-contain sm:h-[460px] xl:h-[690px]"
+        >
+          <source src={trainingVideo} type="video/mp4" />
+        </video>
+      </div>
+
+      {/* PHOTO CARDS */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {galleryImages.map((img, index) => {
+          const cards = [
+            ["1 ON 1 WORK", "Ball handling & defense"],
+            ["COACH LEADERSHIP", "Mentorship & guidance"],
+            ["BEHIND THE SCENES", "The work off the court"],
+            ["SKILL DEVELOPMENT", "Footwork & fundamentals"],
+            ["PLAYER GROWTH", "Progress every day"],
+          ];
+
+          return (
+            <article
+              key={index}
+              className="overflow-hidden rounded-3xl border border-white/10 bg-[#07111d] shadow-[0_0_28px_rgba(0,132,255,.1)]"
+            >
+              <div className="h-[220px] bg-black sm:h-[250px]">
+                <img
+                  src={img}
+                  alt={cards[index]?.[0] || "ThinkWork Basketball media"}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+
+              <div className="border-t border-white/10 bg-[#08111c] p-5">
+                <p className="text-[14px] font-black uppercase text-white">
+                  {cards[index]?.[0]}
+                </p>
+
+                <p className="mt-1 text-sm font-medium text-white/65">
+                  {cards[index]?.[1]}
+                </p>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+</section>
+     
 
       {/* CONTACT */}
       <footer id="contact" className="bg-[#020812] px-4 py-10 sm:px-6 lg:px-8 xl:px-28">
