@@ -26,6 +26,8 @@ import image4 from "./assets/images/image4.jpeg";
 
 import trainingVideo from "./assets/videos/IMG_1193.mp4";
 
+const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/YOUR_FORM_ID";
+
 const navItems = ["Home", "Programs", "About", "Schedule", "Media", "Contact"];
 
 const packages = [
@@ -86,6 +88,16 @@ const galleryImages = [image0, image1, image2, image3, image4];
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCard, setActiveCard] = useState(null);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(null);
+
+  const openSignup = (program = null) => {
+    setSelectedProgram(program);
+    setShowSignupModal(true);
+    setMenuOpen(false);
+  };
+
+  const closeSignup = () => setShowSignupModal(false);
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#02060d] text-white selection:bg-orange-500/30">
@@ -117,12 +129,12 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-3">
-            <a
-              href="#schedule"
+            <button
+              onClick={() => openSignup()}
               className="rounded-md bg-gradient-to-b from-orange-500 to-orange-700 px-4 py-3 text-[11px] font-black uppercase tracking-wide shadow-[0_0_22px_rgba(249,115,22,.35)] transition hover:-translate-y-0.5 sm:px-7 lg:px-12 lg:text-[13px]"
             >
               Join Now
-            </a>
+            </button>
 
             <button
               onClick={() => setMenuOpen((prev) => !prev)}
@@ -173,9 +185,12 @@ export default function App() {
             </p>
 
             <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:gap-5">
-              <a href="#schedule" className="inline-flex items-center justify-center gap-3 rounded-md bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-4 text-[12px] font-black uppercase shadow-[0_0_25px_rgba(249,115,22,.45)] transition hover:-translate-y-1 sm:px-10 sm:text-[13px]">
+              <button
+                onClick={() => openSignup()}
+                className="inline-flex items-center justify-center gap-3 rounded-md bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-4 text-[12px] font-black uppercase shadow-[0_0_25px_rgba(249,115,22,.45)] transition hover:-translate-y-1 sm:px-10 sm:text-[13px]"
+              >
                 Join Training
-              </a>
+              </button>
 
               <a href="#programs" className="inline-flex items-center justify-center gap-4 rounded-md border border-cyan-200/40 bg-black/40 px-8 py-4 text-[12px] font-black uppercase transition hover:border-orange-400 hover:bg-orange-500/10 sm:px-10 sm:text-[13px]">
                 View Packages <ArrowRight className="h-4 w-4 text-orange-500" />
@@ -197,77 +212,126 @@ export default function App() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {packages.map((program) => {
-              const Icon = program.icon;
+  {packages.map((program) => {
+    const Icon = program.icon;
 
-              return (
-                <article
-                  key={program.title}
-                  onClick={() => setActiveCard(activeCard === program.title ? null : program.title)}
-                  className="h-[340px] cursor-pointer [perspective:1100px]"
-                >
-                  <div
-                    className={`relative h-full w-full transition-all duration-700 [transform-style:preserve-3d] ${
-                      activeCard === program.title ? "[transform:rotateY(180deg)]" : ""
-                    }`}
-                  >
-                    <div
-                      className={`absolute inset-0 overflow-hidden rounded-3xl border bg-black p-7 [backface-visibility:hidden] ${
-                        program.featured ? "border-orange-500/70 shadow-[0_0_35px_rgba(249,115,22,.3)]" : "border-white/15"
-                      }`}
-                    >
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,132,255,.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,.18),transparent_35%)]" />
+    return (
+      <article key={program.title} className="h-[340px] [perspective:1100px]">
+        <div
+          className={`relative h-full w-full transition-all duration-700 [transform-style:preserve-3d] ${
+            activeCard === program.title ? "[transform:rotateY(180deg)]" : ""
+          }`}
+        >
+          {/* FRONT */}
+          <button
+            type="button"
+            onClick={() => setActiveCard(program.title)}
+            className={`absolute inset-0 overflow-hidden rounded-3xl border bg-black p-7 text-left [backface-visibility:hidden] ${
+              program.featured
+                ? "border-orange-500/70 shadow-[0_0_35px_rgba(249,115,22,.3)]"
+                : "border-white/15"
+            }`}
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,132,255,.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,.18),transparent_35%)]" />
 
-                      <div className="relative z-10 flex h-full flex-col">
-                        <div className="flex items-start justify-between gap-4">
-                          <Icon className="h-10 w-10 text-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,.8)]" />
-                          <span className="rounded-full border border-orange-500/40 bg-orange-500/10 px-3 py-1 text-[10px] font-black uppercase text-orange-300">
-                            {program.tag}
-                          </span>
-                        </div>
+            <div className="relative z-10 flex h-full flex-col">
+              <div className="flex items-start justify-between gap-4">
+                <Icon className="h-10 w-10 text-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,.8)]" />
 
-                        <p className="mt-7 text-[11px] font-black uppercase tracking-[3px] text-cyan-300">{program.category}</p>
-                        <h3 className="mt-2 text-[30px] font-black uppercase leading-none">{program.title}</h3>
-                        <p className="mt-3 text-sm font-semibold text-white/75">{program.sessions}</p>
+                <span className="rounded-full border border-orange-500/40 bg-orange-500/10 px-3 py-1 text-[10px] font-black uppercase text-orange-300">
+                  {program.tag}
+                </span>
+              </div>
 
-                        <div className="mt-auto">
-                          <p className="text-sm font-bold text-white/45 line-through">{program.regular}</p>
-                          <p className="text-[46px] font-black leading-none text-white">{program.price}</p>
-                          <p className="mt-2 text-[11px] font-black uppercase tracking-[2px] text-white/50">Deal Price</p>
-                        </div>
-                      </div>
-                    </div>
+              <p className="mt-7 text-[11px] font-black uppercase tracking-[3px] text-cyan-300">
+                {program.category}
+              </p>
 
-                    <div className="absolute inset-0 flex flex-col justify-center rounded-3xl border border-orange-500/60 bg-[#0a0b0d] p-7 shadow-[0_0_30px_rgba(249,115,22,.25)] [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                      <p className="text-[14px] font-black uppercase text-orange-500">What You Get</p>
+              <h3 className="mt-2 text-[30px] font-black uppercase leading-none text-white">
+                {program.title}
+              </h3>
 
-                      <ul className="mt-5 space-y-3 text-sm font-semibold text-white/85">
-                        {program.bullets.map((bullet) => (
-                          <li key={bullet} className="flex items-center gap-3">
-                            <Check className="h-4 w-4 text-orange-500" /> {bullet}
-                          </li>
-                        ))}
-                      </ul>
+              <p className="mt-3 text-sm font-semibold text-white/75">
+                {program.sessions}
+              </p>
 
-                      <a href="#schedule" className="mt-7 inline-flex w-fit rounded-md bg-gradient-to-b from-orange-500 to-orange-700 px-7 py-3 text-[12px] font-black uppercase shadow-[0_0_22px_rgba(249,115,22,.45)]">
-                        Join Now
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+              <div className="mt-auto">
+                <p className="text-sm font-bold text-white/45 line-through">
+                  {program.regular}
+                </p>
+
+                <p className="text-[46px] font-black leading-none text-white">
+                  {program.price}
+                </p>
+
+                <p className="mt-2 text-[11px] font-black uppercase tracking-[2px] text-white/50">
+                  Tap to view details
+                </p>
+              </div>
+            </div>
+          </button>
+
+          {/* BACK */}
+<div className="absolute inset-0 z-20 flex flex-col justify-center rounded-3xl border border-orange-500/60 bg-[#0a0b0d] p-7 shadow-[0_0_30px_rgba(249,115,22,.25)] [backface-visibility:hidden] [transform:rotateY(180deg)]">            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveCard(null);
+              }}
+              className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <p className="text-[14px] font-black uppercase text-orange-500">
+              What You Get
+            </p>
+
+            <ul className="mt-5 space-y-3 text-sm font-semibold text-white/85">
+              {program.bullets.map((bullet) => (
+                <li key={bullet} className="flex items-center gap-3">
+                  <Check className="h-4 w-4 text-orange-500" />
+                  {bullet}
+                </li>
+              ))}
+            </ul>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                openSignup(program);
+              }}
+              className="mt-7 inline-flex w-fit rounded-md bg-gradient-to-b from-orange-500 to-orange-700 px-7 py-3 text-[12px] font-black uppercase shadow-[0_0_22px_rgba(249,115,22,.45)] transition hover:-translate-y-0.5"
+            >
+              Join Now
+            </button>
           </div>
+        </div>
+      </article>
+    );
+  })}
+</div>
 
           <div className="mt-8 grid gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-2 lg:grid-cols-3">
             {memberships.map(([name, sessions, price]) => (
-              <div key={name} className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-3">
+              <button
+                key={name}
+                onClick={() =>
+                  openSignup({
+                    title: name,
+                    sessions,
+                    price,
+                  })
+                }
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-left transition hover:border-orange-500/60 hover:bg-orange-500/10"
+              >
                 <div>
                   <p className="font-black uppercase">{name}</p>
                   <p className="text-sm text-white/55">{sessions}</p>
                 </div>
                 <p className="text-xl font-black text-orange-400">{price}</p>
-              </div>
+              </button>
             ))}
           </div>
 
@@ -309,9 +373,12 @@ export default function App() {
             ))}
           </div>
 
-          <a href="#contact" className="mt-7 inline-flex items-center gap-4 rounded-md border border-cyan-200/50 px-7 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10">
+          <button
+            onClick={() => openSignup()}
+            className="mt-7 inline-flex items-center gap-4 rounded-md border border-cyan-200/50 px-7 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10"
+          >
             Start Sign-Up <ArrowRight className="h-4 w-4 text-orange-500" />
-          </a>
+          </button>
         </div>
 
         <div id="payments" className="relative min-h-[420px] overflow-hidden p-6 sm:p-8 xl:p-14">
@@ -327,102 +394,74 @@ export default function App() {
             ))}
           </div>
 
-          <a href="#contact" className="mt-7 inline-flex items-center gap-4 rounded-md border border-cyan-200/50 px-7 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10">
+          <button
+            onClick={() => openSignup()}
+            className="mt-7 inline-flex items-center gap-4 rounded-md border border-cyan-200/50 px-7 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10"
+          >
             Join Now <ArrowRight className="h-4 w-4 text-orange-500" />
-          </a>
+          </button>
         </div>
       </section>
 
-   {/* MEDIA */}
-<section
-  id="media"
-  className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28"
->
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,132,255,.16),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(249,115,22,.12),transparent_30%)]" />
+      {/* MEDIA */}
+      <section id="media" className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,132,255,.16),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(249,115,22,.12),transparent_30%)]" />
 
-  <div className="relative z-10 mx-auto max-w-[1600px]">
-    <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-      <div>
-        <p className="text-[13px] font-black uppercase text-orange-500">
-          Media
-        </p>
+        <div className="relative z-10 mx-auto max-w-[1600px]">
+          <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-[13px] font-black uppercase text-orange-500">Media</p>
 
-        <h2 className="mt-2 text-[38px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px] lg:text-[62px]">
-          Training In Action
-        </h2>
+              <h2 className="mt-2 text-[38px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px] lg:text-[62px]">
+                Training In Action
+              </h2>
 
-        <div className="mt-5 h-[2px] w-20 bg-orange-500" />
+              <div className="mt-5 h-[2px] w-20 bg-orange-500" />
 
-        <p className="mt-5 max-w-[560px] text-base font-medium leading-7 text-white/75 sm:text-lg">
-          Real work. Real athletes. Real results. See training sessions,
-          behind-the-scenes moments, and player development in action.
-        </p>
-      </div>
+              <p className="mt-5 max-w-[560px] text-base font-medium leading-7 text-white/75 sm:text-lg">
+                Real work. Real athletes. Real results. See training sessions, behind-the-scenes moments, and player development in action.
+              </p>
+            </div>
 
-      <a
-        href="#contact"
-        className="inline-flex w-fit items-center justify-center gap-4 rounded-lg border border-orange-500 px-7 py-4 text-[12px] font-black uppercase tracking-wide text-white transition hover:bg-orange-500/10 sm:px-9"
-      >
-        View All Media <ArrowRight className="h-4 w-4 text-orange-500" />
-      </a>
-    </div>
+            <a href="#contact" className="inline-flex w-fit items-center justify-center gap-4 rounded-lg border border-orange-500 px-7 py-4 text-[12px] font-black uppercase tracking-wide text-white transition hover:bg-orange-500/10 sm:px-9">
+              View All Media <ArrowRight className="h-4 w-4 text-orange-500" />
+            </a>
+          </div>
 
-    <div className="grid gap-6 xl:grid-cols-[1.05fr_1.45fr]">
-      {/* FEATURE VIDEO */}
-      <div className="overflow-hidden rounded-3xl border border-white/15 bg-black shadow-[0_0_45px_rgba(0,132,255,.16)]">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          controls
-          className="h-[300px] w-full bg-black object-contain sm:h-[460px] xl:h-[690px]"
-        >
-          <source src={trainingVideo} type="video/mp4" />
-        </video>
-      </div>
+          <div className="grid gap-6 xl:grid-cols-[1.05fr_1.45fr]">
+            <div className="overflow-hidden rounded-3xl border border-white/15 bg-black shadow-[0_0_45px_rgba(0,132,255,.16)]">
+              <video autoPlay muted loop playsInline controls className="h-[300px] w-full bg-black object-contain sm:h-[460px] xl:h-[690px]">
+                <source src={trainingVideo} type="video/mp4" />
+              </video>
+            </div>
 
-      {/* PHOTO CARDS */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {galleryImages.map((img, index) => {
-          const cards = [
-            ["1 ON 1 WORK", "Ball handling & defense"],
-            ["COACH LEADERSHIP", "Mentorship & guidance"],
-            ["BEHIND THE SCENES", "The work off the court"],
-            ["SKILL DEVELOPMENT", "Footwork & fundamentals"],
-            ["PLAYER GROWTH", "Progress every day"],
-          ];
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {galleryImages.map((img, index) => {
+                const cards = [
+                  ["1 ON 1 WORK", "Ball handling & defense"],
+                  ["COACH LEADERSHIP", "Mentorship & guidance"],
+                  ["BEHIND THE SCENES", "The work off the court"],
+                  ["SKILL DEVELOPMENT", "Footwork & fundamentals"],
+                  ["PLAYER GROWTH", "Progress every day"],
+                ];
 
-          return (
-            <article
-              key={index}
-              className="overflow-hidden rounded-3xl border border-white/10 bg-[#07111d] shadow-[0_0_28px_rgba(0,132,255,.1)]"
-            >
-              <div className="h-[220px] bg-black sm:h-[250px]">
-                <img
-                  src={img}
-                  alt={cards[index]?.[0] || "ThinkWork Basketball media"}
-                  className="h-full w-full object-contain"
-                />
-              </div>
+                return (
+                  <article key={index} className="overflow-hidden rounded-3xl border border-white/10 bg-[#07111d] shadow-[0_0_28px_rgba(0,132,255,.1)]">
+                    <div className="h-[220px] bg-black sm:h-[250px]">
+                      <img src={img} alt={cards[index]?.[0] || "ThinkWork Basketball media"} className="h-full w-full object-contain" />
+                    </div>
 
-              <div className="border-t border-white/10 bg-[#08111c] p-5">
-                <p className="text-[14px] font-black uppercase text-white">
-                  {cards[index]?.[0]}
-                </p>
-
-                <p className="mt-1 text-sm font-medium text-white/65">
-                  {cards[index]?.[1]}
-                </p>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-    </div>
-  </div>
-</section>
-     
+                    <div className="border-t border-white/10 bg-[#08111c] p-5">
+                      <p className="text-[14px] font-black uppercase text-white">{cards[index]?.[0]}</p>
+                      <p className="mt-1 text-sm font-medium text-white/65">{cards[index]?.[1]}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* CONTACT */}
       <footer id="contact" className="bg-[#020812] px-4 py-10 sm:px-6 lg:px-8 xl:px-28">
@@ -451,6 +490,252 @@ export default function App() {
           </a>
         </div>
       </footer>
+
+      {/* SIGNUP MODAL */}
+      {showSignupModal && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
+          <div className="relative max-h-[95vh] w-full max-w-3xl overflow-y-auto rounded-[32px] border border-white/10 bg-[#050b14] shadow-[0_0_80px_rgba(0,132,255,.2)]">
+            <button
+              onClick={closeSignup}
+              className="absolute right-5 top-5 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 transition hover:bg-orange-500/20"
+            >
+              <X className="h-5 w-5 text-white" />
+            </button>
+
+            <div className="p-6 sm:p-10">
+              <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-500">Start Sign-Up</p>
+
+              <h2 className="mt-2 text-[34px] font-black leading-none text-white sm:text-[52px]">
+                Join ThinkWork Basketball
+              </h2>
+
+              <p className="mt-4 max-w-[580px] text-sm leading-7 text-white/65 sm:text-base">
+                Fill out the form below and ThinkWork Basketball will follow up with you to get started.
+              </p>
+
+              <div className="mt-8 grid gap-3 rounded-3xl border border-orange-500/30 bg-[#08111c] p-5 shadow-[0_0_30px_rgba(249,115,22,.15)]">
+                <p className="text-[12px] font-black uppercase tracking-[2px] text-white/45">Selected Program</p>
+
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 className="text-[26px] font-black text-white">
+                      {selectedProgram?.title || "Program Not Selected Yet"}
+                    </h3>
+
+                    <p className="mt-1 text-sm font-medium text-white/60">
+                      {selectedProgram?.sessions || "The team will help you choose the best fit."}
+                    </p>
+                  </div>
+
+                  {selectedProgram?.price && (
+                    <div className="text-left sm:text-right">
+                      <p className="text-[38px] font-black leading-none text-orange-400">{selectedProgram.price}</p>
+                      <p className="mt-1 text-[11px] font-black uppercase tracking-wide text-white/40">Deal Price</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+           <form
+  action={FORMSPREE_SIGNUP_URL}
+  method="POST"
+  className="mt-8 grid gap-5"
+>
+  {/* REDIRECT TO CALENDLY */}
+  <input
+    type="hidden"
+    name="_next"
+    value="https://calendly.com/YOUR-CALENDLY-LINK"
+  />
+
+  <input
+    type="hidden"
+    name="Form Type"
+    value="New Athlete Sign-Up"
+  />
+
+  <input
+    type="hidden"
+    name="Selected Program"
+    value={selectedProgram?.title || "Not selected"}
+  />
+
+  <input
+    type="hidden"
+    name="Program Sessions"
+    value={selectedProgram?.sessions || ""}
+  />
+
+  <input
+    type="hidden"
+    name="Program Price"
+    value={selectedProgram?.price || ""}
+  />
+
+  {/* ATHLETE NAME */}
+  <div className="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label className="mb-2 block text-sm font-bold text-white">
+        Athlete First Name
+      </label>
+
+      <input
+        name="Athlete First Name"
+        required
+        placeholder="Enter first name"
+        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+      />
+    </div>
+
+    <div>
+      <label className="mb-2 block text-sm font-bold text-white">
+        Athlete Last Name
+      </label>
+
+      <input
+        name="Athlete Last Name"
+        required
+        placeholder="Enter last name"
+        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+      />
+    </div>
+  </div>
+
+  {/* AGE + PARENT */}
+  <div className="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label className="mb-2 block text-sm font-bold text-white">
+        Athlete Age
+      </label>
+
+      <input
+        type="number"
+        name="Athlete Age"
+        required
+        placeholder="Enter age"
+        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+      />
+    </div>
+
+    <div>
+      <label className="mb-2 block text-sm font-bold text-white">
+        Parent/Guardian Name
+      </label>
+
+      <input
+        name="Parent Guardian Name"
+        required
+        placeholder="Enter parent name"
+        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+      />
+    </div>
+  </div>
+
+  {/* PHONE + EMAIL */}
+  <div className="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label className="mb-2 block text-sm font-bold text-white">
+        Phone Number
+      </label>
+
+      <input
+        type="tel"
+        name="Phone"
+        required
+        placeholder="Enter phone number"
+        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+      />
+    </div>
+
+    <div>
+      <label className="mb-2 block text-sm font-bold text-white">
+        Email Address
+      </label>
+
+      <input
+        type="email"
+        name="Email"
+        required
+        placeholder="Enter email address"
+        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+      />
+    </div>
+  </div>
+
+  {/* PROGRAM IF NOT SELECTED */}
+  {!selectedProgram && (
+    <div>
+      <label className="mb-2 block text-sm font-bold text-white">
+        Program Interest
+      </label>
+
+      <select
+        name="Program Interest"
+        required
+        className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+      >
+        <option value="">Choose a program</option>
+
+        <option>Starter - 2 Sessions / Week - $70</option>
+
+        <option>Growth - 3 Sessions / Week - $100</option>
+
+        <option>Elite - 5 Sessions / Week - $170</option>
+
+        <option>ThinkWork Pro - 20 Sessions - $650</option>
+
+        <option>Private Training</option>
+
+        <option>Partner Workout</option>
+
+        <option>Small Group Training</option>
+      </select>
+    </div>
+  )}
+
+  {/* SCHEDULING */}
+  <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-5">
+    <p className="text-sm font-bold text-white">
+      Training Scheduling
+    </p>
+
+    <p className="mt-2 text-sm leading-6 text-white/65">
+      After submitting this form, you’ll automatically be redirected to our
+      live scheduling system to select your official training date and time.
+    </p>
+  </div>
+
+  {/* NOTES */}
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Additional Notes
+    </label>
+
+    <textarea
+      name="Additional Notes"
+      rows="4"
+      placeholder="Anything else we should know?"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
+
+  {/* SUBMIT */}
+  <button
+    type="submit"
+    className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1"
+  >
+    Continue To Scheduling
+    <ArrowRight className="h-5 w-5" />
+  </button>
+
+  <p className="text-center text-xs text-white/35">
+    Your information is secure and will never be shared.
+  </p>
+</form>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
