@@ -90,6 +90,7 @@ export default function App() {
   const [activeCard, setActiveCard] = useState(null);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState(null);
+  const [aboutExpanded, setAboutExpanded] = useState(false);
 
   const openSignup = (program = null) => {
     setSelectedProgram(program);
@@ -341,68 +342,165 @@ export default function App() {
         </div>
       </section>
 
-      {/* ABOUT / SCHEDULE / PAYMENTS */}
-      <section className="grid grid-cols-1 border-b border-cyan-400/10 bg-[#020812] lg:grid-cols-3">
-        <div id="about" className="relative min-h-[420px] overflow-hidden border-b border-cyan-400/10 p-6 sm:p-8 lg:border-b-0 lg:border-r xl:p-14">
-          <p className="text-[13px] font-black uppercase text-orange-500">Who We Are</p>
-          <h2 className="mt-2 text-[30px] font-black uppercase leading-none sm:text-[38px]">More Than Skill</h2>
-          <p className="mt-6 max-w-[480px] text-[15px] font-medium leading-7 text-white/85">
-            At ThinkWork Basketball, we believe basketball is more than skill — it’s mindset, discipline, intelligence, and purpose.
-          </p>
-          <p className="mt-4 max-w-[480px] text-[15px] font-medium leading-7 text-white/75">
-            We help athletes outTHINK, outWORK, and outPLAY through high-level skill development, basketball IQ training, mentorship, and competitive growth.
-          </p>
-          <p className="mt-5 text-[14px] font-black uppercase tracking-[3px] text-cyan-300">
-            Develop the THINKSET as much as the skillset.
-          </p>
-          <img src={logoWall} alt="" className="pointer-events-none absolute bottom-4 right-4 hidden h-[170px] w-[170px] rounded-full object-cover opacity-50 drop-shadow-[0_0_40px_rgba(0,140,255,.8)] sm:block" />
-        </div>
+    {/* ABOUT */}
+<section
+  id="about"
+  className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28"
+>
+  <div className="mx-auto grid max-w-[1600px] gap-14 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
+    <div>
+      <p className="text-[13px] font-black uppercase tracking-[3px] text-orange-500">
+        Who We Are
+      </p>
 
-        <div id="schedule" className="min-h-[420px] border-b border-cyan-400/10 p-6 sm:p-8 lg:border-b-0 lg:border-r xl:p-14">
-          <p className="text-[13px] font-black uppercase text-orange-500">Schedule</p>
-          <h2 className="mt-2 text-[30px] font-black uppercase leading-none sm:text-[38px]">Book Your Spot</h2>
-          <p className="mt-6 text-[15px] font-medium leading-7 text-white/75">
-            Players can choose their program, preferred training days, and preferred times during sign-up.
+      <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px] lg:text-[82px]">
+        More Than Skill
+      </h2>
+
+      <div className="mt-8 max-w-4xl text-[16px] font-semibold leading-8 text-white/75 sm:text-[19px] sm:leading-10">
+        <p>
+          At ThinkWork Basketball, we believe basketball is more than skill —
+          it’s mindset, discipline, intelligence, and purpose.
+        </p>
+
+        {aboutExpanded && (
+          <p className="mt-6">
+            We are a development-driven basketball program focused on building
+            complete players on and off the court. Our mission is to help
+            athletes outTHINK, outWORK, and outPLAY through high-level skill
+            development, basketball IQ training, mentorship, and competitive
+            growth. We teach players how to read the game, make winning
+            decisions, develop confidence, and compete with intention.
+            ThinkWork Basketball was built on the belief that talent alone is
+            not enough. The players who separate themselves are the ones who
+            combine intelligence, effort, consistency, and character. Every
+            drill, workout, film session, and teaching moment is designed to
+            develop not just better athletes — but stronger leaders and
+            thinkers. We create an environment where players are challenged,
+            encouraged, and inspired to grow. From beginners learning
+            fundamentals to advanced athletes sharpening their game, our focus
+            remains the same: Develop the THINKSET as much as the skillset.
           </p>
+        )}
+      </div>
 
-          <div className="mt-6 grid gap-3">
-            {["Private Training", "Partner Workouts", "Small Group Training", "Monthly Memberships"].map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-md border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-bold text-white/85">
-                <Check className="h-4 w-4 text-orange-500" /> {item}
-              </div>
-            ))}
-          </div>
+      <button
+        onClick={() => setAboutExpanded((prev) => !prev)}
+        className="mt-8 rounded-xl border border-cyan-200/40 bg-black/30 px-7 py-4 text-[12px] font-black uppercase tracking-[2px] text-white transition hover:border-orange-500 hover:bg-orange-500/10"
+      >
+        {aboutExpanded ? "Show Less" : "Read More"}
+      </button>
 
-          <button
-            onClick={() => openSignup()}
-            className="mt-7 inline-flex items-center gap-4 rounded-md border border-cyan-200/50 px-7 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10"
+      <p className="mt-8 max-w-3xl text-[15px] font-black uppercase tracking-[6px] text-cyan-300 sm:text-[18px]">
+        Develop the THINKSET as much as the skillset.
+      </p>
+    </div>
+
+    <div className="flex justify-center lg:justify-end">
+      <div className="relative">
+        <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-3xl" />
+
+        <img
+          src={logoWall}
+          alt="ThinkWork Basketball"
+          className="relative h-[220px] w-[220px] rounded-full object-cover opacity-90 drop-shadow-[0_0_55px_rgba(0,140,255,.75)] sm:h-[300px] sm:w-[300px] lg:h-[420px] lg:w-[420px]"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+{/* SCHEDULE + JOIN FLOW */}
+<section className="border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
+  <div className="mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-2">
+    {/* SCHEDULE */}
+    <div
+      id="schedule"
+      className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 lg:p-10"
+    >
+      <p className="text-[13px] font-black uppercase text-orange-500">
+        Schedule
+      </p>
+
+      <h2 className="mt-2 text-[34px] font-black uppercase leading-none sm:text-[44px]">
+        Book Your Spot
+      </h2>
+
+      <p className="mt-6 max-w-[520px] text-[16px] font-medium leading-8 text-white/75">
+        Players can choose their program, preferred training days, and preferred
+        times during sign-up.
+      </p>
+
+      <div className="mt-8 grid gap-4">
+        {[
+          "Private Training",
+          "Partner Workouts",
+          "Small Group Training",
+          "Monthly Memberships",
+        ].map((item) => (
+          <div
+            key={item}
+            className="flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-5 py-4 text-sm font-bold text-white/85"
           >
-            Start Sign-Up <ArrowRight className="h-4 w-4 text-orange-500" />
-          </button>
-        </div>
-
-        <div id="payments" className="relative min-h-[420px] overflow-hidden p-6 sm:p-8 xl:p-14">
-          <p className="text-[13px] font-black uppercase text-orange-500">Join Flow</p>
-          <h2 className="mt-2 text-[30px] font-black uppercase leading-none sm:text-[38px]">Simple Process</h2>
-
-          <div className="mt-6 grid max-w-[360px] gap-3 text-sm font-bold text-white/85">
-            {["Player information", "Parent contact", "Program selection", "Preferred days/times", "Payment confirmation"].map((step, index) => (
-              <div key={step} className="flex items-center gap-3 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2">
-                <span className="grid h-6 w-6 place-items-center rounded-full bg-orange-600 text-xs font-black">{index + 1}</span>
-                {step}
-              </div>
-            ))}
+            <Check className="h-4 w-4 text-orange-500" />
+            {item}
           </div>
+        ))}
+      </div>
 
-          <button
-            onClick={() => openSignup()}
-            className="mt-7 inline-flex items-center gap-4 rounded-md border border-cyan-200/50 px-7 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10"
+      <button
+        onClick={() => openSignup()}
+        className="mt-8 inline-flex items-center gap-4 rounded-xl border border-cyan-200/50 px-8 py-5 text-[12px] font-black uppercase tracking-[2px] transition hover:border-orange-500 hover:bg-orange-500/10"
+      >
+        Start Sign-Up
+        <ArrowRight className="h-4 w-4 text-orange-500" />
+      </button>
+    </div>
+
+    {/* JOIN FLOW */}
+    <div
+      id="payments"
+      className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 lg:p-10"
+    >
+      <p className="text-[13px] font-black uppercase text-orange-500">
+        Join Flow
+      </p>
+
+      <h2 className="mt-2 text-[34px] font-black uppercase leading-none sm:text-[44px]">
+        Simple Process
+      </h2>
+
+      <div className="mt-8 grid gap-4 text-sm font-bold text-white/85">
+        {[
+          "Player information",
+          "Parent contact",
+          "Program selection",
+          "Preferred days/times",
+          "Payment confirmation",
+        ].map((step, index) => (
+          <div
+            key={step}
+            className="flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-5 py-4"
           >
-            Join Now <ArrowRight className="h-4 w-4 text-orange-500" />
-          </button>
-        </div>
-      </section>
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-orange-600 text-xs font-black">
+              {index + 1}
+            </span>
 
+            {step}
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={() => openSignup()}
+        className="mt-8 inline-flex items-center gap-4 rounded-xl border border-cyan-200/50 px-8 py-5 text-[12px] font-black uppercase tracking-[2px] transition hover:border-orange-500 hover:bg-orange-500/10"
+      >
+        Join Now
+        <ArrowRight className="h-4 w-4 text-orange-500" />
+      </button>
+    </div>
+  </div>
+</section>
       {/* MEDIA */}
       <section id="media" className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,132,255,.16),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(249,115,22,.12),transparent_30%)]" />
@@ -464,32 +562,56 @@ export default function App() {
       </section>
 
       {/* CONTACT */}
-      <footer id="contact" className="bg-[#020812] px-4 py-10 sm:px-6 lg:px-8 xl:px-28">
-        <div className="mx-auto grid max-w-[1600px] items-center gap-7 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_220px]">
-          <div>
-            <p className="text-[13px] font-black uppercase text-orange-500">Contact</p>
-            <h2 className="text-[28px] font-black uppercase leading-none sm:text-[30px]">Let’s Connect</h2>
-          </div>
+     {/* CONTACT */}
+<footer id="contact" className="bg-[#020812] px-4 py-10 sm:px-6 lg:px-8 xl:px-28">
+  <div className="mx-auto grid max-w-[1600px] items-center gap-7 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_220px]">
+    <div>
+      <p className="text-[13px] font-black uppercase text-orange-500">
+        Contact
+      </p>
 
-          <div className="grid gap-5 text-sm font-medium text-white/90 lg:grid-cols-3">
-            <span className="flex items-center gap-4">
-              <Phone className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" /> Add Phone
-            </span>
+      <h2 className="text-[28px] font-black uppercase leading-none sm:text-[30px]">
+        Let’s Connect
+      </h2>
+    </div>
 
-            <span className="flex items-center gap-4 break-all">
-              <Mail className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" /> thinkworkbasketball@gmail.com
-            </span>
+    <div className="grid gap-5 text-sm font-medium text-white/90 lg:grid-cols-3">
+      <span className="flex items-center gap-4">
+        <Phone className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
+        Add Phone
+      </span>
 
-            <span className="flex items-center gap-4">
-              <MapPin className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" /> Add Location
-            </span>
-          </div>
+      <a
+        href="mailto:thinkworkbasketball@gmail.com"
+        className="flex items-center gap-4 break-all transition hover:text-orange-400"
+      >
+        <Mail className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
+        thinkworkbasketball@gmail.com
+      </a>
 
-          <a href="mailto:thinkworkbasketball@gmail.com" className="inline-flex items-center justify-center gap-4 rounded-md border border-cyan-200/50 px-8 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10 md:col-span-2 xl:col-span-1">
-            Send Message <ArrowRight className="h-4 w-4 text-orange-500" />
-          </a>
+      <a
+        href="https://www.instagram.com/thinkworkbasketball"
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-4 transition hover:text-orange-400"
+      >
+        <div className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500/40 text-orange-500">
+          IG
         </div>
-      </footer>
+
+        @thinkworkbasketball
+      </a>
+    </div>
+
+    <a
+      href="mailto:thinkworkbasketball@gmail.com"
+      className="inline-flex items-center justify-center gap-4 rounded-md border border-cyan-200/50 px-8 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10 md:col-span-2 xl:col-span-1"
+    >
+      Send Message
+      <ArrowRight className="h-4 w-4 text-orange-500" />
+    </a>
+  </div>
+</footer>
 
       {/* SIGNUP MODAL */}
       {showSignupModal && (
@@ -513,28 +635,82 @@ export default function App() {
                 Fill out the form below and ThinkWork Basketball will follow up with you to get started.
               </p>
 
-              <div className="mt-8 grid gap-3 rounded-3xl border border-orange-500/30 bg-[#08111c] p-5 shadow-[0_0_30px_rgba(249,115,22,.15)]">
-                <p className="text-[12px] font-black uppercase tracking-[2px] text-white/45">Selected Program</p>
+              <div className="mt-8 rounded-3xl border border-orange-500/30 bg-[#08111c] p-5 shadow-[0_0_30px_rgba(249,115,22,.15)]">
+  <p className="text-[12px] font-black uppercase tracking-[2px] text-white/45">
+    Selected Program
+  </p>
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h3 className="text-[26px] font-black text-white">
-                      {selectedProgram?.title || "Program Not Selected Yet"}
-                    </h3>
+  {selectedProgram ? (
+    <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h3 className="text-[28px] font-black text-white">
+          {selectedProgram.title}
+        </h3>
 
-                    <p className="mt-1 text-sm font-medium text-white/60">
-                      {selectedProgram?.sessions || "The team will help you choose the best fit."}
-                    </p>
-                  </div>
+        <p className="mt-1 text-sm font-medium text-white/60">
+          {selectedProgram.sessions}
+        </p>
 
-                  {selectedProgram?.price && (
-                    <div className="text-left sm:text-right">
-                      <p className="text-[38px] font-black leading-none text-orange-400">{selectedProgram.price}</p>
-                      <p className="mt-1 text-[11px] font-black uppercase tracking-wide text-white/40">Deal Price</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+        <button
+          type="button"
+          onClick={() => setSelectedProgram(null)}
+          className="mt-4 text-[11px] font-black uppercase tracking-[2px] text-cyan-300 transition hover:text-orange-400"
+        >
+          Change Program
+        </button>
+      </div>
+
+      <div className="text-left sm:text-right">
+        <p className="text-[42px] font-black leading-none text-orange-400">
+          {selectedProgram.price}
+        </p>
+
+        <p className="mt-1 text-[11px] font-black uppercase tracking-wide text-white/40">
+          Selected Price
+        </p>
+      </div>
+    </div>
+  ) : (
+    <div className="mt-5">
+      <p className="text-sm font-bold text-white">
+        Choose the training option that fits best.
+      </p>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        {[
+          ...packages.filter(
+            (program) => program.title !== "ThinkWork Pro"
+          ),
+
+          ...memberships.map(([title, sessions, price]) => ({
+            title,
+            sessions,
+            price,
+          })),
+        ].map((program) => (
+          <button
+            key={`${program.title}-${program.sessions}`}
+            type="button"
+            onClick={() => setSelectedProgram(program)}
+            className="rounded-2xl border border-white/10 bg-black/30 p-4 text-left transition hover:border-orange-500 hover:bg-orange-500/10"
+          >
+            <p className="text-base font-black uppercase text-white">
+              {program.title}
+            </p>
+
+            <p className="mt-1 text-sm text-white/55">
+              {program.sessions}
+            </p>
+
+            <p className="mt-3 text-2xl font-black text-orange-400">
+              {program.price}
+            </p>
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
 
            <form
   action={FORMSPREE_SIGNUP_URL}
