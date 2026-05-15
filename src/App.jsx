@@ -200,7 +200,135 @@ export default function App() {
           </motion.div>
         </div>
       </section>
+    {/* ABOUT */}
+<section
+  id="about"
+  className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28"
+>
+  <div className="mx-auto grid max-w-[1600px] gap-14 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
+    <div>
+      <p className="text-[13px] font-black uppercase tracking-[3px] text-orange-500">
+        Who We Are
+      </p>
 
+      <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px] lg:text-[82px]">
+        More Than Skill
+      </h2>
+
+      <div className="mt-8 max-w-4xl text-[16px] font-semibold leading-8 text-white/75 sm:text-[19px] sm:leading-10">
+        <p>
+          At ThinkWork Basketball, we believe basketball is more than skill —
+          it’s mindset, discipline, intelligence, and purpose.
+        </p>
+
+        {aboutExpanded && (
+          <p className="mt-6">
+            We are a development-driven basketball program focused on building
+            complete players on and off the court. Our mission is to help
+            athletes outTHINK, outWORK, and outPLAY through high-level skill
+            development, basketball IQ training, mentorship, and competitive
+            growth. We teach players how to read the game, make winning
+            decisions, develop confidence, and compete with intention.
+            ThinkWork Basketball was built on the belief that talent alone is
+            not enough. The players who separate themselves are the ones who
+            combine intelligence, effort, consistency, and character. Every
+            drill, workout, film session, and teaching moment is designed to
+            develop not just better athletes — but stronger leaders and
+            thinkers. We create an environment where players are challenged,
+            encouraged, and inspired to grow. From beginners learning
+            fundamentals to advanced athletes sharpening their game, our focus
+            remains the same: Develop the THINKSET as much as the skillset.
+          </p>
+        )}
+      </div>
+
+      <button
+        onClick={() => setAboutExpanded((prev) => !prev)}
+        className="mt-8 rounded-xl border border-cyan-200/40 bg-black/30 px-7 py-4 text-[12px] font-black uppercase tracking-[2px] text-white transition hover:border-orange-500 hover:bg-orange-500/10"
+      >
+        {aboutExpanded ? "Show Less" : "Read More"}
+      </button>
+
+      <p className="mt-8 max-w-3xl text-[15px] font-black uppercase tracking-[6px] text-cyan-300 sm:text-[18px]">
+        Develop the THINKSET as much as the skillset.
+      </p>
+    </div>
+
+    <div className="flex justify-center lg:justify-end">
+      <div className="relative">
+        <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-3xl" />
+
+        <img
+          src={logoWall}
+          alt="ThinkWork Basketball"
+          className="relative h-[220px] w-[220px] rounded-full object-cover opacity-90 drop-shadow-[0_0_55px_rgba(0,140,255,.75)] sm:h-[300px] sm:w-[300px] lg:h-[420px] lg:w-[420px]"
+        />
+      </div>
+    </div>
+  </div>
+      </section>
+      
+
+
+      {/* MEDIA */}
+      <section id="media" className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,132,255,.16),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(249,115,22,.12),transparent_30%)]" />
+
+        <div className="relative z-10 mx-auto max-w-[1600px]">
+          <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-[13px] font-black uppercase text-orange-500">Media</p>
+
+              <h2 className="mt-2 text-[38px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px] lg:text-[62px]">
+                Training In Action
+              </h2>
+
+              <div className="mt-5 h-[2px] w-20 bg-orange-500" />
+
+              <p className="mt-5 max-w-[560px] text-base font-medium leading-7 text-white/75 sm:text-lg">
+                Real work. Real athletes. Real results. See training sessions, behind-the-scenes moments, and player development in action.
+              </p>
+            </div>
+
+            <a href="#contact" className="inline-flex w-fit items-center justify-center gap-4 rounded-lg border border-orange-500 px-7 py-4 text-[12px] font-black uppercase tracking-wide text-white transition hover:bg-orange-500/10 sm:px-9">
+              View All Media <ArrowRight className="h-4 w-4 text-orange-500" />
+            </a>
+          </div>
+
+          <div className="grid gap-6 xl:grid-cols-[1.05fr_1.45fr]">
+            <div className="overflow-hidden rounded-3xl border border-white/15 bg-black shadow-[0_0_45px_rgba(0,132,255,.16)]">
+              <video autoPlay muted loop playsInline controls className="h-[300px] w-full bg-black object-contain sm:h-[460px] xl:h-[690px]">
+                <source src={trainingVideo} type="video/mp4" />
+              </video>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {galleryImages.map((img, index) => {
+                const cards = [
+                  ["1 ON 1 WORK", "Ball handling & defense"],
+                  ["COACH LEADERSHIP", "Mentorship & guidance"],
+                  ["BEHIND THE SCENES", "The work off the court"],
+                  ["SKILL DEVELOPMENT", "Footwork & fundamentals"],
+                  ["PLAYER GROWTH", "Progress every day"],
+                ];
+
+                return (
+                  <article key={index} className="overflow-hidden rounded-3xl border border-white/10 bg-[#07111d] shadow-[0_0_28px_rgba(0,132,255,.1)]">
+                    <div className="h-[220px] bg-black sm:h-[250px]">
+                      <img src={img} alt={cards[index]?.[0] || "ThinkWork Basketball media"} className="h-full w-full object-contain" />
+                    </div>
+
+                    <div className="border-t border-white/10 bg-[#08111c] p-5">
+                      <p className="text-[14px] font-black uppercase text-white">{cards[index]?.[0]}</p>
+                      <p className="mt-1 text-sm font-medium text-white/65">{cards[index]?.[1]}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
       {/* PROGRAMS */}
       <section id="programs" className="relative border-b border-cyan-400/10 bg-[#020812] px-4 py-14 sm:px-6 lg:px-8 xl:px-28">
         <div className="mx-auto max-w-[1600px]">
@@ -341,75 +469,6 @@ export default function App() {
           </p>
         </div>
       </section>
-
-    {/* ABOUT */}
-<section
-  id="about"
-  className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28"
->
-  <div className="mx-auto grid max-w-[1600px] gap-14 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
-    <div>
-      <p className="text-[13px] font-black uppercase tracking-[3px] text-orange-500">
-        Who We Are
-      </p>
-
-      <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px] lg:text-[82px]">
-        More Than Skill
-      </h2>
-
-      <div className="mt-8 max-w-4xl text-[16px] font-semibold leading-8 text-white/75 sm:text-[19px] sm:leading-10">
-        <p>
-          At ThinkWork Basketball, we believe basketball is more than skill —
-          it’s mindset, discipline, intelligence, and purpose.
-        </p>
-
-        {aboutExpanded && (
-          <p className="mt-6">
-            We are a development-driven basketball program focused on building
-            complete players on and off the court. Our mission is to help
-            athletes outTHINK, outWORK, and outPLAY through high-level skill
-            development, basketball IQ training, mentorship, and competitive
-            growth. We teach players how to read the game, make winning
-            decisions, develop confidence, and compete with intention.
-            ThinkWork Basketball was built on the belief that talent alone is
-            not enough. The players who separate themselves are the ones who
-            combine intelligence, effort, consistency, and character. Every
-            drill, workout, film session, and teaching moment is designed to
-            develop not just better athletes — but stronger leaders and
-            thinkers. We create an environment where players are challenged,
-            encouraged, and inspired to grow. From beginners learning
-            fundamentals to advanced athletes sharpening their game, our focus
-            remains the same: Develop the THINKSET as much as the skillset.
-          </p>
-        )}
-      </div>
-
-      <button
-        onClick={() => setAboutExpanded((prev) => !prev)}
-        className="mt-8 rounded-xl border border-cyan-200/40 bg-black/30 px-7 py-4 text-[12px] font-black uppercase tracking-[2px] text-white transition hover:border-orange-500 hover:bg-orange-500/10"
-      >
-        {aboutExpanded ? "Show Less" : "Read More"}
-      </button>
-
-      <p className="mt-8 max-w-3xl text-[15px] font-black uppercase tracking-[6px] text-cyan-300 sm:text-[18px]">
-        Develop the THINKSET as much as the skillset.
-      </p>
-    </div>
-
-    <div className="flex justify-center lg:justify-end">
-      <div className="relative">
-        <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-3xl" />
-
-        <img
-          src={logoWall}
-          alt="ThinkWork Basketball"
-          className="relative h-[220px] w-[220px] rounded-full object-cover opacity-90 drop-shadow-[0_0_55px_rgba(0,140,255,.75)] sm:h-[300px] sm:w-[300px] lg:h-[420px] lg:w-[420px]"
-        />
-      </div>
-    </div>
-  </div>
-</section>
-
 {/* SCHEDULE + JOIN FLOW */}
 <section className="border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
   <div className="mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-2">
@@ -501,65 +560,7 @@ export default function App() {
     </div>
   </div>
 </section>
-      {/* MEDIA */}
-      <section id="media" className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,132,255,.16),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(249,115,22,.12),transparent_30%)]" />
 
-        <div className="relative z-10 mx-auto max-w-[1600px]">
-          <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-[13px] font-black uppercase text-orange-500">Media</p>
-
-              <h2 className="mt-2 text-[38px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px] lg:text-[62px]">
-                Training In Action
-              </h2>
-
-              <div className="mt-5 h-[2px] w-20 bg-orange-500" />
-
-              <p className="mt-5 max-w-[560px] text-base font-medium leading-7 text-white/75 sm:text-lg">
-                Real work. Real athletes. Real results. See training sessions, behind-the-scenes moments, and player development in action.
-              </p>
-            </div>
-
-            <a href="#contact" className="inline-flex w-fit items-center justify-center gap-4 rounded-lg border border-orange-500 px-7 py-4 text-[12px] font-black uppercase tracking-wide text-white transition hover:bg-orange-500/10 sm:px-9">
-              View All Media <ArrowRight className="h-4 w-4 text-orange-500" />
-            </a>
-          </div>
-
-          <div className="grid gap-6 xl:grid-cols-[1.05fr_1.45fr]">
-            <div className="overflow-hidden rounded-3xl border border-white/15 bg-black shadow-[0_0_45px_rgba(0,132,255,.16)]">
-              <video autoPlay muted loop playsInline controls className="h-[300px] w-full bg-black object-contain sm:h-[460px] xl:h-[690px]">
-                <source src={trainingVideo} type="video/mp4" />
-              </video>
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {galleryImages.map((img, index) => {
-                const cards = [
-                  ["1 ON 1 WORK", "Ball handling & defense"],
-                  ["COACH LEADERSHIP", "Mentorship & guidance"],
-                  ["BEHIND THE SCENES", "The work off the court"],
-                  ["SKILL DEVELOPMENT", "Footwork & fundamentals"],
-                  ["PLAYER GROWTH", "Progress every day"],
-                ];
-
-                return (
-                  <article key={index} className="overflow-hidden rounded-3xl border border-white/10 bg-[#07111d] shadow-[0_0_28px_rgba(0,132,255,.1)]">
-                    <div className="h-[220px] bg-black sm:h-[250px]">
-                      <img src={img} alt={cards[index]?.[0] || "ThinkWork Basketball media"} className="h-full w-full object-contain" />
-                    </div>
-
-                    <div className="border-t border-white/10 bg-[#08111c] p-5">
-                      <p className="text-[14px] font-black uppercase text-white">{cards[index]?.[0]}</p>
-                      <p className="mt-1 text-sm font-medium text-white/65">{cards[index]?.[1]}</p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CONTACT */}
      {/* CONTACT */}
