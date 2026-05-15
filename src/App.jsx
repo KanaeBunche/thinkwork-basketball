@@ -26,14 +26,10 @@ import image3 from "./assets/images/image3.jpeg";
 import image4 from "./assets/images/image4.jpeg";
 import image5 from "./assets/images/image5.jpeg";
 
-import trainingVideo from "./assets/videos/IMG_1193.mp4";
+
 import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
-import vid6 from "./assets/videos/vid6.mp4";
-import vid7 from "./assets/videos/vid7.mp4";
-import vid8 from "./assets/videos/vid8.mp4";
-import vid9 from "./assets/videos/vid9.mp4";
-import vid10 from "./assets/videos/vid10.mp4";
+
 
 const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/YOUR_FORM_ID";
 
