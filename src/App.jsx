@@ -6,6 +6,7 @@ import {
   MapPin,
   Menu,
   Phone,
+  Play,
   Star,
   Trophy,
   Users,
@@ -23,8 +24,16 @@ import image1 from "./assets/images/image1.jpeg";
 import image2 from "./assets/images/image2.jpeg";
 import image3 from "./assets/images/image3.jpeg";
 import image4 from "./assets/images/image4.jpeg";
+import image5 from "./assets/images/image5.jpeg";
 
 import trainingVideo from "./assets/videos/IMG_1193.mp4";
+import vid3 from "./assets/videos/vid3.mp4";
+import vid5 from "./assets/videos/vid5.mp4";
+import vid6 from "./assets/videos/vid6.mp4";
+import vid7 from "./assets/videos/vid7.mp4";
+import vid8 from "./assets/videos/vid8.mp4";
+import vid9 from "./assets/videos/vid9.mp4";
+import vid10 from "./assets/videos/vid10.mp4";
 
 const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/YOUR_FORM_ID";
 
@@ -83,7 +92,41 @@ const memberships = [
   ["ThinkWork Pro", "20 Sessions", "$650"],
 ];
 
-const galleryImages = [image0, image1, image2, image3, image4];
+const mediaItems = [
+  {
+    type: "video",
+    src: vid3,
+    image: image0,
+    label: "Training",
+    title: "1 On 1 Work",
+    desc: "Ball handling & defense",
+  },
+
+  {
+    type: "video",
+    src: vid5,
+    image: image1,
+    label: "Training",
+    title: "Handling Drills",
+    desc: "Control. Rhythm. Confidence.",
+  },
+
+  {
+    type: "image",
+    image: image4,
+    label: "Leadership",
+    title: "Coach Leadership",
+    desc: "Mentorship & guidance",
+  },
+
+  {
+    type: "image",
+    image: image5,
+    label: "Culture",
+    title: "Player Growth",
+    desc: "Confidence on and off the court.",
+  },
+];
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -91,6 +134,7 @@ export default function App() {
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [aboutExpanded, setAboutExpanded] = useState(false);
+  const [activeVideo, setActiveVideo] = useState(null);
 
   const openSignup = (program = null) => {
     setSelectedProgram(program);
@@ -200,135 +244,176 @@ export default function App() {
           </motion.div>
         </div>
       </section>
-    {/* ABOUT */}
-<section
-  id="about"
-  className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28"
->
-  <div className="mx-auto grid max-w-[1600px] gap-14 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
-    <div>
-      <p className="text-[13px] font-black uppercase tracking-[3px] text-orange-500">
-        Who We Are
+
+      {/* ABOUT */}
+      <section id="about" className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
+        <div className="mx-auto grid max-w-[1600px] gap-14 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+          <div>
+            <p className="text-[13px] font-black uppercase tracking-[3px] text-orange-500">
+              Meet The Founder
+            </p>
+
+            <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px] lg:text-[76px]">
+              Coach Dupree
+            </h2>
+
+            <div className="mt-8 max-w-4xl text-[16px] font-semibold leading-8 text-white/75 sm:text-[18px] sm:leading-9">
+              <p>
+                I’m Dupree “Coach Duree” McCullen, founder of ThinkWork Basketball — a program built to develop high-IQ players through skill work, discipline, confidence, and game understanding.
+              </p>
+
+              {aboutExpanded && (
+                <p className="mt-6">
+                  With a passion for teaching and mentorship, I help athletes improve not only their game, but their mindset, leadership, and work ethic. Players and families choose ThinkWork Basketball for detailed development, energy, patience, and a genuine commitment to helping every athlete grow on and off the court.
+                </p>
+              )}
+            </div>
+
+            <button
+              onClick={() => setAboutExpanded((prev) => !prev)}
+              className="mt-8 rounded-xl border border-cyan-200/40 bg-black/30 px-7 py-4 text-[12px] font-black uppercase tracking-[2px] text-white transition hover:border-orange-500 hover:bg-orange-500/10"
+            >
+              {aboutExpanded ? "Show Less" : "Read More"}
+            </button>
+
+            <p className="mt-8 max-w-3xl text-[15px] font-black uppercase tracking-[6px] text-cyan-300 sm:text-[18px]">
+              Develop the THINKSET as much as the skillset.
+            </p>
+          </div>
+<div className="flex justify-center lg:justify-end">
+  <div className="relative overflow-hidden rounded-[32px] border border-orange-500/30 bg-black shadow-[0_0_45px_rgba(249,115,22,.18)]">
+    
+    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10" />
+
+    <img
+      src={image1}
+      alt="Coach Dupree"
+      className="h-[420px] w-[320px] object-cover sm:h-[520px] sm:w-[420px]"
+    />
+
+    <div className="absolute bottom-0 left-0 z-20 p-6">
+      <p className="text-[11px] font-black uppercase tracking-[3px] text-orange-400">
+        ThinkWork Basketball
       </p>
 
-      <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px] lg:text-[82px]">
-        More Than Skill
-      </h2>
+      <h3 className="mt-2 text-[32px] font-black uppercase leading-none text-white">
+        Coach Dupree
+      </h3>
 
-      <div className="mt-8 max-w-4xl text-[16px] font-semibold leading-8 text-white/75 sm:text-[19px] sm:leading-10">
-        <p>
-          At ThinkWork Basketball, we believe basketball is more than skill —
-          it’s mindset, discipline, intelligence, and purpose.
-        </p>
-
-        {aboutExpanded && (
-          <p className="mt-6">
-            We are a development-driven basketball program focused on building
-            complete players on and off the court. Our mission is to help
-            athletes outTHINK, outWORK, and outPLAY through high-level skill
-            development, basketball IQ training, mentorship, and competitive
-            growth. We teach players how to read the game, make winning
-            decisions, develop confidence, and compete with intention.
-            ThinkWork Basketball was built on the belief that talent alone is
-            not enough. The players who separate themselves are the ones who
-            combine intelligence, effort, consistency, and character. Every
-            drill, workout, film session, and teaching moment is designed to
-            develop not just better athletes — but stronger leaders and
-            thinkers. We create an environment where players are challenged,
-            encouraged, and inspired to grow. From beginners learning
-            fundamentals to advanced athletes sharpening their game, our focus
-            remains the same: Develop the THINKSET as much as the skillset.
-          </p>
-        )}
-      </div>
-
-      <button
-        onClick={() => setAboutExpanded((prev) => !prev)}
-        className="mt-8 rounded-xl border border-cyan-200/40 bg-black/30 px-7 py-4 text-[12px] font-black uppercase tracking-[2px] text-white transition hover:border-orange-500 hover:bg-orange-500/10"
-      >
-        {aboutExpanded ? "Show Less" : "Read More"}
-      </button>
-
-      <p className="mt-8 max-w-3xl text-[15px] font-black uppercase tracking-[6px] text-cyan-300 sm:text-[18px]">
-        Develop the THINKSET as much as the skillset.
+      <p className="mt-2 text-sm font-semibold text-white/70">
+        Skill Development • Leadership • Basketball IQ
       </p>
-    </div>
-
-    <div className="flex justify-center lg:justify-end">
-      <div className="relative">
-        <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-3xl" />
-
-        <img
-          src={logoWall}
-          alt="ThinkWork Basketball"
-          className="relative h-[220px] w-[220px] rounded-full object-cover opacity-90 drop-shadow-[0_0_55px_rgba(0,140,255,.75)] sm:h-[300px] sm:w-[300px] lg:h-[420px] lg:w-[420px]"
-        />
-      </div>
     </div>
   </div>
+</div>
+        
+        </div>
       </section>
-      
-
 
       {/* MEDIA */}
-      <section id="media" className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
+      <section id="media" className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-20 sm:px-6 lg:px-8 xl:px-28">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,132,255,.16),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(249,115,22,.12),transparent_30%)]" />
 
-        <div className="relative z-10 mx-auto max-w-[1600px]">
-          <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative z-10 mx-auto max-w-[1500px]">
+          <div className="mx-auto mb-12 max-w-4xl text-center">
+            <p className="text-[13px] font-black uppercase tracking-[4px] text-orange-500">
+              Media & Gallery
+            </p>
+
+            <h2 className="mt-3 text-[38px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px] lg:text-[70px]">
+              Training. Moments. Culture.
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-[700px] text-base font-medium leading-7 text-white/70 sm:text-lg">
+              A look inside the work we put in every day. Real training, real moments, real results.
+            </p>
+          </div>
+
+          {/* FEATURED VIDEO */}
+        <div className="relative h-[360px] overflow-hidden sm:h-[520px]">
+  <img
+    src={image0}
+    alt="ThinkWork training session"
+    className="absolute inset-0 h-full w-full object-cover object-center opacity-80"
+  />
+
+  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+
+  <div className="absolute left-6 top-6 z-20 rounded-md border border-orange-500 bg-orange-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[2px] text-orange-400">
+    Featured
+  </div>
+
+  <div className="absolute bottom-8 left-6 z-20 max-w-[520px] sm:left-10">
+    <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-400">
+      ThinkWork Basketball
+    </p>
+
+    <h3 className="mt-2 text-[38px] font-black uppercase leading-none text-white sm:text-[56px]">
+      Training In Action
+    </h3>
+
+    <p className="mt-3 text-sm font-semibold text-white/70 sm:text-base">
+      A preview of the discipline, energy, and player development behind the work.
+    </p>
+  </div>
+</div>
+
+          {/* MEDIA GRID */}
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {mediaItems.map((item, index) => (
+              <article key={index} className="group overflow-hidden rounded-3xl border border-white/10 bg-[#07111d] shadow-[0_0_28px_rgba(0,132,255,.1)]">
+                <div className="relative h-[230px] overflow-hidden bg-black">
+                  {activeVideo === index && item.type === "video" ? (
+                    <video src={item.src} autoPlay controls playsInline className="h-full w-full bg-black object-contain" />
+                  ) : (
+                    <>
+                      <img src={item.image} alt={item.title} className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105" />
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+                      {item.type === "video" && (
+                        <button type="button" onClick={() => setActiveVideo(index)} className="absolute inset-0 grid place-items-center">
+                          <span className="grid h-14 w-14 place-items-center rounded-full border border-white/40 bg-black/55 transition group-hover:border-orange-500 group-hover:bg-orange-500/20">
+                            <Play className="ml-1 h-6 w-6 fill-white text-white" />
+                          </span>
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                <div className="border-t border-white/10 bg-[#08111c] p-5">
+                  <p className="text-[11px] font-black uppercase tracking-[2px] text-orange-400">
+                    {item.label}
+                  </p>
+
+                  <h3 className="mt-2 text-[15px] font-black uppercase text-white">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-1 text-sm font-medium text-white/60">
+                    {item.desc}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-col gap-5 rounded-3xl border border-white/10 bg-white/[0.03] p-7 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-[13px] font-black uppercase text-orange-500">Media</p>
-
-              <h2 className="mt-2 text-[38px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px] lg:text-[62px]">
-                Training In Action
-              </h2>
-
-              <div className="mt-5 h-[2px] w-20 bg-orange-500" />
-
-              <p className="mt-5 max-w-[560px] text-base font-medium leading-7 text-white/75 sm:text-lg">
-                Real work. Real athletes. Real results. See training sessions, behind-the-scenes moments, and player development in action.
+              <p className="text-2xl font-black uppercase text-white">See More Content</p>
+              <p className="mt-2 max-w-[620px] text-sm font-medium leading-6 text-white/60">
+                Follow the journey and stay updated on training sessions, highlights, and more.
               </p>
             </div>
 
-            <a href="#contact" className="inline-flex w-fit items-center justify-center gap-4 rounded-lg border border-orange-500 px-7 py-4 text-[12px] font-black uppercase tracking-wide text-white transition hover:bg-orange-500/10 sm:px-9">
-              View All Media <ArrowRight className="h-4 w-4 text-orange-500" />
+            <a href="https://www.instagram.com/thinkworkbasketball" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-4 rounded-lg border border-orange-500 px-7 py-4 text-[12px] font-black uppercase tracking-wide text-white transition hover:bg-orange-500/10">
+              View Instagram <ArrowRight className="h-4 w-4 text-orange-500" />
             </a>
-          </div>
-
-          <div className="grid gap-6 xl:grid-cols-[1.05fr_1.45fr]">
-            <div className="overflow-hidden rounded-3xl border border-white/15 bg-black shadow-[0_0_45px_rgba(0,132,255,.16)]">
-              <video autoPlay muted loop playsInline controls className="h-[300px] w-full bg-black object-contain sm:h-[460px] xl:h-[690px]">
-                <source src={trainingVideo} type="video/mp4" />
-              </video>
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {galleryImages.map((img, index) => {
-                const cards = [
-                  ["1 ON 1 WORK", "Ball handling & defense"],
-                  ["COACH LEADERSHIP", "Mentorship & guidance"],
-                  ["BEHIND THE SCENES", "The work off the court"],
-                  ["SKILL DEVELOPMENT", "Footwork & fundamentals"],
-                  ["PLAYER GROWTH", "Progress every day"],
-                ];
-
-                return (
-                  <article key={index} className="overflow-hidden rounded-3xl border border-white/10 bg-[#07111d] shadow-[0_0_28px_rgba(0,132,255,.1)]">
-                    <div className="h-[220px] bg-black sm:h-[250px]">
-                      <img src={img} alt={cards[index]?.[0] || "ThinkWork Basketball media"} className="h-full w-full object-contain" />
-                    </div>
-
-                    <div className="border-t border-white/10 bg-[#08111c] p-5">
-                      <p className="text-[14px] font-black uppercase text-white">{cards[index]?.[0]}</p>
-                      <p className="mt-1 text-sm font-medium text-white/65">{cards[index]?.[1]}</p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
           </div>
         </div>
       </section>
+
       {/* PROGRAMS */}
       <section id="programs" className="relative border-b border-cyan-400/10 bg-[#020812] px-4 py-14 sm:px-6 lg:px-8 xl:px-28">
         <div className="mx-auto max-w-[1600px]">
@@ -341,118 +426,84 @@ export default function App() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-  {packages.map((program) => {
-    const Icon = program.icon;
+            {packages.map((program) => {
+              const Icon = program.icon;
 
-    return (
-      <article key={program.title} className="h-[340px] [perspective:1100px]">
-        <div
-          className={`relative h-full w-full transition-all duration-700 [transform-style:preserve-3d] ${
-            activeCard === program.title ? "[transform:rotateY(180deg)]" : ""
-          }`}
-        >
-          {/* FRONT */}
-          <button
-            type="button"
-            onClick={() => setActiveCard(program.title)}
-            className={`absolute inset-0 overflow-hidden rounded-3xl border bg-black p-7 text-left [backface-visibility:hidden] ${
-              program.featured
-                ? "border-orange-500/70 shadow-[0_0_35px_rgba(249,115,22,.3)]"
-                : "border-white/15"
-            }`}
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,132,255,.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,.18),transparent_35%)]" />
+              return (
+                <article key={program.title} className="h-[340px] [perspective:1100px]">
+                  <div className={`relative h-full w-full transition-all duration-700 [transform-style:preserve-3d] ${activeCard === program.title ? "[transform:rotateY(180deg)]" : ""}`}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveCard(program.title)}
+                      className={`absolute inset-0 overflow-hidden rounded-3xl border bg-black p-7 text-left [backface-visibility:hidden] ${
+                        program.featured ? "border-orange-500/70 shadow-[0_0_35px_rgba(249,115,22,.3)]" : "border-white/15"
+                      }`}
+                    >
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,132,255,.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,.18),transparent_35%)]" />
 
-            <div className="relative z-10 flex h-full flex-col">
-              <div className="flex items-start justify-between gap-4">
-                <Icon className="h-10 w-10 text-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,.8)]" />
+                      <div className="relative z-10 flex h-full flex-col">
+                        <div className="flex items-start justify-between gap-4">
+                          <Icon className="h-10 w-10 text-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,.8)]" />
+                          <span className="rounded-full border border-orange-500/40 bg-orange-500/10 px-3 py-1 text-[10px] font-black uppercase text-orange-300">{program.tag}</span>
+                        </div>
 
-                <span className="rounded-full border border-orange-500/40 bg-orange-500/10 px-3 py-1 text-[10px] font-black uppercase text-orange-300">
-                  {program.tag}
-                </span>
-              </div>
+                        <p className="mt-7 text-[11px] font-black uppercase tracking-[3px] text-cyan-300">{program.category}</p>
+                        <h3 className="mt-2 text-[30px] font-black uppercase leading-none text-white">{program.title}</h3>
+                        <p className="mt-3 text-sm font-semibold text-white/75">{program.sessions}</p>
 
-              <p className="mt-7 text-[11px] font-black uppercase tracking-[3px] text-cyan-300">
-                {program.category}
-              </p>
+                        <div className="mt-auto">
+                          <p className="text-sm font-bold text-white/45 line-through">{program.regular}</p>
+                          <p className="text-[46px] font-black leading-none text-white">{program.price}</p>
+                          <p className="mt-2 text-[11px] font-black uppercase tracking-[2px] text-white/50">Tap to view details</p>
+                        </div>
+                      </div>
+                    </button>
 
-              <h3 className="mt-2 text-[30px] font-black uppercase leading-none text-white">
-                {program.title}
-              </h3>
+                    <div className="absolute inset-0 z-20 flex flex-col justify-center rounded-3xl border border-orange-500/60 bg-[#0a0b0d] p-7 shadow-[0_0_30px_rgba(249,115,22,.25)] [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveCard(null);
+                        }}
+                        className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
 
-              <p className="mt-3 text-sm font-semibold text-white/75">
-                {program.sessions}
-              </p>
+                      <p className="text-[14px] font-black uppercase text-orange-500">What You Get</p>
 
-              <div className="mt-auto">
-                <p className="text-sm font-bold text-white/45 line-through">
-                  {program.regular}
-                </p>
+                      <ul className="mt-5 space-y-3 text-sm font-semibold text-white/85">
+                        {program.bullets.map((bullet) => (
+                          <li key={bullet} className="flex items-center gap-3">
+                            <Check className="h-4 w-4 text-orange-500" />
+                            {bullet}
+                          </li>
+                        ))}
+                      </ul>
 
-                <p className="text-[46px] font-black leading-none text-white">
-                  {program.price}
-                </p>
-
-                <p className="mt-2 text-[11px] font-black uppercase tracking-[2px] text-white/50">
-                  Tap to view details
-                </p>
-              </div>
-            </div>
-          </button>
-
-          {/* BACK */}
-<div className="absolute inset-0 z-20 flex flex-col justify-center rounded-3xl border border-orange-500/60 bg-[#0a0b0d] p-7 shadow-[0_0_30px_rgba(249,115,22,.25)] [backface-visibility:hidden] [transform:rotateY(180deg)]">            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setActiveCard(null);
-              }}
-              className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10"
-            >
-              <X className="h-4 w-4" />
-            </button>
-
-            <p className="text-[14px] font-black uppercase text-orange-500">
-              What You Get
-            </p>
-
-            <ul className="mt-5 space-y-3 text-sm font-semibold text-white/85">
-              {program.bullets.map((bullet) => (
-                <li key={bullet} className="flex items-center gap-3">
-                  <Check className="h-4 w-4 text-orange-500" />
-                  {bullet}
-                </li>
-              ))}
-            </ul>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                openSignup(program);
-              }}
-              className="mt-7 inline-flex w-fit rounded-md bg-gradient-to-b from-orange-500 to-orange-700 px-7 py-3 text-[12px] font-black uppercase shadow-[0_0_22px_rgba(249,115,22,.45)] transition hover:-translate-y-0.5"
-            >
-              Join Now
-            </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openSignup(program);
+                        }}
+                        className="mt-7 inline-flex w-fit rounded-md bg-gradient-to-b from-orange-500 to-orange-700 px-7 py-3 text-[12px] font-black uppercase shadow-[0_0_22px_rgba(249,115,22,.45)] transition hover:-translate-y-0.5"
+                      >
+                        Join Now
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-        </div>
-      </article>
-    );
-  })}
-</div>
 
           <div className="mt-8 grid gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-2 lg:grid-cols-3">
             {memberships.map(([name, sessions, price]) => (
               <button
                 key={name}
-                onClick={() =>
-                  openSignup({
-                    title: name,
-                    sessions,
-                    price,
-                  })
-                }
+                onClick={() => openSignup({ title: name, sessions, price })}
                 className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-left transition hover:border-orange-500/60 hover:bg-orange-500/10"
               >
                 <div>
@@ -469,446 +520,214 @@ export default function App() {
           </p>
         </div>
       </section>
-{/* SCHEDULE + JOIN FLOW */}
-<section className="border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
-  <div className="mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-2">
-    {/* SCHEDULE */}
-    <div
-      id="schedule"
-      className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 lg:p-10"
-    >
-      <p className="text-[13px] font-black uppercase text-orange-500">
-        Schedule
-      </p>
 
-      <h2 className="mt-2 text-[34px] font-black uppercase leading-none sm:text-[44px]">
-        Book Your Spot
-      </h2>
+      {/* SCHEDULE + JOIN FLOW */}
+      <section className="border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
+        <div className="mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-2">
+          <div id="schedule" className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 lg:p-10">
+            <p className="text-[13px] font-black uppercase text-orange-500">Schedule</p>
+            <h2 className="mt-2 text-[34px] font-black uppercase leading-none sm:text-[44px]">Book Your Spot</h2>
 
-      <p className="mt-6 max-w-[520px] text-[16px] font-medium leading-8 text-white/75">
-        Players can choose their program, preferred training days, and preferred
-        times during sign-up.
-      </p>
+            <p className="mt-6 max-w-[520px] text-[16px] font-medium leading-8 text-white/75">
+              Players can choose their program, preferred training days, and preferred times during sign-up.
+            </p>
 
-      <div className="mt-8 grid gap-4">
-        {[
-          "Private Training",
-          "Partner Workouts",
-          "Small Group Training",
-          "Monthly Memberships",
-        ].map((item) => (
-          <div
-            key={item}
-            className="flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-5 py-4 text-sm font-bold text-white/85"
-          >
-            <Check className="h-4 w-4 text-orange-500" />
-            {item}
+            <div className="mt-8 grid gap-4">
+              {["Private Training", "Partner Workouts", "Small Group Training", "Monthly Memberships"].map((item) => (
+                <div key={item} className="flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-5 py-4 text-sm font-bold text-white/85">
+                  <Check className="h-4 w-4 text-orange-500" />
+                  {item}
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => openSignup()} className="mt-8 inline-flex items-center gap-4 rounded-xl border border-cyan-200/50 px-8 py-5 text-[12px] font-black uppercase tracking-[2px] transition hover:border-orange-500 hover:bg-orange-500/10">
+              Start Sign-Up <ArrowRight className="h-4 w-4 text-orange-500" />
+            </button>
           </div>
-        ))}
-      </div>
 
-      <button
-        onClick={() => openSignup()}
-        className="mt-8 inline-flex items-center gap-4 rounded-xl border border-cyan-200/50 px-8 py-5 text-[12px] font-black uppercase tracking-[2px] transition hover:border-orange-500 hover:bg-orange-500/10"
-      >
-        Start Sign-Up
-        <ArrowRight className="h-4 w-4 text-orange-500" />
-      </button>
-    </div>
+          <div id="payments" className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 lg:p-10">
+            <p className="text-[13px] font-black uppercase text-orange-500">Join Flow</p>
+            <h2 className="mt-2 text-[34px] font-black uppercase leading-none sm:text-[44px]">Simple Process</h2>
 
-    {/* JOIN FLOW */}
-    <div
-      id="payments"
-      className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 lg:p-10"
-    >
-      <p className="text-[13px] font-black uppercase text-orange-500">
-        Join Flow
-      </p>
+            <div className="mt-8 grid gap-4 text-sm font-bold text-white/85">
+              {["Player information", "Parent contact", "Program selection", "Preferred days/times", "Payment confirmation"].map((step, index) => (
+                <div key={step} className="flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-5 py-4">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-orange-600 text-xs font-black">{index + 1}</span>
+                  {step}
+                </div>
+              ))}
+            </div>
 
-      <h2 className="mt-2 text-[34px] font-black uppercase leading-none sm:text-[44px]">
-        Simple Process
-      </h2>
-
-      <div className="mt-8 grid gap-4 text-sm font-bold text-white/85">
-        {[
-          "Player information",
-          "Parent contact",
-          "Program selection",
-          "Preferred days/times",
-          "Payment confirmation",
-        ].map((step, index) => (
-          <div
-            key={step}
-            className="flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-5 py-4"
-          >
-            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-orange-600 text-xs font-black">
-              {index + 1}
-            </span>
-
-            {step}
+            <button onClick={() => openSignup()} className="mt-8 inline-flex items-center gap-4 rounded-xl border border-cyan-200/50 px-8 py-5 text-[12px] font-black uppercase tracking-[2px] transition hover:border-orange-500 hover:bg-orange-500/10">
+              Join Now <ArrowRight className="h-4 w-4 text-orange-500" />
+            </button>
           </div>
-        ))}
-      </div>
-
-      <button
-        onClick={() => openSignup()}
-        className="mt-8 inline-flex items-center gap-4 rounded-xl border border-cyan-200/50 px-8 py-5 text-[12px] font-black uppercase tracking-[2px] transition hover:border-orange-500 hover:bg-orange-500/10"
-      >
-        Join Now
-        <ArrowRight className="h-4 w-4 text-orange-500" />
-      </button>
-    </div>
-  </div>
-</section>
-
+        </div>
+      </section>
 
       {/* CONTACT */}
-     {/* CONTACT */}
-<footer id="contact" className="bg-[#020812] px-4 py-10 sm:px-6 lg:px-8 xl:px-28">
-  <div className="mx-auto grid max-w-[1600px] items-center gap-7 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_220px]">
-    <div>
-      <p className="text-[13px] font-black uppercase text-orange-500">
-        Contact
-      </p>
+      <footer id="contact" className="bg-[#020812] px-4 py-10 sm:px-6 lg:px-8 xl:px-28">
+        <div className="mx-auto grid max-w-[1600px] items-center gap-7 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_220px]">
+          <div>
+            <p className="text-[13px] font-black uppercase text-orange-500">Contact</p>
+            <h2 className="text-[28px] font-black uppercase leading-none sm:text-[30px]">Let’s Connect</h2>
+          </div>
 
-      <h2 className="text-[28px] font-black uppercase leading-none sm:text-[30px]">
-        Let’s Connect
-      </h2>
-    </div>
+          <div className="grid gap-5 text-sm font-medium text-white/90 lg:grid-cols-3">
+            <span className="flex items-center gap-4">
+              <Phone className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
+              Add Phone
+            </span>
 
-    <div className="grid gap-5 text-sm font-medium text-white/90 lg:grid-cols-3">
-      <span className="flex items-center gap-4">
-        <Phone className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
-        Add Phone
-      </span>
+            <a href="mailto:thinkworkbasketball@gmail.com" className="flex items-center gap-4 break-all transition hover:text-orange-400">
+              <Mail className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
+              thinkworkbasketball@gmail.com
+            </a>
 
-      <a
-        href="mailto:thinkworkbasketball@gmail.com"
-        className="flex items-center gap-4 break-all transition hover:text-orange-400"
-      >
-        <Mail className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
-        thinkworkbasketball@gmail.com
-      </a>
+            <a href="https://www.instagram.com/thinkworkbasketball" target="_blank" rel="noreferrer" className="flex items-center gap-4 transition hover:text-orange-400">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500/40 text-orange-500">IG</div>
+              @thinkworkbasketball
+            </a>
+          </div>
 
-      <a
-        href="https://www.instagram.com/thinkworkbasketball"
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-4 transition hover:text-orange-400"
-      >
-        <div className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500/40 text-orange-500">
-          IG
+          <a href="mailto:thinkworkbasketball@gmail.com" className="inline-flex items-center justify-center gap-4 rounded-md border border-cyan-200/50 px-8 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10 md:col-span-2 xl:col-span-1">
+            Send Message <ArrowRight className="h-4 w-4 text-orange-500" />
+          </a>
         </div>
-
-        @thinkworkbasketball
-      </a>
-    </div>
-
-    <a
-      href="mailto:thinkworkbasketball@gmail.com"
-      className="inline-flex items-center justify-center gap-4 rounded-md border border-cyan-200/50 px-8 py-4 text-[12px] font-black uppercase transition hover:border-orange-500 hover:bg-orange-500/10 md:col-span-2 xl:col-span-1"
-    >
-      Send Message
-      <ArrowRight className="h-4 w-4 text-orange-500" />
-    </a>
-  </div>
-</footer>
+      </footer>
 
       {/* SIGNUP MODAL */}
       {showSignupModal && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
           <div className="relative max-h-[95vh] w-full max-w-3xl overflow-y-auto rounded-[32px] border border-white/10 bg-[#050b14] shadow-[0_0_80px_rgba(0,132,255,.2)]">
-            <button
-              onClick={closeSignup}
-              className="absolute right-5 top-5 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 transition hover:bg-orange-500/20"
-            >
+            <button onClick={closeSignup} className="absolute right-5 top-5 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 transition hover:bg-orange-500/20">
               <X className="h-5 w-5 text-white" />
             </button>
 
             <div className="p-6 sm:p-10">
               <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-500">Start Sign-Up</p>
-
-              <h2 className="mt-2 text-[34px] font-black leading-none text-white sm:text-[52px]">
-                Join ThinkWork Basketball
-              </h2>
-
+              <h2 className="mt-2 text-[34px] font-black leading-none text-white sm:text-[52px]">Join ThinkWork Basketball</h2>
               <p className="mt-4 max-w-[580px] text-sm leading-7 text-white/65 sm:text-base">
                 Fill out the form below and ThinkWork Basketball will follow up with you to get started.
               </p>
 
               <div className="mt-8 rounded-3xl border border-orange-500/30 bg-[#08111c] p-5 shadow-[0_0_30px_rgba(249,115,22,.15)]">
-  <p className="text-[12px] font-black uppercase tracking-[2px] text-white/45">
-    Selected Program
-  </p>
+                <p className="text-[12px] font-black uppercase tracking-[2px] text-white/45">Selected Program</p>
 
-  {selectedProgram ? (
-    <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h3 className="text-[28px] font-black text-white">
-          {selectedProgram.title}
-        </h3>
+                {selectedProgram ? (
+                  <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h3 className="text-[28px] font-black text-white">{selectedProgram.title}</h3>
+                      <p className="mt-1 text-sm font-medium text-white/60">{selectedProgram.sessions}</p>
 
-        <p className="mt-1 text-sm font-medium text-white/60">
-          {selectedProgram.sessions}
-        </p>
+                      <button type="button" onClick={() => setSelectedProgram(null)} className="mt-4 text-[11px] font-black uppercase tracking-[2px] text-cyan-300 transition hover:text-orange-400">
+                        Change Program
+                      </button>
+                    </div>
 
-        <button
-          type="button"
-          onClick={() => setSelectedProgram(null)}
-          className="mt-4 text-[11px] font-black uppercase tracking-[2px] text-cyan-300 transition hover:text-orange-400"
-        >
-          Change Program
-        </button>
-      </div>
+                    <div className="text-left sm:text-right">
+                      <p className="text-[42px] font-black leading-none text-orange-400">{selectedProgram.price}</p>
+                      <p className="mt-1 text-[11px] font-black uppercase tracking-wide text-white/40">Selected Price</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-5">
+                    <p className="text-sm font-bold text-white">Choose the training option that fits best.</p>
 
-      <div className="text-left sm:text-right">
-        <p className="text-[42px] font-black leading-none text-orange-400">
-          {selectedProgram.price}
-        </p>
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                      {[
+                        ...packages.filter((program) => program.title !== "ThinkWork Pro"),
+                        ...memberships.map(([title, sessions, price]) => ({ title, sessions, price })),
+                      ].map((program) => (
+                        <button key={`${program.title}-${program.sessions}`} type="button" onClick={() => setSelectedProgram(program)} className="rounded-2xl border border-white/10 bg-black/30 p-4 text-left transition hover:border-orange-500 hover:bg-orange-500/10">
+                          <p className="text-base font-black uppercase text-white">{program.title}</p>
+                          <p className="mt-1 text-sm text-white/55">{program.sessions}</p>
+                          <p className="mt-3 text-2xl font-black text-orange-400">{program.price}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
-        <p className="mt-1 text-[11px] font-black uppercase tracking-wide text-white/40">
-          Selected Price
-        </p>
-      </div>
-    </div>
-  ) : (
-    <div className="mt-5">
-      <p className="text-sm font-bold text-white">
-        Choose the training option that fits best.
-      </p>
+              <form action={FORMSPREE_SIGNUP_URL} method="POST" className="mt-8 grid gap-5">
+                <input type="hidden" name="_next" value="https://calendly.com/YOUR-CALENDLY-LINK" />
+                <input type="hidden" name="Form Type" value="New Athlete Sign-Up" />
+                <input type="hidden" name="Selected Program" value={selectedProgram?.title || "Not selected"} />
+                <input type="hidden" name="Program Sessions" value={selectedProgram?.sessions || ""} />
+                <input type="hidden" name="Program Price" value={selectedProgram?.price || ""} />
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {[
-          ...packages.filter(
-            (program) => program.title !== "ThinkWork Pro"
-          ),
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">Athlete First Name</label>
+                    <input name="Athlete First Name" required placeholder="Enter first name" className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500" />
+                  </div>
 
-          ...memberships.map(([title, sessions, price]) => ({
-            title,
-            sessions,
-            price,
-          })),
-        ].map((program) => (
-          <button
-            key={`${program.title}-${program.sessions}`}
-            type="button"
-            onClick={() => setSelectedProgram(program)}
-            className="rounded-2xl border border-white/10 bg-black/30 p-4 text-left transition hover:border-orange-500 hover:bg-orange-500/10"
-          >
-            <p className="text-base font-black uppercase text-white">
-              {program.title}
-            </p>
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">Athlete Last Name</label>
+                    <input name="Athlete Last Name" required placeholder="Enter last name" className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500" />
+                  </div>
+                </div>
 
-            <p className="mt-1 text-sm text-white/55">
-              {program.sessions}
-            </p>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">Athlete Age</label>
+                    <input type="number" name="Athlete Age" required placeholder="Enter age" className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500" />
+                  </div>
 
-            <p className="mt-3 text-2xl font-black text-orange-400">
-              {program.price}
-            </p>
-          </button>
-        ))}
-      </div>
-    </div>
-  )}
-</div>
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">Parent/Guardian Name</label>
+                    <input name="Parent Guardian Name" required placeholder="Enter parent name" className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500" />
+                  </div>
+                </div>
 
-           <form
-  action={FORMSPREE_SIGNUP_URL}
-  method="POST"
-  className="mt-8 grid gap-5"
->
-  {/* REDIRECT TO CALENDLY */}
-  <input
-    type="hidden"
-    name="_next"
-    value="https://calendly.com/YOUR-CALENDLY-LINK"
-  />
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">Phone Number</label>
+                    <input type="tel" name="Phone" required placeholder="Enter phone number" className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500" />
+                  </div>
 
-  <input
-    type="hidden"
-    name="Form Type"
-    value="New Athlete Sign-Up"
-  />
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">Email Address</label>
+                    <input type="email" name="Email" required placeholder="Enter email address" className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500" />
+                  </div>
+                </div>
 
-  <input
-    type="hidden"
-    name="Selected Program"
-    value={selectedProgram?.title || "Not selected"}
-  />
+                {!selectedProgram && (
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">Program Interest</label>
+                    <select name="Program Interest" required className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500">
+                      <option value="">Choose a program</option>
+                      <option>Starter - 2 Sessions / Week - $70</option>
+                      <option>Growth - 3 Sessions / Week - $100</option>
+                      <option>Elite - 5 Sessions / Week - $170</option>
+                      <option>ThinkWork Pro - 20 Sessions - $650</option>
+                      <option>Private Training</option>
+                      <option>Partner Workout</option>
+                      <option>Small Group Training</option>
+                    </select>
+                  </div>
+                )}
 
-  <input
-    type="hidden"
-    name="Program Sessions"
-    value={selectedProgram?.sessions || ""}
-  />
+                <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-5">
+                  <p className="text-sm font-bold text-white">Training Scheduling</p>
+                  <p className="mt-2 text-sm leading-6 text-white/65">
+                    After submitting this form, you’ll automatically be redirected to our live scheduling system to select your official training date and time.
+                  </p>
+                </div>
 
-  <input
-    type="hidden"
-    name="Program Price"
-    value={selectedProgram?.price || ""}
-  />
+                <div>
+                  <label className="mb-2 block text-sm font-bold text-white">Additional Notes</label>
+                  <textarea name="Additional Notes" rows="4" placeholder="Anything else we should know?" className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500" />
+                </div>
 
-  {/* ATHLETE NAME */}
-  <div className="grid gap-5 sm:grid-cols-2">
-    <div>
-      <label className="mb-2 block text-sm font-bold text-white">
-        Athlete First Name
-      </label>
+                <button type="submit" className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1">
+                  Continue To Scheduling <ArrowRight className="h-5 w-5" />
+                </button>
 
-      <input
-        name="Athlete First Name"
-        required
-        placeholder="Enter first name"
-        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-      />
-    </div>
-
-    <div>
-      <label className="mb-2 block text-sm font-bold text-white">
-        Athlete Last Name
-      </label>
-
-      <input
-        name="Athlete Last Name"
-        required
-        placeholder="Enter last name"
-        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-      />
-    </div>
-  </div>
-
-  {/* AGE + PARENT */}
-  <div className="grid gap-5 sm:grid-cols-2">
-    <div>
-      <label className="mb-2 block text-sm font-bold text-white">
-        Athlete Age
-      </label>
-
-      <input
-        type="number"
-        name="Athlete Age"
-        required
-        placeholder="Enter age"
-        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-      />
-    </div>
-
-    <div>
-      <label className="mb-2 block text-sm font-bold text-white">
-        Parent/Guardian Name
-      </label>
-
-      <input
-        name="Parent Guardian Name"
-        required
-        placeholder="Enter parent name"
-        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-      />
-    </div>
-  </div>
-
-  {/* PHONE + EMAIL */}
-  <div className="grid gap-5 sm:grid-cols-2">
-    <div>
-      <label className="mb-2 block text-sm font-bold text-white">
-        Phone Number
-      </label>
-
-      <input
-        type="tel"
-        name="Phone"
-        required
-        placeholder="Enter phone number"
-        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-      />
-    </div>
-
-    <div>
-      <label className="mb-2 block text-sm font-bold text-white">
-        Email Address
-      </label>
-
-      <input
-        type="email"
-        name="Email"
-        required
-        placeholder="Enter email address"
-        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-      />
-    </div>
-  </div>
-
-  {/* PROGRAM IF NOT SELECTED */}
-  {!selectedProgram && (
-    <div>
-      <label className="mb-2 block text-sm font-bold text-white">
-        Program Interest
-      </label>
-
-      <select
-        name="Program Interest"
-        required
-        className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-      >
-        <option value="">Choose a program</option>
-
-        <option>Starter - 2 Sessions / Week - $70</option>
-
-        <option>Growth - 3 Sessions / Week - $100</option>
-
-        <option>Elite - 5 Sessions / Week - $170</option>
-
-        <option>ThinkWork Pro - 20 Sessions - $650</option>
-
-        <option>Private Training</option>
-
-        <option>Partner Workout</option>
-
-        <option>Small Group Training</option>
-      </select>
-    </div>
-  )}
-
-  {/* SCHEDULING */}
-  <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-5">
-    <p className="text-sm font-bold text-white">
-      Training Scheduling
-    </p>
-
-    <p className="mt-2 text-sm leading-6 text-white/65">
-      After submitting this form, you’ll automatically be redirected to our
-      live scheduling system to select your official training date and time.
-    </p>
-  </div>
-
-  {/* NOTES */}
-  <div>
-    <label className="mb-2 block text-sm font-bold text-white">
-      Additional Notes
-    </label>
-
-    <textarea
-      name="Additional Notes"
-      rows="4"
-      placeholder="Anything else we should know?"
-      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-    />
-  </div>
-
-  {/* SUBMIT */}
-  <button
-    type="submit"
-    className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1"
-  >
-    Continue To Scheduling
-    <ArrowRight className="h-5 w-5" />
-  </button>
-
-  <p className="text-center text-xs text-white/35">
-    Your information is secure and will never be shared.
-  </p>
-</form>
+                <p className="text-center text-xs text-white/35">Your information is secure and will never be shared.</p>
+              </form>
             </div>
           </div>
         </div>
