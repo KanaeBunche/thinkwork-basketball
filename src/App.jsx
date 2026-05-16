@@ -571,10 +571,13 @@ export default function App() {
           </div>
 
           <div className="grid gap-5 text-sm font-medium text-white/90 lg:grid-cols-3">
-            <span className="flex items-center gap-4">
-              <Phone className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
-              Add Phone
-            </span>
+          <a
+  href="tel:3476137285"
+  className="flex items-center gap-4 transition hover:text-orange-400"
+>
+  <Phone className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
+  (347) 613-7285
+</a>
 
             <a href="mailto:thinkworkbasketball@gmail.com" className="flex items-center gap-4 break-all transition hover:text-orange-400">
               <Mail className="h-7 w-7 shrink-0 rounded-full border border-orange-500/40 p-1.5 text-orange-500" />
