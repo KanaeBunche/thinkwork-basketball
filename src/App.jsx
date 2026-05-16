@@ -255,7 +255,7 @@ export default function App() {
 
             <div className="mt-8 max-w-4xl text-[16px] font-semibold leading-8 text-white/75 sm:text-[18px] sm:leading-9">
               <p>
-                I’m Dupree “Coach Duree” McCullen, founder of ThinkWork Basketball — a program built to develop high-IQ players through skill work, discipline, confidence, and game understanding.
+                I’m Dupree “Coach Dupree” McCullen, founder of ThinkWork Basketball — a program built to develop high-IQ players through skill work, discipline, confidence, and game understanding.
               </p>
 
               {aboutExpanded && (
