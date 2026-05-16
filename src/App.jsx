@@ -92,7 +92,7 @@ const mediaItems = [
   {
     type: "video",
     src: vid3,
-    image: image0,
+    image: image3,
     label: "Training",
     title: "1 On 1 Work",
     desc: "Ball handling & defense",
@@ -101,7 +101,7 @@ const mediaItems = [
   {
     type: "video",
     src: vid5,
-    image: image1,
+    image: image2,
     label: "Training",
     title: "Handling Drills",
     desc: "Control. Rhythm. Confidence.",
@@ -358,12 +358,11 @@ export default function App() {
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {mediaItems.map((item, index) => (
               <article key={index} className="group overflow-hidden rounded-3xl border border-white/10 bg-[#07111d] shadow-[0_0_28px_rgba(0,132,255,.1)]">
-                <div className="relative h-[230px] overflow-hidden bg-black">
-                  {activeVideo === index && item.type === "video" ? (
+<div className="relative h-[300px] overflow-hidden bg-black">                  {activeVideo === index && item.type === "video" ? (
                     <video src={item.src} autoPlay controls playsInline className="h-full w-full bg-black object-contain" />
                   ) : (
                     <>
-                      <img src={item.image} alt={item.title} className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105" />
+                      <img src={item.image} alt={item.title} className="h-full w-full object-contain bg-black opacity-90 transition duration-500 group-hover:scale-105" />
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
