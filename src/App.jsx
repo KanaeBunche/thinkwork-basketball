@@ -21,11 +21,12 @@ import logoWall from "./assets/logo-glow-wall.png";
 
 import image0 from "./assets/images/image0.jpeg";
 import image1 from "./assets/images/image1.jpeg";
-import image2 from "./assets/images/image2.jpeg";
+import image2 from "./assets/images/image2.png";
 import image3 from "./assets/images/image3.jpeg";
-import image4 from "./assets/images/image4.jpeg";
+import image4 from "./assets/images/image4.png";
 import image5 from "./assets/images/image5.jpeg";
-
+import image6 from "./assets/images/image6.png";
+import image7 from "./assets/images/image7.png";
 
 import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
@@ -92,7 +93,7 @@ const mediaItems = [
   {
     type: "video",
     src: vid3,
-    image: image3,
+    image: image0,
     label: "Training",
     title: "1 On 1 Work",
     desc: "Ball handling & defense",
@@ -101,7 +102,7 @@ const mediaItems = [
   {
     type: "video",
     src: vid5,
-    image: image2,
+    image: image7,
     label: "Training",
     title: "Handling Drills",
     desc: "Control. Rhythm. Confidence.",
@@ -109,7 +110,7 @@ const mediaItems = [
 
   {
     type: "image",
-    image: image4,
+    image: image2,
     label: "Leadership",
     title: "Coach Leadership",
     desc: "Mentorship & guidance",
@@ -250,12 +251,12 @@ export default function App() {
             </p>
 
             <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px] lg:text-[76px]">
-              Coach Dupree
+              Coach Pree
             </h2>
 
             <div className="mt-8 max-w-4xl text-[16px] font-semibold leading-8 text-white/75 sm:text-[18px] sm:leading-9">
               <p>
-                I’m Dupree “Coach Dupree” McCullen, founder of ThinkWork Basketball — a program built to develop high-IQ players through skill work, discipline, confidence, and game understanding.
+                I’m Dupree “Coach Pree” McCullen, founder of ThinkWork Basketball — a program built to develop high-IQ players through skill work, discipline, confidence, and game understanding.
               </p>
 
               {aboutExpanded && (
@@ -327,11 +328,11 @@ export default function App() {
 
           {/* FEATURED VIDEO */}
         <div className="relative h-[360px] overflow-hidden sm:h-[520px]">
-  <img
-    src={image0}
-    alt="ThinkWork training session"
-    className="absolute inset-0 h-full w-full object-cover object-center opacity-80"
-  />
+ <img
+  src={image6}
+  alt="ThinkWork training session"
+  className="absolute inset-0 h-full w-full object-cover object-top opacity-80"
+/>
 
   <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
 
