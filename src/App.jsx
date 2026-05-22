@@ -1,13 +1,20 @@
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  CalendarDays,
   Check,
+  Crown,
+  Flame,
   Mail,
   MapPin,
   Menu,
   Phone,
   Play,
+  Repeat,
+  Rocket,
+  Shield,
   Star,
+  TrendingUp,
   Trophy,
   Users,
   User,
@@ -32,62 +39,115 @@ import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
 
 
-const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/YOUR_FORM_ID";
+const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/maqkoqbv";
 
 const navItems = ["Home", "Programs", "About", "Schedule", "Media", "Contact"];
 
-const packages = [
+const packageIcons = {
+  Starter: Rocket,
+  Acceleration: TrendingUp,
+  Growth: Trophy,
+  Consistency: CalendarDays,
+  Foundation: Shield,
+  Transformation: Repeat,
+  "ThinkWork Pro": Crown,
+  "ThinkWork Growth": TrendingUp,
+  "ThinkWork Elite": Star,
+  "2 Month Summer Monthly Commitment - ThinkWork Exclusive": Flame,
+};
+
+const packageGroups = [
   {
-    title: "Starter",
-    category: "Weekly Package",
-    sessions: "2 Sessions / Week",
-    regular: "$80",
-    price: "$70",
-    tag: "Great Start",
-    icon: Trophy,
-    bullets: ["Skill development", "Confidence building", "Fundamentals", "Game reps"],
+    category: "WEEKLY",
+    items: [
+      {
+        title: "Starter",
+        desc: "Great for beginner athletes building confidence and fundamentals",
+        sessions: "3 Sessions",
+        price: "$100",
+      },
+
+      {
+        title: "Acceleration",
+        desc: "More weekly reps focused on skill growth and basketball IQ",
+        sessions: "4 Sessions",
+        price: "$145",
+      },
+
+      {
+        title: "Growth",
+        desc: "Consistent development with advanced competitive training",
+        sessions: "5 Sessions",
+        price: "$175",
+        featured: true,
+      },
+    ],
   },
+
   {
-    title: "Growth",
-    category: "Weekly Package",
-    sessions: "3 Sessions / Week",
-    regular: "$120",
-    price: "$100",
-    tag: "Most Popular",
-    icon: Users,
-    featured: true,
-    bullets: ["More weekly reps", "Basketball IQ", "Footwork", "Player development"],
+    category: "BI WEEKLY",
+    items: [
+      {
+        title: "Consistency",
+        desc: "Structured athlete development with consistent weekly reps",
+        sessions: "6 Sessions",
+        price: "$210",
+      },
+
+      {
+        title: "Foundation",
+        desc: "Strong skill foundation, discipline, and confidence building",
+        sessions: "8 Sessions",
+        price: "$280",
+      },
+
+      {
+        title: "Transformation",
+        desc: "High-level development focused on competitive growth",
+        sessions: "10 Sessions",
+        price: "$350",
+        featured: true,
+      },
+    ],
   },
+
   {
-    title: "Elite",
-    category: "Weekly Package",
-    sessions: "5 Sessions / Week",
-    regular: "$200",
-    price: "$170",
-    tag: "High Commitment",
-    icon: Star,
-    bullets: ["Advanced reps", "Competitive growth", "Decision making", "Game confidence"],
-  },
-  {
-    title: "ThinkWork Pro",
-    category: "Monthly Membership",
-    sessions: "20 Sessions",
-    regular: "$800",
-    price: "$650",
-    tag: "Best Value",
-    icon: User,
-    bullets: ["Complete development", "High-level training", "Leadership growth", "Discipline & IQ"],
+    category: "MONTHLY COMMITMENT",
+    items: [
+      {
+        title: "ThinkWork Pro",
+        desc: "High-level player development and leadership growth",
+        sessions: "12 Sessions",
+        price: "$440",
+      },
+
+      {
+        title: "ThinkWork Growth",
+        desc: "Advanced training consistency for serious athletes",
+        sessions: "16 Sessions",
+        price: "$625",
+      },
+
+      {
+        title: "ThinkWork Elite",
+        desc: "Elite commitment focused on complete player development",
+        sessions: "20 Sessions",
+        price: "$735",
+         featured: true,
+      },
+
+      {
+        title:
+          "2 Month Summer Monthly Commitment - ThinkWork Exclusive",
+        desc: "Intensive summer training program for maximum growth",
+        sessions: "40 Sessions",
+        price: "$1300",
+      },
+    ],
   },
 ];
 
-const memberships = [
-  ["Consistency", "4 Sessions", "$145"],
-  ["Acceleration", "6 Sessions", "$210"],
-  ["Transformation", "10 Sessions", "$350"],
-  ["Foundation", "8 Sessions", "$275"],
-  ["Advanced", "12 Sessions", "$400"],
-  ["ThinkWork Pro", "20 Sessions", "$650"],
-];
+
 
 const mediaItems = [
   {
@@ -102,7 +162,7 @@ const mediaItems = [
   {
     type: "video",
     src: vid5,
-    image: image7,
+    image: image2,
     label: "Training",
     title: "Handling Drills",
     desc: "Control. Rhythm. Confidence.",
@@ -110,7 +170,7 @@ const mediaItems = [
 
   {
     type: "image",
-    image: image2,
+    image: image4,
     label: "Leadership",
     title: "Coach Leadership",
     desc: "Mentorship & guidance",
@@ -124,6 +184,36 @@ const mediaItems = [
     desc: "Confidence on and off the court.",
   },
 ];
+function SchedulePage() {
+  return (
+    <main className="min-h-screen bg-[#02060d] flex items-center justify-center px-6 text-white">
+      <div className="max-w-2xl rounded-3xl border border-white/10 bg-[#08111c] p-10 text-center">
+        <p className="text-orange-500 font-black uppercase tracking-[3px]">
+          Registration Complete
+        </p>
+
+        <h1 className="mt-4 text-5xl font-black uppercase">
+          Schedule Your Training
+        </h1>
+
+        <p className="mt-6 text-white/65 leading-7">
+          Your registration has been submitted successfully.
+          Click below to choose your official training date and time.
+        </p>
+
+        <a
+          href="https://calendar.app.google/nQGCcpEM869vEFbH8"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-sm font-black uppercase"
+        >
+          Open Scheduling
+          <ArrowRight className="h-5 w-5" />
+        </a>
+      </div>
+    </main>
+  );
+}
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -140,7 +230,9 @@ export default function App() {
   };
 
   const closeSignup = () => setShowSignupModal(false);
-
+if (window.location.pathname === "/schedule") {
+  return <SchedulePage />;
+}
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#02060d] text-white selection:bg-orange-500/30">
       {/* NAV */}
@@ -293,10 +385,7 @@ export default function App() {
         ThinkWork Basketball
       </p>
 
-      <h3 className="mt-2 text-[32px] font-black uppercase leading-none text-white">
-        Coach Dupree
-      </h3>
-
+      
       <p className="mt-2 text-sm font-semibold text-white/70">
         Skill Development • Leadership • Basketball IQ
       </p>
@@ -411,112 +500,150 @@ export default function App() {
       </section>
 
       {/* PROGRAMS */}
-      <section id="programs" className="relative border-b border-cyan-400/10 bg-[#020812] px-4 py-14 sm:px-6 lg:px-8 xl:px-28">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-[13px] font-black uppercase text-orange-500">Training Packages</p>
-              <h2 className="mt-1 text-[32px] font-black uppercase leading-none tracking-[-1px] sm:text-[42px]">Choose Your Work</h2>
-              <div className="mt-3 h-[2px] w-20 bg-orange-500" />
+{/* PROGRAMS */}
+<section
+  id="programs"
+  className="relative overflow-hidden border-b border-cyan-400/10 bg-[#010814] px-4 py-16 sm:px-6 lg:px-8 xl:px-28"
+>
+  {/* PREMIUM BACKGROUND */}
+  <div className="absolute inset-0">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(249,115,22,.10),transparent_30%)]" />
+
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(0,132,255,.12),transparent_30%)]" />
+
+    <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,.02),transparent)]" />
+  </div>
+
+  <div className="relative z-10 mx-auto max-w-[1600px]">
+    <div className="mb-10">
+      <p className="text-[13px] font-black uppercase tracking-[4px] text-orange-500">
+        Training Packages
+      </p>
+
+      <h2 className="mt-2 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px]">
+        Choose Your Work
+      </h2>
+
+      <div className="mt-5 h-[2px] w-24 bg-orange-500" />
+    </div>
+
+    <div className="grid gap-6 lg:grid-cols-3">
+      {packageGroups.map((group) => {
+        const GroupIcon =
+          group.category === "WEEKLY"
+            ? CalendarDays
+            : group.category === "BI WEEKLY"
+            ? Repeat
+            : Crown;
+
+        return (
+          <div
+            key={group.category}
+            className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,#020b18_0%,#01060f_100%)] p-6 shadow-[0_0_40px_rgba(0,0,0,.45)]"
+          >
+            {/* COLUMN GLOW */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,140,255,.08),transparent_45%)]" />
+
+            <div className="relative z-10">
+              <div className="mb-6 flex items-center gap-3">
+                <GroupIcon className="h-5 w-5 text-orange-500" />
+
+                <h3 className="text-[12px] font-black uppercase tracking-[4px] text-orange-400">
+                  {group.category}
+                </h3>
+              </div>
+
+              <div className="space-y-5">
+                {group.items.map(
+                  ({ title, desc, sessions, price, featured }) => {
+                    const PackageIcon = packageIcons[title] || Star;
+
+                    return (
+                      <button
+                        key={title}
+                        type="button"
+                        onClick={() =>
+                          openSignup({
+                            title,
+                            sessions,
+                            price,
+                          })
+                        }
+                        className={`relative w-full overflow-hidden rounded-[28px] border p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.12)] ${
+                          featured
+                            ? "border-orange-500/50 bg-[linear-gradient(180deg,#07111d_0%,#02060d_100%)] shadow-[0_0_35px_rgba(249,115,22,.16)]"
+                            : title.includes("Summer")
+                            ? "border-white/20 border-dashed bg-[linear-gradient(180deg,#07111d_0%,#02060d_100%)]"
+                            : "border-white/10 bg-[linear-gradient(180deg,#050d18_0%,#02060d_100%)]"
+                        }`}
+                      >
+                        {/* CARD GLOW */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,140,255,.10),transparent_35%)]" />
+
+                        {/* FEATURED BADGE */}
+                        {featured && (
+                          <span className="absolute right-4 top-4 rounded-full border border-orange-400/20 bg-orange-500/10 px-3 py-1 text-[9px] font-black uppercase tracking-[1px] text-orange-300 backdrop-blur-md">
+                            Featured
+                          </span>
+                        )}
+
+                        <div className="relative z-10">
+                          <div className="flex items-start gap-4">
+                            <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-orange-500/30 bg-white/[0.03] text-orange-500">
+                              <PackageIcon className="h-7 w-7" />
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                              <h4 className="pr-16 text-[20px] font-black uppercase leading-tight text-white">
+                                {title}
+                              </h4>
+
+                              <p className="mt-3 max-w-[260px] text-sm leading-7 text-white/50">
+                                {desc}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="mt-7 flex items-end justify-between gap-4">
+                            <div>
+                              <p className="text-sm font-semibold uppercase tracking-[1px] text-white/65">
+                                {sessions}
+                              </p>
+
+                              <p className="mt-3 text-[11px] font-black uppercase tracking-[3px] text-white/20">
+                                Tap To View Details
+                              </p>
+                            </div>
+
+                            <p className="text-[42px] font-black leading-none tracking-[-2px] text-orange-400">
+                              {price}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  }
+                )}
+              </div>
             </div>
           </div>
+        );
+      })}
+    </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {packages.map((program) => {
-              const Icon = program.icon;
+    <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+      <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-400">
+        Additional Options
+      </p>
 
-              return (
-                <article key={program.title} className="h-[340px] [perspective:1100px]">
-                  <div className={`relative h-full w-full transition-all duration-700 [transform-style:preserve-3d] ${activeCard === program.title ? "[transform:rotateY(180deg)]" : ""}`}>
-                    <button
-                      type="button"
-                      onClick={() => setActiveCard(program.title)}
-                      className={`absolute inset-0 overflow-hidden rounded-3xl border bg-black p-7 text-left [backface-visibility:hidden] ${
-                        program.featured ? "border-orange-500/70 shadow-[0_0_35px_rgba(249,115,22,.3)]" : "border-white/15"
-                      }`}
-                    >
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,132,255,.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,.18),transparent_35%)]" />
-
-                      <div className="relative z-10 flex h-full flex-col">
-                        <div className="flex items-start justify-between gap-4">
-                          <Icon className="h-10 w-10 text-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,.8)]" />
-                          <span className="rounded-full border border-orange-500/40 bg-orange-500/10 px-3 py-1 text-[10px] font-black uppercase text-orange-300">{program.tag}</span>
-                        </div>
-
-                        <p className="mt-7 text-[11px] font-black uppercase tracking-[3px] text-cyan-300">{program.category}</p>
-                        <h3 className="mt-2 text-[30px] font-black uppercase leading-none text-white">{program.title}</h3>
-                        <p className="mt-3 text-sm font-semibold text-white/75">{program.sessions}</p>
-
-                        <div className="mt-auto">
-                          <p className="text-sm font-bold text-white/45 line-through">{program.regular}</p>
-                          <p className="text-[46px] font-black leading-none text-white">{program.price}</p>
-                          <p className="mt-2 text-[11px] font-black uppercase tracking-[2px] text-white/50">Tap to view details</p>
-                        </div>
-                      </div>
-                    </button>
-
-                    <div className="absolute inset-0 z-20 flex flex-col justify-center rounded-3xl border border-orange-500/60 bg-[#0a0b0d] p-7 shadow-[0_0_30px_rgba(249,115,22,.25)] [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveCard(null);
-                        }}
-                        className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-
-                      <p className="text-[14px] font-black uppercase text-orange-500">What You Get</p>
-
-                      <ul className="mt-5 space-y-3 text-sm font-semibold text-white/85">
-                        {program.bullets.map((bullet) => (
-                          <li key={bullet} className="flex items-center gap-3">
-                            <Check className="h-4 w-4 text-orange-500" />
-                            {bullet}
-                          </li>
-                        ))}
-                      </ul>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openSignup(program);
-                        }}
-                        className="mt-7 inline-flex w-fit rounded-md bg-gradient-to-b from-orange-500 to-orange-700 px-7 py-3 text-[12px] font-black uppercase shadow-[0_0_22px_rgba(249,115,22,.45)] transition hover:-translate-y-0.5"
-                      >
-                        Join Now
-                      </button>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-
-          <div className="mt-8 grid gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-2 lg:grid-cols-3">
-            {memberships.map(([name, sessions, price]) => (
-              <button
-                key={name}
-                onClick={() => openSignup({ title: name, sessions, price })}
-                className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-left transition hover:border-orange-500/60 hover:bg-orange-500/10"
-              >
-                <div>
-                  <p className="font-black uppercase">{name}</p>
-                  <p className="text-sm text-white/55">{sessions}</p>
-                </div>
-                <p className="text-xl font-black text-orange-400">{price}</p>
-              </button>
-            ))}
-          </div>
-
-          <p className="mt-5 text-sm font-semibold text-white/65">
-            Extras: Single Session $40/hour • Partner Workout $25 per athlete • Small Groups $20–$30 per athlete • Sibling Discount 10% off second athlete monthly package
-          </p>
-        </div>
-      </section>
-
+      <p className="mt-3 text-sm leading-7 text-white/60">
+        Single Session $40/hour • Partner Workout $25 per athlete •
+        Small Groups $20–$30 per athlete • Sibling Discount 10% off
+        second athlete monthly package
+      </p>
+    </div>
+  </div>
+</section>
       {/* SCHEDULE + JOIN FLOW */}
       <section className="border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
         <div className="mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-2">
@@ -529,7 +656,7 @@ export default function App() {
             </p>
 
             <div className="mt-8 grid gap-4">
-              {["Private Training", "Partner Workouts", "Small Group Training", "Monthly Memberships"].map((item) => (
+              {["Private Training", "Partner Workouts", "Small Group Training", "Monthly Commitment"].map((item) => (
                 <div key={item} className="flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-5 py-4 text-sm font-bold text-white/85">
                   <Check className="h-4 w-4 text-orange-500" />
                   {item}
@@ -635,23 +762,55 @@ export default function App() {
                     <p className="text-sm font-bold text-white">Choose the training option that fits best.</p>
 
                     <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                      {[
-                        ...packages.filter((program) => program.title !== "ThinkWork Pro"),
-                        ...memberships.map(([title, sessions, price]) => ({ title, sessions, price })),
-                      ].map((program) => (
-                        <button key={`${program.title}-${program.sessions}`} type="button" onClick={() => setSelectedProgram(program)} className="rounded-2xl border border-white/10 bg-black/30 p-4 text-left transition hover:border-orange-500 hover:bg-orange-500/10">
-                          <p className="text-base font-black uppercase text-white">{program.title}</p>
-                          <p className="mt-1 text-sm text-white/55">{program.sessions}</p>
-                          <p className="mt-3 text-2xl font-black text-orange-400">{program.price}</p>
-                        </button>
-                      ))}
+                      {packageGroups.flatMap((group) =>
+                        group.items.map((program) => (
+                          <button
+                            key={`${program.title}-${program.sessions}`}
+                            type="button"
+                            onClick={() => setSelectedProgram(program)}
+                            className="rounded-2xl border border-white/10 bg-black/30 p-4 text-left transition hover:border-orange-500 hover:bg-orange-500/10"
+                          >
+                            <p className="text-base font-black uppercase text-white">
+                              {program.title}
+                            </p>
+                            <p className="mt-1 text-sm text-white/55">
+                              {program.sessions}
+                            </p>
+                            <p className="mt-3 text-2xl font-black text-orange-400">
+                              {program.price}
+                            </p>
+                          </button>
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
               </div>
 
-              <form action={FORMSPREE_SIGNUP_URL} method="POST" className="mt-8 grid gap-5">
-                <input type="hidden" name="_next" value="https://calendly.com/YOUR-CALENDLY-LINK" />
+<form
+  className="mt-8 grid gap-5"
+  onSubmit={async (e) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    await fetch(FORMSPREE_SIGNUP_URL, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    window.location.href = "https://calendar.app.google/nQGCcpEM869vEFbH8";
+  }}
+>
+  {/* <input
+  type="hidden"
+  name="_next"
+  value="http://localhost:5175/schedule"
+ /> */}
                 <input type="hidden" name="Form Type" value="New Athlete Sign-Up" />
                 <input type="hidden" name="Selected Program" value={selectedProgram?.title || "Not selected"} />
                 <input type="hidden" name="Program Sessions" value={selectedProgram?.sessions || ""} />
@@ -698,13 +857,16 @@ export default function App() {
                     <label className="mb-2 block text-sm font-bold text-white">Program Interest</label>
                     <select name="Program Interest" required className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500">
                       <option value="">Choose a program</option>
-                      <option>Starter - 2 Sessions / Week - $70</option>
-                      <option>Growth - 3 Sessions / Week - $100</option>
-                      <option>Elite - 5 Sessions / Week - $170</option>
-                      <option>ThinkWork Pro - 20 Sessions - $650</option>
-                      <option>Private Training</option>
-                      <option>Partner Workout</option>
-                      <option>Small Group Training</option>
+                      {packageGroups.flatMap((group) =>
+                        group.items.map((program) => (
+                          <option
+                            key={`${program.title}-option`}
+                            value={`${program.title} - ${program.sessions} - ${program.price}`}
+                          >
+                            {program.title} - {program.sessions} - {program.price}
+                          </option>
+                        ))
+                      )}
                     </select>
                   </div>
                 )}
@@ -722,7 +884,7 @@ export default function App() {
                 </div>
 
                 <button type="submit" className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1">
-                  Continue To Scheduling <ArrowRight className="h-5 w-5" />
+                 Submit & Continue To Scheduling<ArrowRight className="h-5 w-5" />
                 </button>
 
                 <p className="text-center text-xs text-white/35">Your information is secure and will never be shared.</p>
