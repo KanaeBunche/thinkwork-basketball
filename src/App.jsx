@@ -33,7 +33,7 @@ import image6 from "./assets/images/image6.png";
 import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
 
-const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/maqkoqbv";
+const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/xpqnywor";
 
 const navItems = ["Home", "Programs", "About", "Schedule", "Media", "Contact"];
 
@@ -196,7 +196,7 @@ function SchedulePage() {
         </p>
 
         <a
-          href="https://calendar.app.google/nQGCcpEM869vEFbH8"
+          href="https://calendar.app.google/PJf4yAtk6BqMYMqa8"
           target="_blank"
           rel="noreferrer"
           className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-sm font-black uppercase"
@@ -387,7 +387,7 @@ export default function App() {
               <p>
                 I’m Dupree “Coach Pree” McCullen, founder of ThinkWork
                 Basketball — a program built to develop high-IQ players through
-                skill work, discipline, confidence, and game understanding.
+                skill work, discipline, confidence, faith and game understanding.
               </p>
 
               {aboutExpanded && (
@@ -448,7 +448,7 @@ export default function App() {
             </p>
 
             <h2 className="mt-3 text-[38px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px] lg:text-[70px]">
-              Training. Moments. Culture.
+              Training. Moments. Commitment.
             </h2>
 
             <p className="mx-auto mt-6 max-w-[700px] text-base font-medium leading-7 text-white/70 sm:text-lg">
@@ -981,7 +981,7 @@ export default function App() {
                   });
 
                   window.location.href =
-                    "https://calendar.app.google/nQGCcpEM869vEFbH8";
+                    "https://calendar.app.google/PJf4yAtk6BqMYMqa8";
                 }}
               >
                 <input
