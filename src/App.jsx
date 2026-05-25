@@ -649,20 +649,22 @@ export default function App() {
                             >
                               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,140,255,.10),transparent_35%)]" />
 
-                              {featured && (
-                                <span className="absolute right-4 top-4 rounded-full border border-orange-400/20 bg-orange-500/10 px-3 py-1 text-[9px] font-black uppercase tracking-[1px] text-orange-300 backdrop-blur-md">
-                                  Featured
-                                </span>
-                              )}
-
                               <div className="relative z-10">
+                                <div className="mb-5 flex justify-end">
+                                  {featured && (
+                                    <span className="rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[2px] text-orange-300 backdrop-blur-md">
+                                      Featured
+                                    </span>
+                                  )}
+                                </div>
+
                                 <div className="flex items-start gap-4">
                                   <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-orange-500/30 bg-white/[0.03] text-orange-500">
                                     <PackageIcon className="h-7 w-7" />
                                   </div>
 
                                   <div className="min-w-0 flex-1">
-                                    <h4 className="pr-16 text-[20px] font-black uppercase leading-tight text-white">
+                                    <h4 className="text-[20px] font-black uppercase leading-tight text-white">
                                       {title}
                                     </h4>
 
