@@ -21,7 +21,6 @@ import { useState } from "react";
 
 import logo from "./assets/thinkwork-logo.png";
 import heroPlayer from "./assets/hero-player.png";
-import logoWall from "./assets/images/logo-glow-wall.png";
 
 import image0 from "./assets/images/image0.jpeg";
 import image1 from "./assets/images/image1.jpeg";
@@ -29,6 +28,7 @@ import image2 from "./assets/images/image2.png";
 import image4 from "./assets/images/image4.png";
 import image5 from "./assets/images/image5.jpeg";
 import image6 from "./assets/images/image6.png";
+import image7 from "./assets/images/image7.png";
 
 import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
@@ -59,7 +59,7 @@ const packageGroups = [
         desc: "Great for beginner athletes building confidence and fundamentals",
         sessions: "3 Sessions",
         originalPrice: "$120",
-        price: "$100",
+        price: "$110",
       },
       {
         title: "Acceleration",
@@ -73,7 +73,7 @@ const packageGroups = [
         desc: "Consistent development with advanced competitive training",
         sessions: "5 Sessions",
         originalPrice: "$200",
-        price: "$175",
+        price: "$180",
         featured: true,
       },
     ],
@@ -93,7 +93,7 @@ const packageGroups = [
         desc: "Strong skill foundation, discipline, and confidence building",
         sessions: "8 Sessions",
         originalPrice: "$320",
-        price: "$290",
+        price: "$280",
       },
       {
         title: "Transformation",
@@ -101,7 +101,7 @@ const packageGroups = [
         sessions: "10 Sessions",
         originalPrice: "$400",
         price: "$370",
-        bonus: "1 OutThink Bonus Session",
+        bonus: "1 Exclusive outTHINK Bonus Session",
         featured: true,
       },
     ],
@@ -114,24 +114,24 @@ const packageGroups = [
         desc: "Advanced training consistency for serious athletes",
         sessions: "12 Sessions",
         originalPrice: "$480",
-        price: "$440",
-        bonus: "1 OutThink Bonus Session",
+        price: "$460",
+        bonus: "1 Exclusive outTHINK Bonus Session",
       },
       {
         title: "ThinkWork Pro",
         desc: "High-level player development and leadership growth",
         sessions: "16 Sessions",
         originalPrice: "$640",
-        price: "$615",
-        bonus: "2 OutWork Bonus Sessions",
+        price: "$610",
+        bonus: "2 Exclusive outWORK Bonus Sessions",
       },
       {
         title: "ThinkWork Elite",
         desc: "Elite commitment focused on complete player development",
         sessions: "20 Sessions",
         originalPrice: "$800",
-        price: "$745",
-        bonus: "3 OutPlay Bonus Sessions",
+        price: "$750",
+        bonus: "3 Exclusive outPLAY Bonus Sessions",
         featured: true,
       },
       {
@@ -139,7 +139,7 @@ const packageGroups = [
         desc: "Intensive summer training program for maximum growth",
         sessions: "40 Sessions",
         originalPrice: "$1600",
-        price: "$1450",
+        price: "$1400",
       },
     ],
   },
@@ -157,8 +157,8 @@ const mediaItems = [
   {
     type: "video",
     src: vid5,
-    image: image2,
-    label: "Training",
+    image: image7,
+    label: "Development",
     title: "Handling Drills",
     desc: "Control. Rhythm. Confidence.",
   },
@@ -172,17 +172,35 @@ const mediaItems = [
   {
     type: "image",
     image: image5,
-    label: "Culture",
+    label: "Focus",
     title: "Player Growth",
     desc: "Confidence on and off the court.",
   },
 ];
 
+const testimonials = [
+  {
+    quote:
+      "Coach Pree has been absolutely instrumental in my son's basketball journey. Not only is he a great coach, he is a mentor whose love for the game helps build character. Zeke has improved his skills, confidence, and mindset on and off the court.",
+    name: "MR WINSLOW",
+  },
+  {
+    quote:
+      "Coach Pree is extremely responsive and built a program that fit my abilities and lifestyle. His consistency, clear objectives, challenges, and training skills helped me take my game to the next level.",
+    name: "ZEKE",
+  },
+  {
+    quote:
+      "I am deeply grateful to have the privilege of working with Dupree as my son's basketball coach. His qualifications, knowledge, and coaching philosophy are truly exceptional.",
+    name: "NANA",
+  },
+];
+
 function SchedulePage() {
   return (
-    <main className="min-h-screen bg-[#02060d] flex items-center justify-center px-6 text-white">
+    <main className="flex min-h-screen items-center justify-center bg-[#02060d] px-6 text-white">
       <div className="max-w-2xl rounded-3xl border border-white/10 bg-[#08111c] p-10 text-center">
-        <p className="text-orange-500 font-black uppercase tracking-[3px]">
+        <p className="font-black uppercase tracking-[3px] text-orange-500">
           Registration Complete
         </p>
 
@@ -190,7 +208,7 @@ function SchedulePage() {
           Schedule Your Training
         </h1>
 
-        <p className="mt-6 text-white/65 leading-7">
+        <p className="mt-6 leading-7 text-white/65">
           Your registration has been submitted successfully. Click below to
           choose your official training date and time.
         </p>
@@ -328,8 +346,10 @@ export default function App() {
             transition={{ duration: 0.7 }}
             className="max-w-[680px]"
           >
-            <p className="mb-4 text-[12px] font-black uppercase tracking-[5px] text-orange-500">
-              OutTHINK. OutWORK. OutPLAY.
+            <p className="mb-4 text-[13px] font-black tracking-[4px] text-white">
+              out<span className="text-cyan-400 uppercase">THINK</span>.{" "}
+              out<span className="text-cyan-400 uppercase">WORK</span>.{" "}
+              out<span className="text-cyan-400 uppercase">PLAY</span>.
             </p>
 
             <h1 className="text-[48px] font-black italic uppercase leading-[.85] tracking-[-2px] sm:text-[64px] md:text-[78px] lg:text-[96px]">
@@ -457,7 +477,7 @@ export default function App() {
             </p>
           </div>
 
-          <div className="relative h-[360px] overflow-hidden sm:h-[520px]">
+          <div className="relative h-[360px] overflow-hidden rounded-[32px] border border-white/10 sm:h-[520px]">
             <img
               src={image6}
               alt="ThinkWork training session"
@@ -542,6 +562,8 @@ export default function App() {
               </article>
             ))}
           </div>
+
+         
 
           <div className="mt-10 flex flex-col gap-5 rounded-3xl border border-white/10 bg-white/[0.03] p-7 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -697,7 +719,7 @@ export default function App() {
                                     </p>
 
                                     {bonus && (
-                                      <p className="mt-2 max-w-[170px] text-right text-[10px] font-black uppercase leading-4 tracking-[1px] text-cyan-300">
+                                      <p className="mt-2 max-w-[190px] text-right text-[11px] font-black uppercase leading-5 tracking-[1px] text-white">
                                         {bonus}
                                       </p>
                                     )}
@@ -714,21 +736,70 @@ export default function App() {
               );
             })}
           </div>
+{/* ADDITIONAL OPTIONS */}
+<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+  {[
+    {
+      title: "Individual Single Sessions",
+      sessions: "$40 / Hour",
+      desc: "Focused one-on-one skill development",
+    },
+    {
+      title: "Partner Sessions",
+      sessions: "$30 Per Athlete / Hour",
+      desc: "Train with a partner and build together",
+    },
+    {
+  title: "Small Group Sessions",
+  sessions: "$25 Per Athlete",
+  desc: "3-5 Athletes",
+},
+{
+  title: "Partners Weekly Package",
+  sessions: "$160 • $250",
+  desc: "$160 3 Sessions • $250 5 Sessions",
+},
+  ].map((option) => (
+    <button
+      key={option.title}
+      type="button"
+      onClick={() =>
+        openSignup({
+          title: option.title,
+          sessions: option.desc,
+          price: option.sessions,
+        })
+      }
+      className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,#050d18_0%,#02060d_100%)] p-6 text-left shadow-[0_0_30px_rgba(0,132,255,.08)] transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.14)]"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,140,255,.12),transparent_38%)]" />
 
-          <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
-            <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-400">
-              Additional Options
-            </p>
+      <div className="relative z-10">
+        <p className="text-[10px] font-black uppercase tracking-[3px] text-orange-400">
+          Additional Option
+        </p>
 
-            <p className="mt-3 text-sm leading-7 text-white/60">
-              Single Session $40/hour • Partner Workout $25 per athlete • Small
-              Groups $20–$30 per athlete • Sibling Discount 10% off second
-              athlete monthly package
-            </p>
-          </div>
+        <h4 className="mt-4 text-[18px] font-black uppercase leading-tight text-white">
+          {option.title}
+        </h4>
+
+        <p className="mt-4 text-sm font-semibold uppercase tracking-[1px] text-white/65">
+          {option.sessions}
+        </p>
+
+        <p className="mt-5 text-[15px] font-bold leading-6 text-white">
+          {option.desc}
+        </p>
+
+        <p className="mt-6 text-[11px] font-black uppercase tracking-[3px] text-white/25 group-hover:text-orange-300">
+          Tap To View Details
+        </p>
+      </div>
+    </button>
+  ))}
+</div>
         </div>
       </section>
-
       {/* SCHEDULE + JOIN FLOW */}
       <section className="border-b border-cyan-400/10 bg-[#020812] px-4 py-16 sm:px-6 lg:px-8 xl:px-28">
         <div className="mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-2">
@@ -812,6 +883,44 @@ export default function App() {
             >
               Join Now <ArrowRight className="h-4 w-4 text-orange-500" />
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="border-b border-cyan-400/10 bg-[#020812] px-4 py-20 sm:px-6 lg:px-8 xl:px-28">
+        <div className="mx-auto max-w-[1300px]">
+          <div className="mb-12 text-center">
+            <p className="text-[13px] font-black uppercase tracking-[4px] text-orange-500">
+              Testimonials
+            </p>
+
+            <h2 className="mt-3 text-[40px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px]">
+              What Families Are Saying
+            </h2>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {testimonials.map((item, index) => (
+              <div
+                key={index}
+                className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 shadow-[0_0_30px_rgba(0,132,255,.08)]"
+              >
+                <div className="mb-5 text-4xl font-black text-orange-500">
+                  “
+                </div>
+
+                <p className="text-[15px] font-bold italic leading-8 text-white/85">
+  {item.quote}
+</p>
+
+                <div className="mt-8 h-[1px] w-full bg-white/10" />
+
+                <p className="mt-5 text-[12px] font-black uppercase tracking-[3px] text-cyan-300">
+                  {item.name}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
