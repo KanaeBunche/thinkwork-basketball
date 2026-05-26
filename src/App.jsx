@@ -978,6 +978,21 @@ export default function App() {
             Send Message <ArrowRight className="h-4 w-4 text-orange-500" />
           </a>
         </div>
+                {/* Footer Credit */}
+        <div className="mt-10 border-t border-white/10 pt-6 text-center">
+          <p className="text-xs font-medium tracking-wide text-white/35">
+            Website by{" "}
+            <a
+              href="https://www.kodedbykanae.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-cyan-300 transition hover:text-orange-400"
+            >
+              Koded by Kanae
+            </a>
+          </p>
+        </div>
+      
       </footer>
 
       {/* SIGNUP MODAL */}
