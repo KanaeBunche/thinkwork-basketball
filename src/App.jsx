@@ -244,6 +244,7 @@ export default function App() {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
+  const [expandedTestimonials, setExpandedTestimonials] = useState({});
 
   const openSignup = (program = null) => {
     setSelectedProgram(program);
@@ -751,61 +752,67 @@ export default function App() {
           </div>
 
           {/* ADDITIONAL OPTIONS */}
-<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">            {[
-              {
-                title: "Individual Single Sessions",
-                sessions: "$40 / Hour",
-                desc: "Focused one-on-one skill development",
-              },
-              {
-                title: "Small Group Sessions",
-                sessions: "$25 Per Athlete",
-                desc: "3-5 Athletes",
-              },
-              {
-                title: "Partners Weekly Package",
-                sessions: "$160 • $250",
-                desc: "$160 3 Sessions • $250 5 Sessions",
-              },
-            ].map((option) => (
-              <button
-                key={option.title}
-                type="button"
-                onClick={() =>
-                  openSignup({
-                    title: option.title,
-                    sessions: option.desc,
-                    price: option.sessions,
-                  })
-                }
-                className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,#050d18_0%,#02060d_100%)] p-6 text-left shadow-[0_0_30px_rgba(0,132,255,.08)] transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.14)]"
-              >
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,140,255,.12),transparent_38%)]" />
+{/* ADDITIONAL OPTIONS */}
+<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">  {[
+  {
+    title: "Individual Single Sessions",
+    sessions: "$40 / Hour",
+    desc: "Focused one-on-one skill development",
+  },
+  {
+    title: "Partner Sessions",
+    sessions: "$30 Per Athlete / Hour",
+    desc: "Train with a partner and build together",
+  },
+  {
+    title: "Small Group Sessions",
+    sessions: "$25 Per Athlete",
+    desc: "3-5 Athletes",
+  },
+  {
+    title: "Parent Sessions",
+    sessions: "$40 / Hour",
+    desc: "Parents can participate in sessions alongside athletes",
+  },
+].map((option) => (
+    <button
+      key={option.title}
+      type="button"
+      onClick={() =>
+        openSignup({
+          title: option.title,
+          sessions: option.desc,
+          price: option.sessions,
+        })
+      }
+      className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,#050d18_0%,#02060d_100%)] p-6 text-left shadow-[0_0_30px_rgba(0,132,255,.08)] transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.14)]"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,140,255,.12),transparent_38%)]" />
 
-                <div className="relative z-10">
-                  <p className="text-[10px] font-black uppercase tracking-[3px] text-orange-400">
-                    Additional Option
-                  </p>
+      <div className="relative z-10">
+        <p className="text-[10px] font-black uppercase tracking-[3px] text-orange-400">
+          Additional Option
+        </p>
 
-                  <h4 className="mt-4 text-[18px] font-black uppercase leading-tight text-white">
-                    {option.title}
-                  </h4>
+        <h4 className="mt-4 text-[18px] font-black uppercase leading-tight text-white">
+          {option.title}
+        </h4>
 
-                  <p className="mt-4 text-sm font-semibold uppercase tracking-[1px] text-white/65">
-                    {option.sessions}
-                  </p>
+        <p className="mt-4 text-sm font-semibold uppercase tracking-[1px] text-white/65">
+          {option.sessions}
+        </p>
 
-                  <p className="mt-5 text-[15px] font-bold leading-6 text-white">
-                    {option.desc}
-                  </p>
+        <p className="mt-5 text-[15px] font-bold leading-6 text-white">
+          {option.desc}
+        </p>
 
-                  <p className="mt-6 text-[11px] font-black uppercase tracking-[3px] text-white/25 group-hover:text-orange-300">
-                    Tap To View Details
-                  </p>
-                </div>
-              </button>
-            ))}
-          </div>
+        <p className="mt-6 text-[11px] font-black uppercase tracking-[3px] text-white/25 group-hover:text-orange-300">
+          Tap To View Details
+        </p>
+      </div>
+    </button>
+  ))}
+</div>
         </div>
       </section>
 
@@ -929,9 +936,24 @@ export default function App() {
                     “
                   </div>
 
-                  <p className="text-[15px] font-medium leading-8 text-white/85">
-                    {item.quote}
-                  </p>
+<p className="text-[15px] italic leading-8 text-white/85">  {expandedTestimonials[index]
+    ? item.quote
+    : `${item.quote.slice(0, 170)}...`}
+</p>
+
+<button
+  type="button"
+  onClick={() =>
+    setExpandedTestimonials((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }))
+  }
+  className="mt-5 text-[11px] font-black uppercase tracking-[2px] text-cyan-300 transition hover:text-orange-400"
+>
+  {expandedTestimonials[index] ? "Read Less" : "Read More"}
+</button>
+                  
 
                   <div className="mt-8 h-[1px] w-full bg-white/10" />
 
