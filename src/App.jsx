@@ -428,8 +428,8 @@ export default function App() {
       </h3>
 
       <p className="mt-2 text-[11px] font-bold uppercase tracking-[2px] text-white/50">
-        With Coach Pree
-      </p>
+  First-Time Training Session With Coach Pree
+</p>
     </div>
 
     <div className="flex h-12 w-12 items-center justify-center rounded-full border border-orange-400/30 bg-orange-500/10 text-orange-300 transition group-hover:bg-orange-500/20">
