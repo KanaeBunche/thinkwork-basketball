@@ -484,7 +484,7 @@ export default function App() {
 </div>
 
 <p className="mt-8 max-w-3xl text-[15px] font-black uppercase tracking-[6px] text-cyan-300 sm:text-[18px]">
-  Develop YOUR THINKSET as much as the skillset.
+  DEVELOP YOUR THINKSET AS MUCH AS YOUR SKILLSET
 </p>
           </div>
 
