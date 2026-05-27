@@ -74,7 +74,6 @@ const packageGroups = [
         sessions: "5 Sessions",
         originalPrice: "$200",
         price: "$180",
-        featured: true,
       },
     ],
   },
@@ -132,7 +131,6 @@ const packageGroups = [
         originalPrice: "$800",
         price: "$750",
         bonus: "3 Exclusive outPLAY Bonus Sessions",
-        featured: true,
       },
       {
         title: "2 Month Summer Monthly Commitment - ThinkWork Exclusive",
@@ -140,6 +138,7 @@ const packageGroups = [
         sessions: "40 Sessions",
         originalPrice: "$1600",
         price: "$1400",
+        featured: true,
       },
     ],
   },
@@ -181,9 +180,10 @@ const mediaItems = [
 const testimonials = [
   {
     quote:
-      "I am so glad we met Coach Pree. He has made such an impact on my son’s development. My son has been training with Coach Pree for almost a year and we noticed significant improvement within just the first three sessions. He connects with young athletes to promote emotional growth, mindset, individuality, and skills that apply both on and off the court.",
+      "I am so glad we met  Coach Pree.  He has made such an  impact  on my son’s development . My son has been training with Coach Pree for almost a year and  We noticed significant improvement within just the first three sessions of training with him.\n\nI attended the first few sessions and it  was evident  that he possess a unique talent for coaching and development. His knowledge and passion for the game are clear, but what truly sets him apart is how he connects with young athletes to promote emotional growth as well.  He doesn't  just focus on the  physical aspect of training . He also focuses on mindset  individuality,  as well as development life stages of the athlete. By doing so, he is able to  teach and  reinforce skills that apply both on and off the court, Coach Pree met my son where he was and helped him reach his goals.\n\nI especially appreciate Coach Pree's professionalism and energy. He is  always punctual, prepared, and actively engaged, moving right alongside his athletes throughout every session.\n\nIt has been a pleasure to watch my son grow in the sport he loves. Thanks to Coach Pree's training, he has gained invaluable skills, techniques, and, most importantly, a stronger sense of confidence.",
     name: "MO’NIQUE",
     role: "Dakari’s Mom",
+    closing: "forever grateful",
   },
   {
     quote:
@@ -192,17 +192,17 @@ const testimonials = [
   },
   {
     quote:
-      "I am deeply grateful to have the privilege of working with Dupree as my son's basketball coach. His qualifications, broad knowledge, and coaching philosophy are truly exceptional. Coach Pree provides valuable support in recovery phases and helps develop the mindset needed to handle pressure during intense competition.",
+      "I am deeply grateful to have the privilege of working with Dupree as my son's basketball 🏀 coach. His qualifications, broad knowledge, and coaching philosophy are truly exceptional.  From the moment my son began training under coach pree guidance, it was evident that my son is the hands of a professional expert in basketball. Coach pree provides the most valuable support in recovery phases and for developing the mindset essential for handling pressure during intense competitions.",
     name: "NANA",
   },
   {
     quote:
-      "Coach Pree helped build my self-confidence on and off the court. He is extremely responsive to my life needs and built a program that fit my abilities and lifestyle. His consistency with objectives, challenges, and clear training skills helped me take my game to the next level.",
+      "self - confidence  on and off the court. He is extremely responsive to my life needs and other necessary adaptions as they arose and built a program that fit my abilities and lifestyle. What I like about coach pree is his consistency with objectives, challenges, and clear with training skills. I recommend coach pree to any baller looking to take their game to the next level.",
     name: "ZEKE",
   },
   {
     quote:
-      "Coach Pree has been absolutely instrumental in my son's basketball journey. Not only is he a great coach, he is a mentor whose love for the game helps build character. Zeke has improved his skills, movement, and confidence on and off the court.",
+      "Coach pree has been absolutely instrumental in my son's basketball  journey. Not only is he a great coach; he is a mentor whose love for the game, helps builds character. Zeke has not only improved his skills shooting the ball and defenses movements, he has become more confident on and off the court. Coach pree creates a positive and encouraging environment where everyone feels valued and supported.i highly recommend him to any parent seeking a coach who cares about the development of a young althelete.",
     name: "PAPA WINSLOW",
   },
 ];
@@ -250,6 +250,15 @@ export default function App() {
     setSelectedProgram(program);
     setShowSignupModal(true);
     setMenuOpen(false);
+  };
+
+  const openFreeSession = () => {
+    openSignup({
+      title: "Claim Your Free Session",
+      sessions: "1 First-Time Session With Coach Pree",
+      price: "Free",
+      note: "Only for first-time sessions with Coach Pree.",
+    });
   };
 
   const closeSignup = () => setShowSignupModal(false);
@@ -400,6 +409,19 @@ export default function App() {
                 View Packages <ArrowRight className="h-4 w-4 text-orange-500" />
               </a>
             </div>
+
+            <button
+              type="button"
+              onClick={openFreeSession}
+              className="mt-6 inline-flex rotate-[-2deg] flex-col items-center justify-center rounded-full border-2 border-dashed border-orange-400 bg-orange-500/10 px-8 py-5 text-center shadow-[0_0_30px_rgba(249,115,22,.22)] transition hover:rotate-0 hover:scale-105 hover:bg-orange-500/20"
+            >
+              <span className="text-[12px] font-black uppercase tracking-[3px] text-orange-300">
+                Claim Your Free Session
+              </span>
+              <span className="mt-1 text-[10px] font-black uppercase tracking-[2px] text-white/60">
+                First-time session with Coach Pree only
+              </span>
+            </button>
           </motion.div>
         </div>
       </section>
@@ -418,36 +440,37 @@ export default function App() {
             <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px] lg:text-[76px]">
               Coach Pree
             </h2>
+<div className="mt-8 max-w-4xl space-y-6 text-[16px] font-semibold leading-8 text-white/75 sm:text-[18px] sm:leading-9">
+  <p>
+    I’m Dupree “Coach Pree” McCullen, founder of{" "}
+    <span className="font-black text-cyan-300">
+      ThinkWork Basketball.
+    </span>{" "}
+    
+  </p>
 
-            <div className="mt-8 max-w-4xl text-[16px] font-semibold leading-8 text-white/75 sm:text-[18px] sm:leading-9">
-              <p>
-                I’m Dupree “Coach Pree” McCullen, founder of ThinkWork
-                Basketball — a program built to develop high-IQ players through
-                skill work, discipline, confidence, faith and game understanding.
-              </p>
+  <p>
+    Our commitment is to develop intelligent, confident, disciplined athletes
+    by combining skill development, basketball IQ, mentorship, faith and
+    intentional work ethic. We aim to help players grow not only in
+    performance, but in mindset, character, leadership, and understanding of
+    the game — teaching athletes how to make outTHINK, outWORK, and outPLAY
+    come to life.
+  </p>
 
-              {aboutExpanded && (
-                <p className="mt-6">
-                  With a passion for teaching and mentorship, I help athletes
-                  improve not only their game, but their mindset, leadership,
-                  and work ethic. Players and families choose ThinkWork
-                  Basketball for detailed development, energy, patience, and a
-                  genuine commitment to helping every athlete grow on and off the
-                  court.
-                </p>
-              )}
-            </div>
+  <p>
+    Players & families choose{" "}
+    <span className="font-black text-cyan-300">
+      ThinkWork Basketball
+    </span>{" "}
+    for detailed development, patience, high energy, safe environment and a
+    genuine commitment to helping every athlete grow on and off the court.
+  </p>
+</div>
 
-            <button
-              onClick={() => setAboutExpanded((prev) => !prev)}
-              className="mt-8 rounded-xl border border-cyan-200/40 bg-black/30 px-7 py-4 text-[12px] font-black uppercase tracking-[2px] text-white transition hover:border-orange-500 hover:bg-orange-500/10"
-            >
-              {aboutExpanded ? "Show Less" : "Read More"}
-            </button>
-
-            <p className="mt-8 max-w-3xl text-[15px] font-black uppercase tracking-[6px] text-cyan-300 sm:text-[18px]">
-              Develop the THINKSET as much as the skillset.
-            </p>
+<p className="mt-8 max-w-3xl text-[15px] font-black uppercase tracking-[6px] text-cyan-300 sm:text-[18px]">
+  Develop YOUR THINKSET as much as the skillset.
+</p>
           </div>
 
           <div className="flex justify-center lg:justify-end">
@@ -460,11 +483,7 @@ export default function App() {
                 className="h-[420px] w-[320px] object-cover sm:h-[520px] sm:w-[420px]"
               />
 
-              <div className="absolute bottom-0 left-0 z-20 p-6">
-                <p className="text-[11px] font-black uppercase tracking-[3px] text-orange-400">
-                  ThinkWork Basketball
-                </p>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -602,6 +621,37 @@ export default function App() {
         </div>
       </section>
 
+      {/* CORE VALUES PLACEHOLDER */}
+      <section className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-20 sm:px-6 lg:px-8 xl:px-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(249,115,22,.10),transparent_34%)]" />
+
+        <div className="relative z-10 mx-auto max-w-[1400px] rounded-[36px] border border-white/10 bg-[linear-gradient(180deg,#07111d_0%,#02060d_100%)] p-8 text-center shadow-[0_0_45px_rgba(0,132,255,.10)] sm:p-12">
+          <p className="text-[13px] font-black uppercase tracking-[4px] text-orange-500">
+            Core Values
+          </p>
+
+          <h2 className="mt-3 text-[36px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px]">
+            Coming Soon
+          </h2>
+
+          <p className="mx-auto mt-5 max-w-[720px] text-base font-medium leading-8 text-white/65 sm:text-lg">
+            This section will highlight the values that guide ThinkWork
+            Basketball’s training, mindset, mentorship, and player development.
+          </p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            {["Mindset", "Discipline", "Leadership"].map((value) => (
+              <div
+                key={value}
+                className="rounded-2xl border border-white/10 bg-black/30 px-6 py-5 text-[13px] font-black uppercase tracking-[3px] text-cyan-300"
+              >
+                {value}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* PROGRAMS */}
       <section
         id="programs"
@@ -675,7 +725,7 @@ export default function App() {
                                   price,
                                 })
                               }
-                              className={`relative w-full overflow-hidden rounded-[28px] border p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.12)] ${
+                              className={`group relative w-full overflow-hidden rounded-[28px] border p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.12)] ${
                                 featured
                                   ? "border-orange-500/50 bg-[linear-gradient(180deg,#07111d_0%,#02060d_100%)] shadow-[0_0_35px_rgba(249,115,22,.16)]"
                                   : title.includes("Summer")
@@ -716,7 +766,7 @@ export default function App() {
                                       {sessions}
                                     </p>
 
-                                    <p className="mt-3 text-[11px] font-black uppercase tracking-[3px] text-white/20">
+                                    <p className="mt-3 text-[11px] font-black uppercase tracking-[3px] text-white/20 transition group-hover:text-orange-300">
                                       Tap To View Details
                                     </p>
                                   </div>
@@ -752,67 +802,66 @@ export default function App() {
           </div>
 
           {/* ADDITIONAL OPTIONS */}
-{/* ADDITIONAL OPTIONS */}
-<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">  {[
-  {
-    title: "Individual Single Sessions",
-    sessions: "$40 / Hour",
-    desc: "Focused one-on-one skill development",
-  },
-  {
-    title: "Partner Sessions",
-    sessions: "$30 Per Athlete / Hour",
-    desc: "Train with a partner and build together",
-  },
-  {
-    title: "Small Group Sessions",
-    sessions: "$25 Per Athlete",
-    desc: "3-5 Athletes",
-  },
-  {
-    title: "Parent Sessions",
-    sessions: "$40 / Hour",
-    desc: "Parents can participate in sessions alongside athletes",
-  },
-].map((option) => (
-    <button
-      key={option.title}
-      type="button"
-      onClick={() =>
-        openSignup({
-          title: option.title,
-          sessions: option.desc,
-          price: option.sessions,
-        })
-      }
-      className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,#050d18_0%,#02060d_100%)] p-6 text-left shadow-[0_0_30px_rgba(0,132,255,.08)] transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.14)]"
-    >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,140,255,.12),transparent_38%)]" />
+          <div className="mx-auto mt-8 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                title: "Individual Single Sessions",
+                sessions: "$40 / Hour",
+                desc: "Focused one-on-one skill development",
+              },
+              {
+                title: "Partner Sessions",
+                sessions: "$30 Per Athlete / Hour",
+                desc: "Train with a partner and build together",
+              },
+              {
+                title: "Small Group Sessions",
+                sessions: "$25 Per Athlete",
+                desc: "3-5 Athletes",
+              },
+            ].map((option) => (
+              <button
+                key={option.title}
+                type="button"
+                onClick={() =>
+                  openSignup({
+                    title: option.title,
+                    sessions: option.desc,
+                    price: option.sessions,
+                  })
+                }
+                className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,#050d18_0%,#02060d_100%)] p-6 text-left shadow-[0_0_30px_rgba(0,132,255,.08)] transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.14)]"
+              >
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,140,255,.12),transparent_38%)]" />
 
-      <div className="relative z-10">
-        <p className="text-[10px] font-black uppercase tracking-[3px] text-orange-400">
-          Additional Option
-        </p>
+                <div className="relative z-10">
+                  <p className="text-[10px] font-black uppercase tracking-[3px] text-orange-400">
+                    Additional Option
+                  </p>
 
-        <h4 className="mt-4 text-[18px] font-black uppercase leading-tight text-white">
-          {option.title}
-        </h4>
+                  <h4 className="mt-4 text-[18px] font-black uppercase leading-tight text-white">
+                    {option.title}
+                  </h4>
 
-        <p className="mt-4 text-sm font-semibold uppercase tracking-[1px] text-white/65">
-          {option.sessions}
-        </p>
+                  <p className="mt-4 text-[11px] font-black uppercase tracking-[1px] text-orange-400 transition group-hover:text-orange-300">
+  {option.sessions}
+</p>
 
-        <p className="mt-5 text-[15px] font-bold leading-6 text-white">
-          {option.desc}
-        </p>
+                  <p className="mt-5 text-[15px] font-bold leading-6 text-white">
+                    {option.desc}
+                  </p>
 
-        <p className="mt-6 text-[11px] font-black uppercase tracking-[3px] text-white/25 group-hover:text-orange-300">
-          Tap To View Details
-        </p>
-      </div>
-    </button>
-  ))}
-</div>
+                  <div className="mt-6 flex items-center justify-between gap-4">
+                    <p className="text-[11px] font-black uppercase tracking-[3px] text-white/25 transition group-hover:text-orange-300">
+                      Tap To View Details
+                    </p>
+
+                   
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -995,7 +1044,7 @@ export default function App() {
               <h2 className="mt-4 text-[40px] font-black uppercase leading-none text-white sm:text-[64px] lg:text-[86px]">
                 Built Through Work.
                 <br />
-                Developed Through Mindset.
+                Developed Through Thinkset.
               </h2>
 
               <p className="mt-6 max-w-[700px] text-base font-semibold leading-7 text-white/70 sm:text-lg">
@@ -1118,6 +1167,12 @@ export default function App() {
                       <p className="mt-1 text-sm font-medium text-white/60">
                         {selectedProgram.sessions}
                       </p>
+
+                      {selectedProgram.note && (
+                        <p className="mt-3 max-w-[360px] rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[2px] text-orange-300">
+                          {selectedProgram.note}
+                        </p>
+                      )}
 
                       <button
                         type="button"
