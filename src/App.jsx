@@ -410,18 +410,33 @@ export default function App() {
               </a>
             </div>
 
-            <button
-              type="button"
-              onClick={openFreeSession}
-              className="mt-6 inline-flex rotate-[-2deg] flex-col items-center justify-center rounded-full border-2 border-dashed border-orange-400 bg-orange-500/10 px-8 py-5 text-center shadow-[0_0_30px_rgba(249,115,22,.22)] transition hover:rotate-0 hover:scale-105 hover:bg-orange-500/20"
-            >
-              <span className="text-[12px] font-black uppercase tracking-[3px] text-orange-300">
-                Claim Your Free Session
-              </span>
-              <span className="mt-1 text-[10px] font-black uppercase tracking-[2px] text-white/60">
-                First-time session with Coach Pree only
-              </span>
-            </button>
+           <button
+  type="button"
+  onClick={openFreeSession}
+  className="group relative mt-7 overflow-hidden rounded-2xl border border-orange-500/25 bg-[linear-gradient(135deg,rgba(249,115,22,.12),rgba(0,0,0,.45))] px-6 py-5 shadow-[0_0_30px_rgba(249,115,22,.10)] transition duration-300 hover:-translate-y-1 hover:border-orange-400 hover:shadow-[0_0_45px_rgba(249,115,22,.18)]"
+>
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,.18),transparent_40%)]" />
+
+  <div className="relative z-10 flex items-center justify-between gap-6">
+    <div className="text-left">
+      <p className="text-[10px] font-black uppercase tracking-[3px] text-orange-300">
+        First-Time Offer
+      </p>
+
+      <h3 className="mt-1 text-[22px] font-black uppercase leading-none text-white">
+        Claim Your Free Session
+      </h3>
+
+      <p className="mt-2 text-[11px] font-bold uppercase tracking-[2px] text-white/50">
+        With Coach Pree
+      </p>
+    </div>
+
+    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-orange-400/30 bg-orange-500/10 text-orange-300 transition group-hover:bg-orange-500/20">
+      <ArrowRight className="h-5 w-5" />
+    </div>
+  </div>
+</button>
           </motion.div>
         </div>
       </section>
