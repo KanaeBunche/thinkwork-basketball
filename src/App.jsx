@@ -465,7 +465,7 @@ export default function App() {
   </p>
 
   <p>
-    Our commitment is to develop intelligent, confident, disciplined athletes
+    Our commitment is to establish intelligent, confident, disciplined athletes 
     by combining skill development, basketball IQ, mentorship, faith and
     intentional work ethic. We aim to help players grow not only in
     performance, but in mindset, character, leadership, and understanding of
@@ -1407,7 +1407,22 @@ export default function App() {
                       placeholder="Enter email address"
                       className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
                     />
+
                   </div>
+
+
+                  <div>
+  <label className="mb-2 block text-sm font-bold text-white">
+    Instagram (Optional)
+  </label>
+
+  <input
+    type="text"
+    name="Instagram"
+    placeholder="@instagramhandle"
+    className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+  />
+</div>
                 </div>
 
                 {!selectedProgram && (
