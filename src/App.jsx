@@ -458,7 +458,7 @@ export default function App() {
 <div className="mt-8 max-w-4xl space-y-6 text-[16px] font-semibold leading-8 text-white/75 sm:text-[18px] sm:leading-9">
   <p>
     I’m Dupree “Coach Pree” McCullen, founder of{" "}
-    <span className="font-black text-cyan-300">
+    <span className="font-black text-orange-500">
       ThinkWork Basketball.
     </span>{" "}
     
@@ -475,7 +475,7 @@ export default function App() {
 
   <p>
     Players & families choose{" "}
-    <span className="font-black text-cyan-300">
+    <span className="font-black text-orange-500">
       ThinkWork Basketball
     </span>{" "}
     for detailed development, patience, high energy, safe environment and a
@@ -637,36 +637,83 @@ export default function App() {
       </section>
 
       {/* CORE VALUES PLACEHOLDER */}
-      <section className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-20 sm:px-6 lg:px-8 xl:px-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(249,115,22,.10),transparent_34%)]" />
+      {/* THINKWORK DNA */}
+<section className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-20 sm:px-6 lg:px-8 xl:px-28">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(249,115,22,.10),transparent_34%)]" />
 
-        <div className="relative z-10 mx-auto max-w-[1400px] rounded-[36px] border border-white/10 bg-[linear-gradient(180deg,#07111d_0%,#02060d_100%)] p-8 text-center shadow-[0_0_45px_rgba(0,132,255,.10)] sm:p-12">
-          <p className="text-[13px] font-black uppercase tracking-[4px] text-orange-500">
-            Core Values
-          </p>
+  <div className="relative z-10 mx-auto max-w-[1450px]">
+    <div className="mb-12 text-center">
+      <p className="text-[13px] font-black uppercase tracking-[4px] text-orange-500">
+        ThinkWork Basketball
+      </p>
 
-          <h2 className="mt-3 text-[36px] font-black uppercase leading-none tracking-[-1px] text-white sm:text-[54px]">
-            Coming Soon
-          </h2>
+      <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px]">
+        ThinkWork DNA 🧬
+      </h2>
 
-          <p className="mx-auto mt-5 max-w-[720px] text-base font-medium leading-8 text-white/65 sm:text-lg">
-            This section will highlight the values that guide ThinkWork
-            Basketball’s training, mindset, mentorship, and player development.
-          </p>
+      <p className="mx-auto mt-5 max-w-[760px] text-base font-medium leading-8 text-white/65 sm:text-lg">
+        The core values that shape every athlete inside the ThinkWork
+        Basketball program.
+      </p>
+    </div>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {["Mindset", "Discipline", "Leadership"].map((value) => (
-              <div
-                key={value}
-                className="rounded-2xl border border-white/10 bg-black/30 px-6 py-5 text-[13px] font-black uppercase tracking-[3px] text-cyan-300"
-              >
-                {value}
-              </div>
-            ))}
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      {[
+        {
+          title: "Faith",
+          desc: "Honor God through character, purpose, humility, and leadership.",
+        },
+        {
+          title: "Intelligence",
+          desc: "Learn the game beyond talent and develop a high basketball IQ.",
+        },
+        {
+          title: "Discipline",
+          desc: "Build consistent habits, focus, and accountability.",
+        },
+        {
+          title: "Work Ethic",
+          desc: "Embrace purposeful reps and relentless improvement.",
+        },
+        {
+          title: "Confidence",
+          desc: "Develop belief through preparation and growth.",
+        },
+        {
+          title: "Leadership",
+          desc: "Lead through attitude, effort, and character.",
+        },
+        {
+          title: "Mentorship",
+          desc: "Grow on and off the court through guidance and support.",
+        },
+        {
+          title: "Competitive Growth",
+          desc: "Commit to outTHINK, outWORK, and outPLAY into your DNA.",
+        },
+      ].map((item) => (
+        <div
+          key={item.title}
+          className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,#07111d_0%,#02060d_100%)] p-7 shadow-[0_0_35px_rgba(0,132,255,.08)] transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.14)]"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,132,255,.10),transparent_38%)]" />
+
+          <div className="relative z-10">
+            <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-400">
+              {item.title}
+            </p>
+
+            <div className="mt-5 h-[1px] w-14 bg-orange-500" />
+
+            <p className="mt-5 text-[15px] font-medium leading-7 text-white/70">
+              {item.desc}
+            </p>
           </div>
         </div>
-      </section>
-
+      ))}
+    </div>
+  </div>
+</section>
       {/* PROGRAMS */}
       <section
         id="programs"
