@@ -484,9 +484,12 @@ export default function App() {
 </div>
 
 
-<p className="mt-8 max-w-3xl text-[16px] font-extrabold italic tracking-[2px] text-cyan-300 sm:text-[20px]">
+
+<p className="mt-8 max-w-3xl text-[16px] font-extrabold italic uppercase tracking-[2px] text-cyan-300 sm:text-[20px]">
   “DEVELOP YOUR THINKSET AS WELL AS YOUR SKILLSET.” - COACH PREE
 </p>
+
+
 
 
           </div>
