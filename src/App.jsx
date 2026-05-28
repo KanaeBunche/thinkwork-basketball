@@ -1495,6 +1495,28 @@ export default function App() {
                   />
                 </div>
 
+                {/* PACKAGES */}
+<div className="grid gap-8 md:grid-cols-3">
+  {/* package cards here */}
+</div>
+
+{/* TRAVEL NOTICE */}
+<div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
+  <p className="text-center text-sm italic leading-7 text-white/70">
+    <span className="font-semibold text-white">
+      Special Travel Requests:
+    </span>{" "}
+    Pricing may vary for sessions held at private locations,
+    residential gyms, or requested off-site facilities.
+    Additional travel fees may apply based on distance,
+    facility access, and scheduling accommodations.
+  </p>
+</div>
+
+{/* CONTINUE BUTTON / REGISTRATION */}
+<div className="mt-10">
+  {/* buttons */}
+</div>
                 <button
                   type="submit"
                   className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1"
