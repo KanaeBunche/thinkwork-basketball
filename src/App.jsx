@@ -1397,7 +1397,19 @@ export default function App() {
                       type="tel"
                       name="Phone"
                       required
-                      placeholder="Enter phone number"
+                      placeholder="phone number"
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      name=" Parent Phone"
+                      required
+                      placeholder="Parent Phone number"
                       className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
                     />
                   </div>
