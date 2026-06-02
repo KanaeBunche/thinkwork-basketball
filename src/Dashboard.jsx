@@ -23,23 +23,57 @@ export default function Dashboard() {
     setLoading(false);
   };
 
-  const markPaid = async (id) => {
+ const markPaid = async (signup) => {
+  const location = prompt(
+    "Enter session location:",
+    "Location will be provided by Coach Pree"
+  );
+
+  if (!location) return;
+
+  try {
+    const emailResponse = await fetch("/api/send-confirmation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        parentEmail: signup.email,
+        athleteName: `${signup.athlete_first_name} ${signup.athlete_last_name}`,
+        program: signup.selected_program,
+        trainingDate: signup.training_date,
+        trainingTime: signup.training_time,
+        location,
+      }),
+    });
+
+    if (!emailResponse.ok) {
+      alert("Email failed to send.");
+      return;
+    }
+
     const { error } = await supabase
       .from("signups")
       .update({
         payment_status: "Paid",
-        confirmation_status: "Ready To Send",
+        confirmation_status: "Confirmation Sent",
       })
-      .eq("id", id);
+      .eq("id", signup.id);
 
     if (error) {
       console.error(error);
-      alert("Could not mark as paid.");
+      alert("Payment update failed.");
       return;
     }
 
     fetchSignups();
-  };
+
+    alert("Confirmation email sent successfully.");
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong sending the confirmation.");
+  }
+};
 
   useEffect(() => {
     fetchSignups();
@@ -122,7 +156,7 @@ export default function Dashboard() {
 
                     <td className="p-4">
                       <button
-                        onClick={() => markPaid(signup.id)}
+                        onClick={() => markPaid(signup)}
                         disabled={signup.payment_status === "Paid"}
                         className="rounded-xl bg-orange-600 px-4 py-3 text-xs font-black uppercase disabled:opacity-40"
                       >

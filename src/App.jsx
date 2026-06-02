@@ -17,7 +17,8 @@ import {
   Trophy,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "./supabaseClient";
 
 import logo from "./assets/thinkwork-logo.png";
 import heroPlayer from "./assets/hero-player.png";
@@ -33,10 +34,43 @@ import image7 from "./assets/images/image7.png";
 import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
 
-const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/xpqnywor";
-
 const navItems = ["Home", "Programs", "About", "Schedule", "Media", "Contact"];
 
+const weekdayTimes = [
+  "9:00 AM",
+  "10:30 AM",
+  "12:00 PM",
+  "1:30 PM",
+  "3:00 PM",
+  "4:30 PM",
+];
+
+const saturdayTimes = ["8:00 AM", "9:30 AM"];
+
+const getDayName = (dateValue) => {
+  if (!dateValue) return "";
+
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  return date.toLocaleDateString("en-US", { weekday: "long" });
+};
+
+const getTimesForDate = (dateValue) => {
+  const dayName = getDayName(dateValue);
+
+  if (
+    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].includes(dayName)
+  ) {
+    return weekdayTimes;
+  }
+
+  if (dayName === "Saturday") {
+    return saturdayTimes;
+  }
+
+  return [];
+};
 const packageIcons = {
   Starter: Rocket,
   Acceleration: TrendingUp,
@@ -220,19 +254,227 @@ function SchedulePage() {
         </h1>
 
         <p className="mt-6 leading-7 text-white/65">
-          Your registration has been submitted successfully. Click below to
-          choose your official training date and time.
+          Your registration and training time have been submitted successfully.
+          Coach Pree will review your registration and follow up with payment
+          and confirmation details.
         </p>
 
         <a
-          href="https://calendar.app.google/PJf4yAtk6BqMYMqa8"
-          target="_blank"
-          rel="noreferrer"
+          href="/"
           className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-sm font-black uppercase"
         >
-          Open Scheduling
+          Back To Home
           <ArrowRight className="h-5 w-5" />
         </a>
+      </div>
+    </main>
+  );
+}
+
+function DashboardPage() {
+  const [signups, setSignups] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchSignups = async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("signups")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      alert("Could not load dashboard.");
+      setLoading(false);
+      return;
+    }
+
+    setSignups(data || []);
+    setLoading(false);
+  };
+
+  const markPaid = async (signup) => {
+    const location = prompt(
+      "Enter session location:",
+      "Location will be confirmed by Coach Pree"
+    );
+
+    if (location === null) {
+      return;
+    }
+
+    const emailResponse = await fetch("/api/send-confirmation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        parentEmail: signup.email,
+        athleteName: `${signup.athlete_first_name || ""} ${
+          signup.athlete_last_name || ""
+        }`.trim(),
+        parentName: signup.parent_guardian_name,
+        program: signup.selected_program,
+        programSessions: signup.program_sessions,
+        programPrice: signup.program_price,
+        trainingDate: signup.training_date,
+        trainingTime: signup.training_time,
+        location,
+      }),
+    });
+
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.json().catch(() => null);
+      console.error(errorData);
+      alert("Payment was not updated because the confirmation email failed.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("signups")
+      .update({
+        payment_status: "Paid",
+        confirmation_status: "Confirmation Sent",
+      })
+      .eq("id", signup.id);
+
+    if (error) {
+      console.error(error);
+      alert("Email sent, but payment status could not be updated.");
+      return;
+    }
+
+    fetchSignups();
+  };
+
+  useEffect(() => {
+    fetchSignups();
+  }, []);
+
+  return (
+    <main className="min-h-screen bg-[#02060d] px-4 py-8 text-white sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-[1500px]">
+        <div className="mb-8 flex flex-col gap-4 rounded-[28px] border border-white/10 bg-[#08111c] p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-500">
+              Owner Dashboard
+            </p>
+            <h1 className="mt-2 text-4xl font-black uppercase">
+              ThinkWork Signups
+            </h1>
+            <p className="mt-2 text-sm text-white/50">
+              View registrations, selected training dates, times, and payment status.
+            </p>
+          </div>
+
+          <button
+            onClick={fetchSignups}
+            className="rounded-2xl border border-orange-500/40 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] transition hover:bg-orange-500/10"
+          >
+            Refresh
+          </button>
+        </div>
+
+        {loading ? (
+          <p className="text-white/60">Loading signups...</p>
+        ) : signups.length === 0 ? (
+          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
+            <p className="text-lg font-bold text-white/70">No signups yet.</p>
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#08111c]">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1100px] text-left text-sm">
+                <thead className="border-b border-white/10 bg-black/35 text-[11px] uppercase tracking-[2px] text-white/45">
+                  <tr>
+                    <th className="px-5 py-4">Athlete</th>
+                    <th className="px-5 py-4">Parent</th>
+                    <th className="px-5 py-4">Contact</th>
+                    <th className="px-5 py-4">Program</th>
+                    <th className="px-5 py-4">Date</th>
+                    <th className="px-5 py-4">Time</th>
+                    <th className="px-5 py-4">Payment</th>
+                    <th className="px-5 py-4">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {signups.map((signup) => (
+                    <tr
+                      key={signup.id}
+                      className="border-b border-white/10 align-top last:border-b-0"
+                    >
+                      <td className="px-5 py-5">
+                        <p className="font-black text-white">
+                          {signup.athlete_first_name} {signup.athlete_last_name}
+                        </p>
+                        <p className="mt-1 text-xs text-white/45">
+                          Age: {signup.athlete_age || "N/A"}
+                        </p>
+                      </td>
+
+                      <td className="px-5 py-5 text-white/75">
+                        {signup.parent_guardian_name || "N/A"}
+                      </td>
+
+                      <td className="px-5 py-5">
+                        <p className="text-white/75">{signup.phone}</p>
+                        <p className="mt-1 text-xs text-white/45">
+                          {signup.email}
+                        </p>
+                      </td>
+
+                      <td className="px-5 py-5">
+                        <p className="font-bold text-orange-300">
+                          {signup.selected_program || "Not selected"}
+                        </p>
+                        <p className="mt-1 text-xs text-white/45">
+                          {signup.program_sessions} • {signup.program_price}
+                        </p>
+                      </td>
+
+                      <td className="px-5 py-5 text-white/75">
+                        {signup.training_date || "N/A"}
+                      </td>
+
+                      <td className="px-5 py-5 text-white/75">
+                        {signup.training_time || "N/A"}
+                      </td>
+
+                      <td className="px-5 py-5">
+                        <span
+                          className={`rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[1px] ${
+                            signup.payment_status === "Paid"
+                              ? "bg-green-500/15 text-green-300"
+                              : "bg-orange-500/15 text-orange-300"
+                          }`}
+                        >
+                          {signup.payment_status || "Not Paid"}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-5">
+                        <button
+                          type="button"
+                          onClick={() => markPaid(signup)}
+                          disabled={signup.payment_status === "Paid"}
+                          className="rounded-xl bg-gradient-to-b from-orange-500 to-orange-700 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-white disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {signup.payment_status === "Paid" ? "Paid" : "Mark Paid"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        <p className="mt-6 text-center text-xs text-white/35">
+          Preview dashboard. Add owner login before final public launch.
+        </p>
       </div>
     </main>
   );
@@ -245,6 +487,10 @@ export default function App() {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedTestimonials, setExpandedTestimonials] = useState({});
+  const [trainingDate, setTrainingDate] = useState("");
+  const [trainingTime, setTrainingTime] = useState("");
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
 
   const openSignup = (program = null) => {
     setSelectedProgram(program);
@@ -262,6 +508,45 @@ export default function App() {
   };
 
   const closeSignup = () => setShowSignupModal(false);
+
+  const availableTimes = useMemo(() => {
+    const timesForDate = getTimesForDate(trainingDate);
+
+    return timesForDate.map((time) => {
+      const isBooked = bookedSlots.some(
+        (slot) =>
+          slot.training_date === trainingDate && slot.training_time === time
+      );
+
+      return {
+        time,
+        isBooked,
+      };
+    });
+  }, [trainingDate, bookedSlots]);
+
+  useEffect(() => {
+    const fetchBookedSlots = async () => {
+      const { data, error } = await supabase
+        .from("signups")
+        .select("training_date, training_time")
+        .not("training_date", "is", null)
+        .not("training_time", "is", null);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setBookedSlots(data || []);
+    };
+
+    fetchBookedSlots();
+  }, []);
+
+  if (window.location.pathname === "/dashboard") {
+    return <DashboardPage />;
+  }
 
   if (window.location.pathname === "/schedule") {
     return <SchedulePage />;
@@ -930,6 +1215,9 @@ export default function App() {
               </button>
             ))}
           </div>
+          <p className="mt-3 text-center text-[11px] italic tracking-wide text-white/45">
+  * Individual Single Sessions, Partner Sessions, and Small Group Sessions are only offered to athletes under 21 years old. Clients over 21 years old may book Individual Training Sessions for <span className="font-semibold text-orange-400">$50/hour</span>.
+</p>
         </div>
       </section>
 
@@ -1299,19 +1587,66 @@ export default function App() {
                 onSubmit={async (e) => {
                   e.preventDefault();
 
+                  if (!trainingDate || !trainingTime) {
+                    alert("Please choose a training date and time.");
+                    return;
+                  }
+
+                  setSubmitting(true);
+
                   const form = e.currentTarget;
                   const formData = new FormData(form);
 
-                  await fetch(FORMSPREE_SIGNUP_URL, {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                      Accept: "application/json",
-                    },
+                  const { data: existingBooking, error: checkError } =
+                    await supabase
+                      .from("signups")
+                      .select("id")
+                      .eq("training_date", trainingDate)
+                      .eq("training_time", trainingTime)
+                      .limit(1);
+
+                  if (checkError) {
+                    console.error(checkError);
+                    alert("Could not check booking availability.");
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  if (existingBooking?.length > 0) {
+                    alert("That time was just booked. Please choose another time.");
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  const { error } = await supabase.from("signups").insert({
+                    athlete_first_name: formData.get("Athlete First Name"),
+                    athlete_last_name: formData.get("Athlete Last Name"),
+                    athlete_age: formData.get("Athlete Age"),
+                    parent_guardian_name: formData.get("Parent Guardian Name"),
+                    phone: formData.get("Phone"),
+                    parent_phone: formData.get("Parent Phone"),
+                    email: formData.get("Email"),
+                    instagram: formData.get("Instagram"),
+                    selected_program:
+                      selectedProgram?.title || formData.get("Program Interest"),
+                    program_sessions: selectedProgram?.sessions || "",
+                    program_price: selectedProgram?.price || "",
+                    training_date: trainingDate,
+                    training_time: trainingTime,
+                    additional_notes: formData.get("Additional Notes"),
+                    payment_status: "Not Paid",
+                    confirmation_status: "Not Sent",
                   });
 
-                  window.location.href =
-                    "https://calendar.app.google/PJf4yAtk6BqMYMqa8";
+                  if (error) {
+                    console.error(error);
+                    alert("Something went wrong. Please try again.");
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  setSubmitting(false);
+                  window.location.href = "/schedule";
                 }}
               >
                 <input
@@ -1336,79 +1671,79 @@ export default function App() {
                 />
 
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Athlete First Name
-                    </label>
-                    <input
-                      name="Athlete First Name"
-                      required
-                      placeholder="Enter first name"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
+  <div>
+  <label className="mb-2 block text-sm font-bold text-white">
+    Athlete First Name
+  </label>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Athlete Last Name
-                    </label>
-                    <input
-                      name="Athlete Last Name"
-                      required
-                      placeholder="Enter last name"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
-                </div>
+  <input
+    name="Athlete First Name"
+    required
+    placeholder="Enter first name"
+    className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+  />
+</div>
+
+ <div>
+  <label className="mb-2 block text-sm font-bold text-white">
+    Athlete Last Name
+  </label>
+
+  <input
+    name="Athlete First Name"
+    required
+    placeholder="Enter first name"
+    className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+  />
+</div>
+
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete Age
+    </label>
+    <input
+      type="email"
+      name="Email"
+      required
+      placeholder="Enter email address"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
+
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+     Parent/Guardian Name
+    </label>
+    <input
+      type="text"
+      name="Instagram"
+      placeholder="@instagramhandle"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
+</div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label className="mb-2 block text-sm font-bold text-white">
-                      Athlete Age
+                      Athlete Phone Number
                     </label>
                     <input
-                      type="number"
+                      type="tel"
                       name="Athlete Age"
-                      required
                       placeholder="Enter age"
                       className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
                     />
                   </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Parent/Guardian Name
-                    </label>
-                    <input
-                      name="Parent Guardian Name"
-                      required
-                      placeholder="Enter parent name"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
-                </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label className="mb-2 block text-sm font-bold text-white">
-                      Phone Number
+                      Athlete Phone Number
                     </label>
                     <input
-                      type="tel"
-                      name="Phone"
-                      required
-                      placeholder="phone number"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      name=" Parent Phone"
-                      required
+                      type="number"
+                      name="Parent Phone"
                       placeholder="Parent Phone number"
                       className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
                     />
@@ -1416,7 +1751,7 @@ export default function App() {
 
                   <div>
                     <label className="mb-2 block text-sm font-bold text-white">
-                      Email Address
+                      Parent Email Address
                     </label>
                     <input
                       type="email"
@@ -1476,10 +1811,59 @@ export default function App() {
                   </p>
 
                   <p className="mt-2 text-sm leading-6 text-white/65">
-                    After submitting this form, you’ll automatically be
-                    redirected to our live scheduling system to select your
-                    official training date and time.
+                    Choose your training date and time below. Sessions are one hour
+                    long with 30 minutes of recovery time between available slots.
+                    Available days are Monday - Friday and Saturday.
                   </p>
+                </div>
+
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">
+                      Training Date
+                    </label>
+
+                    <input
+                      type="date"
+                      name="Training Date"
+                      required
+                      value={trainingDate}
+                      onChange={(e) => {
+                        setTrainingDate(e.target.value);
+                        setTrainingTime("");
+                      }}
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+                    />
+
+                    {trainingDate && availableTimes.length === 0 && (
+                      <p className="mt-2 text-xs font-bold text-orange-300">
+                        Please choose Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday.
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">
+                      Training Time
+                    </label>
+
+                    <select
+                      name="Training Time"
+                      required
+                      value={trainingTime}
+                      onChange={(e) => setTrainingTime(e.target.value)}
+                      disabled={!trainingDate || availableTimes.length === 0}
+                      className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="">Select Time</option>
+
+                      {availableTimes.map(({ time, isBooked }) => (
+                        <option key={time} value={time} disabled={isBooked}>
+                          {isBooked ? `${time} - Booked` : time}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div>
@@ -1519,9 +1903,10 @@ export default function App() {
 </div>
                 <button
                   type="submit"
-                  className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1"
+                  disabled={submitting}
+                  className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Submit & Continue To Scheduling
+                  {submitting ? "Submitting..." : "Submit Registration"}
                   <ArrowRight className="h-5 w-5" />
                 </button>
 
