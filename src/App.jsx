@@ -930,6 +930,9 @@ export default function App() {
               </button>
             ))}
           </div>
+          <p className="mt-4 text-center text-[11px] italic tracking-wide text-white/45">
+  * Individual Single Sessions, Partner Sessions, and Small Group Sessions are only offered to athletes under 21 years old. Clients over 21 years old may book Individual Training Sessions for <span className="font-semibold text-orange-400">$50/hour</span>.
+</p>
         </div>
       </section>
 
