@@ -36,6 +36,8 @@ import vid5 from "./assets/videos/vid5.mp4";
 
 const navItems = ["Home", "Programs", "About", "Schedule", "Media", "Contact"];
 
+const DASHBOARD_PASSWORD = "ThinkWork123";
+
 const weekdayTimes = [
   { value: "9:00 AM", label: "9:00 AM - 10:00 AM" },
   { value: "10:30 AM", label: "10:30 AM - 11:30 AM" },
@@ -276,28 +278,71 @@ function SchedulePage() {
   );
 }
 
+function DashboardPasswordPage({ onUnlock }) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-const getPurchasedSessionCount = (sessionsText, programName) => {
-  const program = programName || "";
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  if (
-    program.includes("Individual") ||
-    program.includes("Partner") ||
-    program.includes("Small Group") ||
-    program.includes("Free Session") ||
-    sessionsText?.includes("Hour")
-  ) {
-    return 1;
-  }
+    if (password === DASHBOARD_PASSWORD) {
+      localStorage.setItem("thinkwork_dashboard_unlocked", "true");
+      setError("");
+      onUnlock();
+      return;
+    }
 
-  const match = sessionsText?.match(/\d+/);
-  return match ? Math.max(1, Number(match[0])) : 1;
-};
+    setError("Incorrect password. Please try again.");
+  };
 
-const getCompletedSessionCount = (signup) => {
-  const completed = Number(signup.sessions_completed || 0);
-  return Number.isNaN(completed) ? 0 : completed;
-};
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#02060d] px-6 text-white">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md rounded-[32px] border border-white/10 bg-[#08111c] p-8 shadow-[0_0_60px_rgba(0,132,255,.14)]"
+      >
+        <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-500">
+          Owner Access
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black uppercase leading-none">
+          Dashboard Login
+        </h1>
+
+        <p className="mt-4 text-sm leading-6 text-white/55">
+          Enter the dashboard password to view registrations and manage sessions.
+        </p>
+
+        <div className="mt-7">
+          <label className="mb-2 block text-sm font-bold text-white">
+            Password
+          </label>
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter dashboard password"
+            className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+          />
+        </div>
+
+        {error && (
+          <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          className="mt-6 w-full rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-white shadow-[0_0_35px_rgba(249,115,22,.25)] transition hover:-translate-y-0.5"
+        >
+          Open Dashboard
+        </button>
+      </form>
+    </main>
+  );
+}
 
 function DashboardPage() {
   const emptyManualSignup = {
@@ -380,12 +425,11 @@ function DashboardPage() {
       training_date: manualSignup.trainingDate,
       training_time: manualSignup.trainingTime,
       additional_notes: manualSignup.notes,
-      payment_status: manualSignup.paymentStatus || "Not Paid",
+      payment_status: manualSignup.paymentStatus,
       confirmation_status:
         manualSignup.paymentStatus === "Paid"
           ? "Manual Entry"
           : "Not Sent",
-      sessions_completed: 0,
     });
 
     if (error) {
@@ -409,30 +453,19 @@ function DashboardPage() {
 
     if (!confirmed) return;
 
-    const { data, error } = await supabase
-      .from("signups")
-      .delete()
-      .eq("id", id)
-      .select("id");
+    const { error } = await supabase.from("signups").delete().eq("id", id);
 
     if (error) {
-      console.error("Delete error:", error);
-      alert(`Could not delete registration: ${error.message}`);
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      alert(
-        "Delete did not go through. Check the Supabase DELETE policy for the signups table."
-      );
-      return;
-    }
+  console.error("Delete error:", error);
+  alert(`Could not delete registration: ${error.message}`);
+  return;
+}
 
     await fetchSignups();
     alert("Registration deleted.");
   };
 
-  const updateCompletedSessions = async (signup, change) => {
+   const updateCompletedSessions = async (signup, change) => {
     const purchased = getPurchasedSessionCount(
       signup.program_sessions,
       signup.selected_program
@@ -833,14 +866,13 @@ function DashboardPage() {
         ) : (
           <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#08111c]">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1300px] text-left text-sm">
+              <table className="w-full min-w-[1180px] text-left text-sm">
                 <thead className="border-b border-white/10 bg-black/35 text-[11px] uppercase tracking-[2px] text-white/45">
                   <tr>
                     <th className="px-5 py-4">Athlete</th>
                     <th className="px-5 py-4">Parent</th>
                     <th className="px-5 py-4">Contact</th>
                     <th className="px-5 py-4">Program</th>
-                    <th className="px-5 py-4">Sessions</th>
                     <th className="px-5 py-4">Date</th>
                     <th className="px-5 py-4">Time</th>
                     <th className="px-5 py-4">Payment</th>
@@ -886,70 +918,6 @@ function DashboardPage() {
                         <p className="mt-1 text-xs text-white/45">
                           {signup.program_sessions} • {signup.program_price}
                         </p>
-                      </td>
-
-                      <td className="px-5 py-5">
-                        {(() => {
-                          const purchased = getPurchasedSessionCount(
-                            signup.program_sessions,
-                            signup.selected_program
-                          );
-                          const completed = getCompletedSessionCount(signup);
-                          const remaining = Math.max(0, purchased - completed);
-
-                          return (
-                            <div className="min-w-[150px]">
-                              <div className="grid grid-cols-3 gap-2 text-center">
-                                <div className="rounded-xl border border-white/10 bg-white/[0.03] px-2 py-2">
-                                  <p className="text-[10px] font-black uppercase text-white/35">
-                                    Bought
-                                  </p>
-                                  <p className="mt-1 text-sm font-black text-white">
-                                    {purchased}
-                                  </p>
-                                </div>
-
-                                <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-2 py-2">
-                                  <p className="text-[10px] font-black uppercase text-green-300/70">
-                                    Done
-                                  </p>
-                                  <p className="mt-1 text-sm font-black text-green-300">
-                                    {completed}
-                                  </p>
-                                </div>
-
-                                <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-2 py-2">
-                                  <p className="text-[10px] font-black uppercase text-orange-300/70">
-                                    Left
-                                  </p>
-                                  <p className="mt-1 text-sm font-black text-orange-300">
-                                    {remaining}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="mt-2 flex gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => updateCompletedSessions(signup, -1)}
-                                  disabled={completed <= 0}
-                                  className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-black text-white/70 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-30"
-                                >
-                                  -
-                                </button>
-
-                                <button
-                                  type="button"
-                                  onClick={() => updateCompletedSessions(signup, 1)}
-                                  disabled={completed >= purchased}
-                                  className="flex-1 rounded-lg border border-cyan-400/30 px-3 py-2 text-[11px] font-black text-cyan-300 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-30"
-                                >
-                                  +
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })()}
                       </td>
 
                       <td className="px-5 py-5 text-white/75">
@@ -1021,6 +989,9 @@ export default function App() {
   const [trainingTime, setTrainingTime] = useState("");
   const [bookedSlots, setBookedSlots] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [dashboardUnlocked, setDashboardUnlocked] = useState(() => {
+    return localStorage.getItem("thinkwork_dashboard_unlocked") === "true";
+  });
 
   const openSignup = (program = null) => {
     setSelectedProgram(program);
@@ -1077,7 +1048,11 @@ export default function App() {
   }, []);
 
   if (window.location.pathname === "/dashboard") {
-    return <DashboardPage />;
+    return dashboardUnlocked ? (
+      <DashboardPage />
+    ) : (
+      <DashboardPasswordPage onUnlock={() => setDashboardUnlocked(true)} />
+    );
   }
 
   if (window.location.pathname === "/schedule") {
@@ -2168,7 +2143,6 @@ export default function App() {
                     additional_notes: formData.get("Additional Notes"),
                     payment_status: "Not Paid",
                     confirmation_status: "Not Sent",
-                    sessions_completed: 0,
                   });
 
                   if (error) {
