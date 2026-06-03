@@ -1669,60 +1669,7 @@ export default function App() {
                   name="Program Price"
                   value={selectedProgram?.price || ""}
                 />
-
-                <div className="grid gap-5 sm:grid-cols-2">
-  <div>
-  <label className="mb-2 block text-sm font-bold text-white">
-    Athlete First Name
-  </label>
-
-  <input
-    name="Athlete First Name"
-    required
-    placeholder="Enter first name"
-    className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-  />
-</div>
-
- <div>
-  <label className="mb-2 block text-sm font-bold text-white">
-    Athlete Last Name
-  </label>
-
-  <input
-    name="Athlete Last Name"
-    required
-    placeholder="Enter last name"
-    className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-  />
-</div>
-
-  <div>
-    <label className="mb-2 block text-sm font-bold text-white">
-      Athlete Age
-    </label>
-  <input
-  type="number"
-  name="Athlete Age"
-  required
-  placeholder="Enter athlete age"
-/>
-  </div>
-
-  <div>
-    <label className="mb-2 block text-sm font-bold text-white">
-     Parent/Guardian Name
-    </label>
-   <input
-  type="text"
-  name="Parent Guardian Name"
-  required
-  placeholder="Enter parent/guardian name"
-/>
-  </div>
-</div>
-
-              <div className="grid gap-5 sm:grid-cols-2">
+<div className="grid gap-5 sm:grid-cols-2">
   <div>
     <label className="mb-2 block text-sm font-bold text-white">
       Athlete First Name
@@ -1825,7 +1772,8 @@ export default function App() {
     />
   </div>
 </div>
-                </div>
+             
+             
 
                 {!selectedProgram && (
                   <div>
