@@ -639,13 +639,13 @@ function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search name, parent, phone, email, program, sessions..."
-              className="min-w-[280px] rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+              className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500 md:w-[320px]"
             />
 
             <button
@@ -952,8 +952,8 @@ function DashboardPage() {
           </div>
         ) : (
           <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#08111c]">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[1300px] text-left text-sm">
+            <div className="overflow-x-auto pb-3">
+              <table className="w-full min-w-[1100px] text-left text-sm">
                 <thead className="border-b border-white/10 bg-black/35 text-[11px] uppercase tracking-[2px] text-white/45">
                   <tr>
                     <th className="px-5 py-4">Athlete</th>
@@ -1018,7 +1018,7 @@ function DashboardPage() {
                           const remaining = Math.max(0, purchased - completed);
 
                           return (
-                            <div className="min-w-[150px]">
+                            <div className="mx-auto min-w-[150px] max-w-[180px]">
                               <div className="grid grid-cols-3 gap-2 text-center">
                                 <div className="rounded-xl border border-white/10 bg-white/[0.03] px-2 py-2">
                                   <p className="text-[10px] font-black uppercase text-white/35">
@@ -1048,12 +1048,12 @@ function DashboardPage() {
                                 </div>
                               </div>
 
-                              <div className="mt-2 flex gap-2">
+                              <div className="mt-2 flex justify-center gap-2">
                                 <button
                                   type="button"
                                   onClick={() => updateCompletedSessions(signup, -1)}
                                   disabled={completed <= 0}
-                                  className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-black text-white/70 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-30"
+                                  className="w-12 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-black text-white/70 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-30"
                                 >
                                   -
                                 </button>
@@ -1062,7 +1062,7 @@ function DashboardPage() {
                                   type="button"
                                   onClick={() => updateCompletedSessions(signup, 1)}
                                   disabled={completed >= purchased}
-                                  className="flex-1 rounded-lg border border-cyan-400/30 px-3 py-2 text-[11px] font-black text-cyan-300 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                  className="w-12 rounded-lg border border-cyan-400/30 px-3 py-2 text-[11px] font-black text-cyan-300 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-30"
                                 >
                                   +
                                 </button>
