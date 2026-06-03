@@ -1648,6 +1648,37 @@ export default function App() {
                     return;
                   }
 
+                  const athleteName = `${formData.get("Athlete First Name") || ""} ${
+                    formData.get("Athlete Last Name") || ""
+                  }`.trim();
+
+                  await fetch("/api/new-registration", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      athleteName,
+                      athleteAge: formData.get("Athlete Age"),
+                      parentName: formData.get("Parent Guardian Name"),
+                      athletePhone: formData.get("Phone"),
+                      parentPhone: formData.get("Parent Phone"),
+                      parentEmail: formData.get("Email"),
+                      instagram: formData.get("Instagram"),
+                      program:
+                        selectedProgram?.title ||
+                        formData.get("Program Interest"),
+                      programSessions: selectedProgram?.sessions || "",
+                      programPrice: selectedProgram?.price || "",
+                      trainingDate,
+                      trainingTime,
+                      location: "Brooklyn Park",
+                      notes: formData.get("Additional Notes"),
+                    }),
+                  }).catch((emailError) => {
+                    console.error("New registration email failed:", emailError);
+                  });
+
                   setSubmitting(false);
                   window.location.href = "/schedule";
                 }}
