@@ -1722,58 +1722,108 @@ export default function App() {
   </div>
 </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Athlete Phone Number
-                    </label>
-                    <input
-                    type="tel"
-                    name="Phone"
-                    placeholder="Enter athlete phone number (optional)"
-                    />
-                  </div>
+              <div className="grid gap-5 sm:grid-cols-2">
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete First Name
+    </label>
+    <input
+      type="text"
+      name="Athlete First Name"
+      required
+      placeholder="Enter first name"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete Last Name
+    </label>
+    <input
+      type="text"
+      name="Athlete Last Name"
+      required
+      placeholder="Enter last name"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Parent/Guardian Phone Number
-                    </label>
-                    <input
-                      type="number"
-                      name="Parent Phone"
-                      placeholder="Parent/Guardian Phone number"
-                      required
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete Age
+    </label>
+    <input
+      type="number"
+      name="Athlete Age"
+      required
+      placeholder="Enter athlete age"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Parent Email Address
-                    </label>
-                    <input
-                      type="email"
-                      name="Email"
-                      required
-                      placeholder="Enter email address"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Parent/Guardian Name
+    </label>
+    <input
+      type="text"
+      name="Parent Guardian Name"
+      required
+      placeholder="Enter parent/guardian name"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                  </div>
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete Phone Number (Optional)
+    </label>
+    <input
+      type="tel"
+      name="Phone"
+      placeholder="Enter athlete phone number"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Parent/Guardian Phone Number
+    </label>
+    <input
+      type="tel"
+      name="Parent Phone"
+      required
+      placeholder="Enter parent/guardian phone number"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                  <div>
-  <label className="mb-2 block text-sm font-bold text-white">
-    Instagram (Optional)
-  </label>
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Parent Email Address
+    </label>
+    <input
+      type="email"
+      name="Email"
+      required
+      placeholder="Enter email address"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-  <input
-    type="text"
-    name="Instagram"
-    placeholder="@instagramhandle"
-    className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-  />
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Instagram (Optional)
+    </label>
+    <input
+      type="text"
+      name="Instagram"
+      placeholder="@instagramhandle"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 </div>
                 </div>
 
