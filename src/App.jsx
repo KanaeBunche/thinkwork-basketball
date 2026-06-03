@@ -37,15 +37,20 @@ import vid5 from "./assets/videos/vid5.mp4";
 const navItems = ["Home", "Programs", "About", "Schedule", "Media", "Contact"];
 
 const weekdayTimes = [
-  "9:00 AM",
-  "10:30 AM",
-  "12:00 PM",
-  "1:30 PM",
-  "3:00 PM",
-  "4:30 PM",
+  { value: "9:00 AM", label: "9:00 AM - 10:00 AM" },
+  { value: "10:30 AM", label: "10:30 AM - 11:30 AM" },
+  { value: "12:00 PM", label: "12:00 PM - 1:00 PM" },
+  { value: "1:30 PM", label: "1:30 PM - 2:30 PM" },
+  { value: "3:00 PM", label: "3:00 PM - 4:00 PM" },
+  { value: "4:30 PM", label: "4:30 PM - 5:30 PM" },
 ];
 
-const saturdayTimes = ["8:00 AM", "9:30 AM"];
+const saturdayTimes = [
+  { value: "8:00 AM", label: "8:00 AM - 9:00 AM" },
+  { value: "9:30 AM", label: "9:30 AM - 10:30 AM" },
+];
+
+
 
 const getDayName = (dateValue) => {
   if (!dateValue) return "";
@@ -507,21 +512,23 @@ export default function App() {
 
   const closeSignup = () => setShowSignupModal(false);
 
-  const availableTimes = useMemo(() => {
-    const timesForDate = getTimesForDate(trainingDate);
+ const availableTimes = useMemo(() => {
+  const timesForDate = getTimesForDate(trainingDate);
 
-    return timesForDate.map((time) => {
-      const isBooked = bookedSlots.some(
-        (slot) =>
-          slot.training_date === trainingDate && slot.training_time === time
-      );
+  return timesForDate.map((slot) => {
+    const isBooked = bookedSlots.some(
+      (booked) =>
+        booked.training_date === trainingDate &&
+        (booked.training_time === slot.label ||
+          booked.training_time === slot.value)
+    );
 
-      return {
-        time,
-        isBooked,
-      };
-    });
-  }, [trainingDate, bookedSlots]);
+    return {
+      ...slot,
+      isBooked,
+    };
+  });
+}, [trainingDate, bookedSlots]);
 
   useEffect(() => {
     const fetchBookedSlots = async () => {
@@ -1806,9 +1813,10 @@ export default function App() {
                   </p>
 
                   <p className="mt-2 text-sm leading-6 text-white/65">
-                    Choose your training date and time below. Sessions are one hour
-                    long with 30 minutes of recovery time between available slots.
-                    Available days are Monday - Friday and Saturday.
+                    Choose your training date and full session time below.
+                    Sessions are one hour long with 30 minutes of recovery time
+                    between available slots. Available days are Monday - Friday
+                    and Saturday. Location: Brooklyn Park.
                   </p>
                 </div>
 
@@ -1832,7 +1840,8 @@ export default function App() {
 
                     {trainingDate && availableTimes.length === 0 && (
                       <p className="mt-2 text-xs font-bold text-orange-300">
-                        Please choose Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday.
+                        Please choose Monday, Tuesday, Wednesday, Thursday,
+                        Friday, or Saturday.
                       </p>
                     )}
                   </div>
@@ -1842,22 +1851,62 @@ export default function App() {
                       Training Time
                     </label>
 
-                    <select
-                      name="Training Time"
-                      required
-                      value={trainingTime}
-                      onChange={(e) => setTrainingTime(e.target.value)}
-                      disabled={!trainingDate || availableTimes.length === 0}
-                      className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">Select Time</option>
+                    <input type="hidden" name="Training Time" value={trainingTime} />
 
-                      {availableTimes.map(({ time, isBooked }) => (
-                        <option key={time} value={time} disabled={isBooked}>
-                          {isBooked ? `${time} - Booked` : time}
-                        </option>
-                      ))}
-                    </select>
+                    {!trainingDate ? (
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-bold text-white/40">
+                        Choose a date first
+                      </div>
+                    ) : availableTimes.length === 0 ? (
+                      <div className="rounded-2xl border border-orange-500/30 bg-orange-500/10 px-5 py-4 text-sm font-bold text-orange-300">
+                        No available sessions for this day.
+                      </div>
+                    ) : (
+                      <div className="grid gap-3">
+                        {availableTimes.map(({ value, label, isBooked }) => (
+                          <button
+                            key={value}
+                            type="button"
+                            disabled={isBooked}
+                            onClick={() => setTrainingTime(label)}
+                            className={`rounded-2xl border px-5 py-4 text-left transition ${
+                              isBooked
+                                ? "cursor-not-allowed border-red-500/30 bg-red-500/10 opacity-60"
+                                : trainingTime === label
+                                ? "border-orange-500 bg-orange-500/15 shadow-[0_0_25px_rgba(249,115,22,.2)]"
+                                : "border-white/10 bg-white/[0.03] hover:border-orange-500/50 hover:bg-orange-500/10"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-4">
+                              <div>
+                                <p className="text-sm font-black text-white">
+                                  {label}
+                                </p>
+                                <p className="mt-1 text-xs font-bold text-white/40">
+                                  Brooklyn Park • 1 hour session
+                                </p>
+                              </div>
+
+                              <span
+                                className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
+                                  isBooked
+                                    ? "bg-red-500/20 text-red-300"
+                                    : trainingTime === label
+                                    ? "bg-orange-500 text-white"
+                                    : "bg-cyan-400/10 text-cyan-300"
+                                }`}
+                              >
+                                {isBooked
+                                  ? "Booked"
+                                  : trainingTime === label
+                                  ? "Selected"
+                                  : "Available"}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
