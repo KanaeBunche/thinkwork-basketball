@@ -76,6 +76,28 @@ const getTimesForDate = (dateValue) => {
 
   return [];
 };
+
+const getPurchasedSessionCount = (sessionsText, programName) => {
+  const program = programName || "";
+
+  if (
+    program.includes("Individual") ||
+    program.includes("Partner") ||
+    program.includes("Small Group") ||
+    program.includes("Free Session") ||
+    sessionsText?.includes("Hour")
+  ) {
+    return 1;
+  }
+
+  const match = sessionsText?.match(/\d+/);
+  return match ? Number(match[0]) : 1;
+};
+
+const getCompletedSessionCount = (signup) => {
+  const completed = Number(signup.sessions_completed || 0);
+  return Number.isNaN(completed) ? 0 : completed;
+};
 const packageIcons = {
   Starter: Rocket,
   Acceleration: TrendingUp,
@@ -277,29 +299,8 @@ function SchedulePage() {
 }
 
 function DashboardPage() {
-  const emptyManualSignup = {
-    athleteFirstName: "",
-    athleteLastName: "",
-    athleteAge: "",
-    parentName: "",
-    athletePhone: "",
-    parentPhone: "",
-    parentEmail: "",
-    instagram: "",
-    program: "",
-    programSessions: "",
-    programPrice: "",
-    trainingDate: "",
-    trainingTime: "",
-    notes: "",
-    paymentStatus: "Not Paid",
-  };
-
   const [signups, setSignups] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAddSignup, setShowAddSignup] = useState(false);
-  const [manualSignup, setManualSignup] = useState(emptyManualSignup);
-  const [manualSubmitting, setManualSubmitting] = useState(false);
 
   const fetchSignups = async () => {
     setLoading(true);
@@ -320,132 +321,55 @@ function DashboardPage() {
     setLoading(false);
   };
 
-  const updateManualSignup = (field, value) => {
-    setManualSignup((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+ const markPaid = async (signup) => {
+  const confirmed = window.confirm(
+    "Mark this registration as PAID and send the confirmation email?"
+  );
 
-  const addManualSignup = async (e) => {
-    e.preventDefault();
+  if (!confirmed) return;
 
-    if (!manualSignup.athleteFirstName || !manualSignup.parentName) {
-      alert("Please add at least the athlete first name and parent name.");
-      return;
-    }
+  const emailResponse = await fetch("/api/send-confirmation", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+  parentEmail: signup.email,
+  athleteName: `${signup.athlete_first_name || ""} ${
+    signup.athlete_last_name || ""
+  }`.trim(),
+  program: signup.selected_program,
+  trainingDate: signup.training_date,
+  trainingTime: signup.training_time,
+  location: "Brooklyn Park",
+}),
+  });
 
-    setManualSubmitting(true);
+  if (!emailResponse.ok) {
+    const errorData = await emailResponse.json().catch(() => null);
+    console.error(errorData);
+    alert("Payment was not updated because the confirmation email failed.");
+    return;
+  }
 
-    const selectedProgramInfo = packageGroups
-      .flatMap((group) => group.items)
-      .find((program) => program.title === manualSignup.program);
+  const { error } = await supabase
+    .from("signups")
+    .update({
+      payment_status: "Paid",
+      confirmation_status: "Confirmation Sent",
+    })
+    .eq("id", signup.id);
 
-    const { error } = await supabase.from("signups").insert({
-      athlete_first_name: manualSignup.athleteFirstName,
-      athlete_last_name: manualSignup.athleteLastName,
-      athlete_age: manualSignup.athleteAge,
-      parent_guardian_name: manualSignup.parentName,
-      phone: manualSignup.athletePhone,
-      parent_phone: manualSignup.parentPhone,
-      email: manualSignup.parentEmail,
-      instagram: manualSignup.instagram,
-      selected_program: manualSignup.program,
-      program_sessions:
-        manualSignup.programSessions || selectedProgramInfo?.sessions || "",
-      program_price: manualSignup.programPrice || selectedProgramInfo?.price || "",
-      training_date: manualSignup.trainingDate,
-      training_time: manualSignup.trainingTime,
-      additional_notes: manualSignup.notes,
-      payment_status: manualSignup.paymentStatus,
-      confirmation_status:
-        manualSignup.paymentStatus === "Paid"
-          ? "Manual Entry"
-          : "Not Sent",
-    });
+  if (error) {
+    console.error(error);
+    alert("Email sent, but payment status could not be updated.");
+    return;
+  }
 
-    if (error) {
-      console.error(error);
-      alert("Could not add registration.");
-      setManualSubmitting(false);
-      return;
-    }
+  await fetchSignups();
 
-    setManualSignup(emptyManualSignup);
-    setShowAddSignup(false);
-    setManualSubmitting(false);
-    await fetchSignups();
-    alert("Manual registration added.");
-  };
-
-  const deleteSignup = async (id) => {
-    const confirmed = window.confirm(
-      "Delete this registration? This cannot be undone."
-    );
-
-    if (!confirmed) return;
-
-    const { error } = await supabase.from("signups").delete().eq("id", id);
-
-    if (error) {
-      console.error(error);
-      alert("Could not delete registration.");
-      return;
-    }
-
-    await fetchSignups();
-    alert("Registration deleted.");
-  };
-
-  const markPaid = async (signup) => {
-    const confirmed = window.confirm(
-      "Mark this registration as PAID and send the confirmation email?"
-    );
-
-    if (!confirmed) return;
-
-    const emailResponse = await fetch("/api/send-confirmation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        parentEmail: signup.email,
-        athleteName: `${signup.athlete_first_name || ""} ${
-          signup.athlete_last_name || ""
-        }`.trim(),
-        program: signup.selected_program,
-        trainingDate: signup.training_date,
-        trainingTime: signup.training_time,
-        location: "Brooklyn Park",
-      }),
-    });
-
-    if (!emailResponse.ok) {
-      const errorData = await emailResponse.json().catch(() => null);
-      console.error(errorData);
-      alert("Payment was not updated because the confirmation email failed.");
-      return;
-    }
-
-    const { error } = await supabase
-      .from("signups")
-      .update({
-        payment_status: "Paid",
-        confirmation_status: "Confirmation Sent",
-      })
-      .eq("id", signup.id);
-
-    if (error) {
-      console.error(error);
-      alert("Email sent, but payment status could not be updated.");
-      return;
-    }
-
-    await fetchSignups();
-
-    alert("Payment marked as PAID. Confirmation email sent.");
-  };
+  alert("Payment marked as PAID. Confirmation email sent.");
+};
 
   useEffect(() => {
     fetchSignups();
@@ -467,298 +391,13 @@ function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button
-              onClick={() => setShowAddSignup((prev) => !prev)}
-              className="rounded-2xl border border-cyan-400/40 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-cyan-200 transition hover:bg-cyan-400/10"
-            >
-              {showAddSignup ? "Close Add Form" : "Add Signup"}
-            </button>
-
-            <button
-              onClick={fetchSignups}
-              className="rounded-2xl border border-orange-500/40 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] transition hover:bg-orange-500/10"
-            >
-              Refresh
-            </button>
-          </div>
-        </div>
-
-        {showAddSignup && (
-          <form
-            onSubmit={addManualSignup}
-            className="mb-8 rounded-[28px] border border-cyan-400/20 bg-[#08111c] p-6 shadow-[0_0_35px_rgba(34,211,238,.08)]"
+          <button
+            onClick={fetchSignups}
+            className="rounded-2xl border border-orange-500/40 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] transition hover:bg-orange-500/10"
           >
-            <div className="mb-6">
-              <p className="text-[12px] font-black uppercase tracking-[3px] text-cyan-300">
-                Manual Entry
-              </p>
-              <h2 className="mt-2 text-2xl font-black uppercase">
-                Add Registration
-              </h2>
-              <p className="mt-2 text-sm text-white/45">
-                Use this when Coach Pree gets a signup outside the website.
-              </p>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Athlete First Name
-                </label>
-                <input
-                  value={manualSignup.athleteFirstName}
-                  onChange={(e) =>
-                    updateManualSignup("athleteFirstName", e.target.value)
-                  }
-                  required
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="First name"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Athlete Last Name
-                </label>
-                <input
-                  value={manualSignup.athleteLastName}
-                  onChange={(e) =>
-                    updateManualSignup("athleteLastName", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="Last name"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Athlete Age
-                </label>
-                <input
-                  type="number"
-                  value={manualSignup.athleteAge}
-                  onChange={(e) =>
-                    updateManualSignup("athleteAge", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="Age"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Parent/Guardian Name
-                </label>
-                <input
-                  value={manualSignup.parentName}
-                  onChange={(e) =>
-                    updateManualSignup("parentName", e.target.value)
-                  }
-                  required
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="Parent name"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Athlete Phone
-                </label>
-                <input
-                  type="tel"
-                  value={manualSignup.athletePhone}
-                  onChange={(e) =>
-                    updateManualSignup("athletePhone", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="Optional"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Parent Phone
-                </label>
-                <input
-                  type="tel"
-                  value={manualSignup.parentPhone}
-                  onChange={(e) =>
-                    updateManualSignup("parentPhone", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="Parent phone"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Parent Email
-                </label>
-                <input
-                  type="email"
-                  value={manualSignup.parentEmail}
-                  onChange={(e) =>
-                    updateManualSignup("parentEmail", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="email@example.com"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Instagram
-                </label>
-                <input
-                  value={manualSignup.instagram}
-                  onChange={(e) =>
-                    updateManualSignup("instagram", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="@handle"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Program
-                </label>
-                <select
-                  value={manualSignup.program}
-                  onChange={(e) =>
-                    updateManualSignup("program", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-                >
-                  <option value="">Choose a program</option>
-                  {packageGroups.flatMap((group) =>
-                    group.items.map((program) => (
-                      <option key={`manual-${program.title}`} value={program.title}>
-                        {program.title} - {program.sessions} - {program.price}
-                      </option>
-                    ))
-                  )}
-                  <option value="Individual Single Sessions">
-                    Individual Single Sessions
-                  </option>
-                  <option value="Partner Sessions">Partner Sessions</option>
-                  <option value="Small Group Sessions">
-                    Small Group Sessions
-                  </option>
-                  <option value="Claim Your Free Session">
-                    Claim Your Free Session
-                  </option>
-                </select>
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Program Sessions
-                </label>
-                <input
-                  value={manualSignup.programSessions}
-                  onChange={(e) =>
-                    updateManualSignup("programSessions", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="Optional override"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Program Price
-                </label>
-                <input
-                  value={manualSignup.programPrice}
-                  onChange={(e) =>
-                    updateManualSignup("programPrice", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="$"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Payment Status
-                </label>
-                <select
-                  value={manualSignup.paymentStatus}
-                  onChange={(e) =>
-                    updateManualSignup("paymentStatus", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-                >
-                  <option value="Not Paid">Not Paid</option>
-                  <option value="Paid">Paid</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Training Date
-                </label>
-                <input
-                  type="date"
-                  value={manualSignup.trainingDate}
-                  onChange={(e) =>
-                    updateManualSignup("trainingDate", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Training Time
-                </label>
-                <input
-                  value={manualSignup.trainingTime}
-                  onChange={(e) =>
-                    updateManualSignup("trainingTime", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="9:00 AM - 10:00 AM"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-bold text-white">
-                  Notes
-                </label>
-                <input
-                  value={manualSignup.notes}
-                  onChange={(e) => updateManualSignup("notes", e.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="Optional notes"
-                />
-              </div>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="submit"
-                disabled={manualSubmitting}
-                className="rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-white disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {manualSubmitting ? "Adding..." : "Add Registration"}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setManualSignup(emptyManualSignup);
-                  setShowAddSignup(false);
-                }}
-                className="rounded-2xl border border-white/10 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-white/70 hover:bg-white/5"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
+            Refresh
+          </button>
+        </div>
 
         {loading ? (
           <p className="text-white/60">Loading signups...</p>
@@ -769,13 +408,14 @@ function DashboardPage() {
         ) : (
           <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#08111c]">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1180px] text-left text-sm">
+              <table className="w-full min-w-[1100px] text-left text-sm">
                 <thead className="border-b border-white/10 bg-black/35 text-[11px] uppercase tracking-[2px] text-white/45">
                   <tr>
                     <th className="px-5 py-4">Athlete</th>
                     <th className="px-5 py-4">Parent</th>
                     <th className="px-5 py-4">Contact</th>
                     <th className="px-5 py-4">Program</th>
+                    <th className="px-5 py-4">Sessions</th>
                     <th className="px-5 py-4">Date</th>
                     <th className="px-5 py-4">Time</th>
                     <th className="px-5 py-4">Payment</th>
@@ -803,14 +443,9 @@ function DashboardPage() {
                       </td>
 
                       <td className="px-5 py-5">
-                        <p className="text-white/75">
-                          Athlete: {signup.phone || "N/A"}
-                        </p>
-                        <p className="mt-1 text-white/75">
-                          Parent: {signup.parent_phone || "N/A"}
-                        </p>
+                        <p className="text-white/75">{signup.phone}</p>
                         <p className="mt-1 text-xs text-white/45">
-                          {signup.email || "No email"}
+                          {signup.email}
                         </p>
                       </td>
 
@@ -821,6 +456,70 @@ function DashboardPage() {
                         <p className="mt-1 text-xs text-white/45">
                           {signup.program_sessions} • {signup.program_price}
                         </p>
+                      </td>
+
+                      <td className="px-5 py-5">
+                        {(() => {
+                          const purchased = getPurchasedSessionCount(
+                            signup.program_sessions,
+                            signup.selected_program
+                          );
+                          const completed = getCompletedSessionCount(signup);
+                          const remaining = Math.max(0, purchased - completed);
+
+                          return (
+                            <div className="min-w-[150px]">
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="rounded-xl border border-white/10 bg-white/[0.03] px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-white/35">
+                                    Bought
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-white">
+                                    {purchased}
+                                  </p>
+                                </div>
+
+                                <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-green-300/70">
+                                    Done
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-green-300">
+                                    {completed}
+                                  </p>
+                                </div>
+
+                                <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-orange-300/70">
+                                    Left
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-orange-300">
+                                    {remaining}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="mt-2 flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => updateCompletedSessions(signup, -1)}
+                                  disabled={completed <= 0}
+                                  className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-black text-white/70 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  -
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => updateCompletedSessions(signup, 1)}
+                                  disabled={completed >= purchased}
+                                  className="flex-1 rounded-lg border border-cyan-400/30 px-3 py-2 text-[11px] font-black text-cyan-300 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </td>
 
                       <td className="px-5 py-5 text-white/75">
@@ -844,26 +543,14 @@ function DashboardPage() {
                       </td>
 
                       <td className="px-5 py-5">
-                        <div className="flex flex-col gap-2">
-                          <button
-                            type="button"
-                            onClick={() => markPaid(signup)}
-                            disabled={signup.payment_status === "Paid"}
-                            className="rounded-xl bg-gradient-to-b from-orange-500 to-orange-700 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-white disabled:cursor-not-allowed disabled:opacity-40"
-                          >
-                            {signup.payment_status === "Paid"
-                              ? "Paid"
-                              : "Mark Paid"}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => deleteSignup(signup.id)}
-                            className="rounded-xl border border-red-500/40 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-red-300 transition hover:bg-red-500/10"
-                          >
-                            Delete
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => markPaid(signup)}
+                          disabled={signup.payment_status === "Paid"}
+                          className="rounded-xl bg-gradient-to-b from-orange-500 to-orange-700 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-white disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {signup.payment_status === "Paid" ? "Paid" : "Mark Paid"}
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -2039,6 +1726,7 @@ export default function App() {
                     additional_notes: formData.get("Additional Notes"),
                     payment_status: "Not Paid",
                     confirmation_status: "Not Sent",
+                    sessions_completed: 0,
                   });
 
                   if (error) {
