@@ -321,6 +321,36 @@ function DashboardPage() {
     setLoading(false);
   };
 
+
+  const updateCompletedSessions = async (signup, change) => {
+    const purchased = getPurchasedSessionCount(
+      signup.program_sessions,
+      signup.selected_program
+    );
+
+    const completed = getCompletedSessionCount(signup);
+
+    const nextCompleted = Math.max(
+      0,
+      Math.min(purchased, completed + change)
+    );
+
+    const { error } = await supabase
+      .from("signups")
+      .update({
+        sessions_completed: nextCompleted,
+      })
+      .eq("id", signup.id);
+
+    if (error) {
+      console.error("Session update error:", error);
+      alert(`Could not update sessions: ${error.message}`);
+      return;
+    }
+
+    await fetchSignups();
+  };
+
  const markPaid = async (signup) => {
   const confirmed = window.confirm(
     "Mark this registration as PAID and send the confirmation email?"
