@@ -291,7 +291,7 @@ const getPurchasedSessionCount = (sessionsText, programName) => {
   }
 
   const match = sessionsText?.match(/\d+/);
-  return match ? Number(match[0]) : 1;
+  return match ? Math.max(1, Number(match[0])) : 1;
 };
 
 const getCompletedSessionCount = (signup) => {
@@ -380,7 +380,7 @@ function DashboardPage() {
       training_date: manualSignup.trainingDate,
       training_time: manualSignup.trainingTime,
       additional_notes: manualSignup.notes,
-      payment_status: manualSignup.paymentStatus,
+      payment_status: manualSignup.paymentStatus || "Not Paid",
       confirmation_status:
         manualSignup.paymentStatus === "Paid"
           ? "Manual Entry"
