@@ -276,6 +276,29 @@ function SchedulePage() {
   );
 }
 
+
+const getPurchasedSessionCount = (sessionsText, programName) => {
+  const program = programName || "";
+
+  if (
+    program.includes("Individual") ||
+    program.includes("Partner") ||
+    program.includes("Small Group") ||
+    program.includes("Free Session") ||
+    sessionsText?.includes("Hour")
+  ) {
+    return 1;
+  }
+
+  const match = sessionsText?.match(/\d+/);
+  return match ? Number(match[0]) : 1;
+};
+
+const getCompletedSessionCount = (signup) => {
+  const completed = Number(signup.sessions_completed || 0);
+  return Number.isNaN(completed) ? 0 : completed;
+};
+
 function DashboardPage() {
   const emptyManualSignup = {
     athleteFirstName: "",
@@ -362,6 +385,7 @@ function DashboardPage() {
         manualSignup.paymentStatus === "Paid"
           ? "Manual Entry"
           : "Not Sent",
+      sessions_completed: 0,
     });
 
     if (error) {
@@ -385,19 +409,30 @@ function DashboardPage() {
 
     if (!confirmed) return;
 
-    const { error } = await supabase.from("signups").delete().eq("id", id);
+    const { data, error } = await supabase
+      .from("signups")
+      .delete()
+      .eq("id", id)
+      .select("id");
 
     if (error) {
-  console.error("Delete error:", error);
-  alert(`Could not delete registration: ${error.message}`);
-  return;
-}
+      console.error("Delete error:", error);
+      alert(`Could not delete registration: ${error.message}`);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      alert(
+        "Delete did not go through. Check the Supabase DELETE policy for the signups table."
+      );
+      return;
+    }
 
     await fetchSignups();
     alert("Registration deleted.");
   };
 
-   const updateCompletedSessions = async (signup, change) => {
+  const updateCompletedSessions = async (signup, change) => {
     const purchased = getPurchasedSessionCount(
       signup.program_sessions,
       signup.selected_program
@@ -798,13 +833,14 @@ function DashboardPage() {
         ) : (
           <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#08111c]">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1180px] text-left text-sm">
+              <table className="w-full min-w-[1300px] text-left text-sm">
                 <thead className="border-b border-white/10 bg-black/35 text-[11px] uppercase tracking-[2px] text-white/45">
                   <tr>
                     <th className="px-5 py-4">Athlete</th>
                     <th className="px-5 py-4">Parent</th>
                     <th className="px-5 py-4">Contact</th>
                     <th className="px-5 py-4">Program</th>
+                    <th className="px-5 py-4">Sessions</th>
                     <th className="px-5 py-4">Date</th>
                     <th className="px-5 py-4">Time</th>
                     <th className="px-5 py-4">Payment</th>
@@ -850,6 +886,70 @@ function DashboardPage() {
                         <p className="mt-1 text-xs text-white/45">
                           {signup.program_sessions} • {signup.program_price}
                         </p>
+                      </td>
+
+                      <td className="px-5 py-5">
+                        {(() => {
+                          const purchased = getPurchasedSessionCount(
+                            signup.program_sessions,
+                            signup.selected_program
+                          );
+                          const completed = getCompletedSessionCount(signup);
+                          const remaining = Math.max(0, purchased - completed);
+
+                          return (
+                            <div className="min-w-[150px]">
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="rounded-xl border border-white/10 bg-white/[0.03] px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-white/35">
+                                    Bought
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-white">
+                                    {purchased}
+                                  </p>
+                                </div>
+
+                                <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-green-300/70">
+                                    Done
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-green-300">
+                                    {completed}
+                                  </p>
+                                </div>
+
+                                <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-orange-300/70">
+                                    Left
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-orange-300">
+                                    {remaining}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="mt-2 flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => updateCompletedSessions(signup, -1)}
+                                  disabled={completed <= 0}
+                                  className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-black text-white/70 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  -
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => updateCompletedSessions(signup, 1)}
+                                  disabled={completed >= purchased}
+                                  className="flex-1 rounded-lg border border-cyan-400/30 px-3 py-2 text-[11px] font-black text-cyan-300 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </td>
 
                       <td className="px-5 py-5 text-white/75">
@@ -2068,6 +2168,7 @@ export default function App() {
                     additional_notes: formData.get("Additional Notes"),
                     payment_status: "Not Paid",
                     confirmation_status: "Not Sent",
+                    sessions_completed: 0,
                   });
 
                   if (error) {
