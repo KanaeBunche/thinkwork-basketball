@@ -294,59 +294,57 @@ function DashboardPage() {
     setLoading(false);
   };
 
-  const markPaid = async (signup) => {
-    const location = prompt(
-      "Enter session location:",
-      "Location will be confirmed by Coach Pree"
-    );
+ const markPaid = async (signup) => {
+  const confirmed = window.confirm(
+    "Mark this registration as PAID and send the confirmation email?"
+  );
 
-    if (location === null) {
-      return;
-    }
+  if (!confirmed) return;
 
-    const emailResponse = await fetch("/api/send-confirmation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        parentEmail: signup.email,
-        athleteName: `${signup.athlete_first_name || ""} ${
-          signup.athlete_last_name || ""
-        }`.trim(),
-        parentName: signup.parent_guardian_name,
-        program: signup.selected_program,
-        programSessions: signup.program_sessions,
-        programPrice: signup.program_price,
-        trainingDate: signup.training_date,
-        trainingTime: signup.training_time,
-        location,
-      }),
-    });
+  const emailResponse = await fetch("/api/send-confirmation", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      parentEmail: signup.email,
+      athleteName: `${signup.athlete_first_name || ""} ${
+        signup.athlete_last_name || ""
+      }`.trim(),
+      parentName: signup.parent_guardian_name,
+      program: signup.selected_program,
+      programSessions: signup.program_sessions,
+      programPrice: signup.program_price,
+      trainingDate: signup.training_date,
+      trainingTime: signup.training_time,
+    }),
+  });
 
-    if (!emailResponse.ok) {
-      const errorData = await emailResponse.json().catch(() => null);
-      console.error(errorData);
-      alert("Payment was not updated because the confirmation email failed.");
-      return;
-    }
+  if (!emailResponse.ok) {
+    const errorData = await emailResponse.json().catch(() => null);
+    console.error(errorData);
+    alert("Payment was not updated because the confirmation email failed.");
+    return;
+  }
 
-    const { error } = await supabase
-      .from("signups")
-      .update({
-        payment_status: "Paid",
-        confirmation_status: "Confirmation Sent",
-      })
-      .eq("id", signup.id);
+  const { error } = await supabase
+    .from("signups")
+    .update({
+      payment_status: "Paid",
+      confirmation_status: "Confirmation Sent",
+    })
+    .eq("id", signup.id);
 
-    if (error) {
-      console.error(error);
-      alert("Email sent, but payment status could not be updated.");
-      return;
-    }
+  if (error) {
+    console.error(error);
+    alert("Email sent, but payment status could not be updated.");
+    return;
+  }
 
-    fetchSignups();
-  };
+  await fetchSignups();
+
+  alert("Payment marked as PAID. Confirmation email sent.");
+};
 
   useEffect(() => {
     fetchSignups();
