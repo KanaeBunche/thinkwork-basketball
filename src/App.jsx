@@ -626,12 +626,12 @@ function DashboardPage() {
   return (
     <main className="min-h-screen bg-[#02060d] px-4 py-8 text-white sm:px-6 lg:px-10">
       <div className="mx-auto max-w-[1500px]">
-        <div className="mb-8 flex flex-col gap-4 rounded-[28px] border border-white/10 bg-[#08111c] p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-8 flex flex-col gap-5 rounded-[28px] border border-white/10 bg-[#08111c] p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-500">
               Owner Dashboard
             </p>
-            <h1 className="mt-2 text-4xl font-black uppercase">
+            <h1 className="mt-2 text-3xl font-black uppercase sm:text-4xl">
               ThinkWork Signups
             </h1>
             <p className="mt-2 text-sm text-white/50">
@@ -639,13 +639,13 @@ function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:items-center">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search name, parent, phone, email, program, sessions..."
-              className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500 md:w-[320px]"
+              className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500 lg:w-[360px]"
             />
 
             <button
@@ -951,19 +951,183 @@ function DashboardPage() {
             <p className="text-lg font-bold text-white/70">No matching registrations found.</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#08111c]">
-            <div className="overflow-x-auto pb-3">
-              <table className="w-full min-w-[1100px] text-left text-sm">
+          <>
+            <div className="grid gap-4 lg:hidden">
+              {filteredSignups.map((signup) => {
+                const purchased = getPurchasedSessionCount(
+                  signup.program_sessions,
+                  signup.selected_program
+                );
+                const completed = getCompletedSessionCount(signup);
+                const remaining = Math.max(0, purchased - completed);
+
+                return (
+                  <article
+                    key={`mobile-${signup.id}`}
+                    className="rounded-[26px] border border-white/10 bg-[#08111c] p-5 shadow-[0_0_30px_rgba(0,132,255,.08)]"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-lg font-black text-white">
+                          {signup.athlete_first_name} {signup.athlete_last_name}
+                        </p>
+                        <p className="mt-1 text-xs font-semibold text-white/45">
+                          Age: {signup.athlete_age || "N/A"}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`inline-flex min-w-[78px] justify-center whitespace-nowrap rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
+                          signup.payment_status === "Paid"
+                            ? "bg-green-500/15 text-green-300"
+                            : "bg-orange-500/15 text-orange-300"
+                        }`}
+                      >
+                        {signup.payment_status || "Not Paid"}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 grid gap-3 text-sm text-white/65">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                          Parent
+                        </p>
+                        <p className="mt-1 font-semibold text-white/80">
+                          {signup.parent_guardian_name || "N/A"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                          Contact
+                        </p>
+                        <p className="mt-1">Athlete: {signup.phone || "N/A"}</p>
+                        <p>Parent: {signup.parent_phone || "N/A"}</p>
+                        <p className="break-all text-xs text-white/45">
+                          {signup.email || "No email"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                          Program
+                        </p>
+                        <p className="mt-1 font-black text-orange-300">
+                          {signup.selected_program || "Not selected"}
+                        </p>
+                        <p className="text-xs text-white/45">
+                          {signup.program_sessions} • {signup.program_price}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                            Date
+                          </p>
+                          <p className="mt-1 font-semibold text-white/80">
+                            {signup.training_date || "N/A"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                            Time
+                          </p>
+                          <p className="mt-1 font-semibold text-white/80">
+                            {signup.training_time || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mx-auto mt-5 max-w-[260px]">
+                      <div className="grid grid-cols-3 gap-2 text-center">
+                        <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3">
+                          <p className="text-[9px] font-black uppercase text-white/35">
+                            Bought
+                          </p>
+                          <p className="mt-1 text-base font-black text-white">
+                            {purchased}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-3 py-3">
+                          <p className="text-[9px] font-black uppercase text-green-300/70">
+                            Done
+                          </p>
+                          <p className="mt-1 text-base font-black text-green-300">
+                            {completed}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-3">
+                          <p className="text-[9px] font-black uppercase text-orange-300/70">
+                            Left
+                          </p>
+                          <p className="mt-1 text-base font-black text-orange-300">
+                            {remaining}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 flex justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => updateCompletedSessions(signup, -1)}
+                          disabled={completed <= 0}
+                          className="w-14 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-black text-white/70 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          -
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => updateCompletedSessions(signup, 1)}
+                          disabled={completed >= purchased}
+                          className="w-14 rounded-lg border border-cyan-400/30 px-3 py-2 text-[11px] font-black text-cyan-300 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => markPaid(signup)}
+                        disabled={signup.payment_status === "Paid"}
+                        className="rounded-xl bg-gradient-to-b from-orange-500 to-orange-700 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-white disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {signup.payment_status === "Paid" ? "Paid" : "Mark Paid"}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => deleteSignup(signup.id)}
+                        className="rounded-xl border border-red-500/40 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-red-300 hover:bg-red-500/10"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="hidden overflow-hidden rounded-[28px] border border-white/10 bg-[#08111c] lg:block">
+              <div className="overflow-x-auto pb-3">
+                <table className="w-full min-w-[1240px] text-left text-sm">
                 <thead className="border-b border-white/10 bg-black/35 text-[11px] uppercase tracking-[2px] text-white/45">
                   <tr>
                     <th className="px-5 py-4">Athlete</th>
                     <th className="px-5 py-4">Parent</th>
                     <th className="px-5 py-4">Contact</th>
                     <th className="px-5 py-4">Program</th>
-                    <th className="px-5 py-4">Sessions</th>
+                    <th className="px-5 py-4 text-center">Sessions</th>
                     <th className="px-5 py-4">Date</th>
                     <th className="px-5 py-4">Time</th>
-                    <th className="px-5 py-4">Payment</th>
+                    <th className="px-5 py-4 text-center">Payment</th>
                     <th className="px-5 py-4">Action</th>
                   </tr>
                 </thead>
@@ -1008,7 +1172,7 @@ function DashboardPage() {
                         </p>
                       </td>
 
-                      <td className="px-5 py-5">
+                      <td className="px-5 py-5 text-center">
                         {(() => {
                           const purchased = getPurchasedSessionCount(
                             signup.program_sessions,
@@ -1018,7 +1182,7 @@ function DashboardPage() {
                           const remaining = Math.max(0, purchased - completed);
 
                           return (
-                            <div className="mx-auto min-w-[150px] max-w-[180px]">
+                            <div className="mx-auto min-w-[190px] max-w-[210px]">
                               <div className="grid grid-cols-3 gap-2 text-center">
                                 <div className="rounded-xl border border-white/10 bg-white/[0.03] px-2 py-2">
                                   <p className="text-[10px] font-black uppercase text-white/35">
@@ -1080,9 +1244,9 @@ function DashboardPage() {
                         {signup.training_time || "N/A"}
                       </td>
 
-                      <td className="px-5 py-5">
+                      <td className="px-5 py-5 text-center">
                         <span
-                          className={`rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[1px] ${
+                          className={`inline-flex min-w-[78px] justify-center whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[1px] ${
                             signup.payment_status === "Paid"
                               ? "bg-green-500/15 text-green-300"
                               : "bg-orange-500/15 text-orange-300"
@@ -1093,7 +1257,7 @@ function DashboardPage() {
                       </td>
 
                       <td className="px-5 py-5">
-                        <div className="flex flex-col gap-2">
+                        <div className="flex min-w-[112px] flex-col gap-2">
                           <button
                             type="button"
                             onClick={() => markPaid(signup)}
@@ -1118,8 +1282,9 @@ function DashboardPage() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         <p className="mt-6 text-center text-xs text-white/35">
