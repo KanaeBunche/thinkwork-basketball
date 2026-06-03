@@ -8,13 +8,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const {
-      parentEmail,
-      athleteName,
-      program,
-      trainingDate,
-      trainingTime,
-    } = req.body;
+  const {
+  parentEmail,
+  athleteName,
+  program,
+  trainingDate,
+  trainingTime,
+  location,
+} = req.body;
 
     const data = await resend.emails.send({
       from: "ThinkWork Basketball <onboarding@resend.dev>",
@@ -91,6 +92,14 @@ export default async function handler(req, res) {
                         ${trainingTime || "N/A"}
                       </td>
                     </tr>
+                    <tr>
+  <td style="padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:13px;color:rgba(255,255,255,0.5);font-weight:700;">
+    Location
+  </td>
+  <td style="padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:14px;color:#67e8f9;font-weight:800;text-align:right;">
+    ${location || "Brooklyn Park"}
+  </td>
+</tr>
                   </table>
                 </div>
 

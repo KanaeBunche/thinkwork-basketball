@@ -312,17 +312,15 @@ function DashboardPage() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      parentEmail: signup.email,
-      athleteName: `${signup.athlete_first_name || ""} ${
-        signup.athlete_last_name || ""
-      }`.trim(),
-      parentName: signup.parent_guardian_name,
-      program: signup.selected_program,
-      programSessions: signup.program_sessions,
-      programPrice: signup.program_price,
-      trainingDate: signup.training_date,
-      trainingTime: signup.training_time,
-    }),
+  parentEmail: signup.email,
+  athleteName: `${signup.athlete_first_name || ""} ${
+    signup.athlete_last_name || ""
+  }`.trim(),
+  program: signup.selected_program,
+  trainingDate: signup.training_date,
+  trainingTime: signup.training_time,
+  location: "Brooklyn Park",
+}),
   });
 
   if (!emailResponse.ok) {
