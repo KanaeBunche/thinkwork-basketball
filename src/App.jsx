@@ -2469,7 +2469,25 @@ export default function App() {
                     setSubmitting(false);
                     return;
                   }
-
+await fetch("/api/new-registration", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    athleteName: `${formData.get("Athlete First Name") || ""} ${
+      formData.get("Athlete Last Name") || ""
+    }`.trim(),
+    parentName: formData.get("Parent Guardian Name"),
+    parentPhone: formData.get("Parent Phone"),
+    parentEmail: formData.get("Email"),
+    program: selectedProgram?.title || formData.get("Program Interest"),
+    trainingDate,
+    trainingTime,
+    instagram: formData.get("Instagram"),
+    notes: formData.get("Additional Notes"),
+  }),
+});
                   setSubmitting(false);
                   window.location.href = "/schedule";
                 }}
