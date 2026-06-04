@@ -20,13 +20,14 @@ export default async function handler(req, res) {
       notes,
     } = req.body;
 
-    const data = await resend.emails.send({
-      from: "ThinkWork Basketball <onboarding@resend.dev>",
-      to: ["kanae.bunche@gmail.com"],
+    
+      const data = await resend.emails.send({
+  from: "ThinkWork Basketball <thinkworkbasketball@gmail.com>",
+  to: ["thinkworkbasketball@gmail.com"],
 
-      subject: `New Registration - ${athleteName}`,
+  subject: `New Registration - ${athleteName}`,
 
-      html: `
+  html: `
         <div style="font-family:Arial,sans-serif;padding:30px;background:#02060d;color:white;">
           <div style="max-width:650px;margin:auto;background:#07111d;padding:30px;border-radius:24px;border:1px solid #1f2937;">
 

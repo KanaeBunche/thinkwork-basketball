@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
       // TEST MODE:
       // Resend only sends to verified emails until the domain is verified.
-      to: ["kanae.bunche@gmail.com"],
+      to: [parentEmail, "thinkworkbasketball@gmail.com"],
 
       // AFTER DOMAIN VERIFICATION, CHANGE TO:
       // to: [parentEmail, "thinkworkbasketball@gmail.com"],
