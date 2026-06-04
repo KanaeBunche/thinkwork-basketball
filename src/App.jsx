@@ -2499,9 +2499,9 @@ await fetch("/api/new-registration", {
       formData.get("Athlete Last Name") || ""
     }`.trim(),
     program: selectedProgram?.title || formData.get("Program Interest"),
+    price: selectedProgram?.price || "",
   }),
-});                 
-                  
+});              
                   setSubmitting(false);
                   window.location.href = "/schedule";
                 }}
