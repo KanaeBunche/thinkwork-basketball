@@ -550,7 +550,6 @@ function DashboardPage() {
         program: signup.selected_program,
         trainingDate: signup.training_date,
         trainingTime: signup.training_time,
-        location: "Brooklyn Park",
       }),
     });
 
@@ -2488,6 +2487,21 @@ await fetch("/api/new-registration", {
     notes: formData.get("Additional Notes"),
   }),
 });
+   
+ await fetch("/api/send-payment-instructions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    parentEmail: formData.get("Email"),
+    athleteName: `${formData.get("Athlete First Name") || ""} ${
+      formData.get("Athlete Last Name") || ""
+    }`.trim(),
+    program: selectedProgram?.title || formData.get("Program Interest"),
+  }),
+});                 
+                  
                   setSubmitting(false);
                   window.location.href = "/schedule";
                 }}
@@ -2654,7 +2668,7 @@ await fetch("/api/new-registration", {
                     Choose your training date and full session time below.
                     Sessions are one hour long with 30 minutes of recovery time
                     between available slots. Available days are Monday - Friday
-                    and Saturday. Location: Brooklyn Park.
+                    and Saturday.
                   </p>
                 </div>
 

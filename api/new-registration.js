@@ -53,7 +53,7 @@ export default async function handler(req, res) {
             <p><strong>Program:</strong> ${program || "N/A"}</p>
             <p><strong>Date:</strong> ${trainingDate || "N/A"}</p>
             <p><strong>Time:</strong> ${trainingTime || "N/A"}</p>
-            <p><strong>Location:</strong> Brooklyn Park</p>
+            
 
             <hr style="border:none;border-top:1px solid #334155;margin:24px 0;" />
 
