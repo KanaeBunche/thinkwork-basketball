@@ -18,16 +18,12 @@ export default async function handler(req, res) {
 } = req.body;
 
     const data = await resend.emails.send({
-      from: "ThinkWork Basketball <onboarding@resend.dev>",
+  from: "ThinkWork Basketball <notifications@thinkworkbasketball.com>",
+  to: [parentEmail],
+  cc: ["thinkworkbasketball@gmail.com"],
 
-      // TEST MODE:
-      // Resend only sends to verified emails until the domain is verified.
-      to: [parentEmail, "thinkworkbasketball@gmail.com"],
+  subject: "ThinkWork Basketball Training Confirmation",
 
-      // AFTER DOMAIN VERIFICATION, CHANGE TO:
-      // to: [parentEmail, "thinkworkbasketball@gmail.com"],
-
-      subject: "ThinkWork Basketball Training Confirmation",
       html: `
         <div style="margin:0;padding:0;background:#02060d;font-family:Arial,Helvetica,sans-serif;color:#ffffff;">
           <div style="max-width:650px;margin:0 auto;padding:40px 18px;">

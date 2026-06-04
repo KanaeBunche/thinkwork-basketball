@@ -21,8 +21,8 @@ export default async function handler(req, res) {
     } = req.body;
 
     
-      const data = await resend.emails.send({
-  from: "ThinkWork Basketball <thinkworkbasketball@gmail.com>",
+     const data = await resend.emails.send({
+  from: "ThinkWork Basketball <notifications@thinkworkbasketball.com>",
   to: ["thinkworkbasketball@gmail.com"],
 
   subject: `New Registration - ${athleteName}`,
