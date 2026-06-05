@@ -19,6 +19,7 @@ export default async function handler(req, res) {
     const data = await resend.emails.send({
   from: "ThinkWork Basketball <notifications@thinkworkbasketball.com>",
   to: [parentEmail],
+  cc: ["thinkworkbasketball@gmail.com"],
 
 
   subject: "ThinkWork Basketball Training Confirmation",

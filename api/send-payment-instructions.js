@@ -20,6 +20,7 @@ export default async function handler(req, res) {
 
       // Parent only
       to: [parentEmail],
+      cc: ["thinkworkbasketball@gmail.com"],
 
       subject: "ThinkWork Basketball Registration Received",
 
