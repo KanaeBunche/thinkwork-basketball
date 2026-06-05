@@ -17,7 +17,8 @@ import {
   Trophy,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "./supabaseClient";
 
 import logo from "./assets/thinkwork-logo.png";
 import heroPlayer from "./assets/hero-player.png";
@@ -33,10 +34,50 @@ import image7 from "./assets/images/image7.png";
 import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
 
-const FORMSPREE_SIGNUP_URL = "https://formspree.io/f/xpqnywor";
-
 const navItems = ["Home", "Programs", "About", "Schedule", "Media", "Contact"];
 
+const DASHBOARD_PASSWORD = "ThinkWork123";
+
+const weekdayTimes = [
+  { value: "9:00 AM", label: "9:00 AM - 10:00 AM" },
+  { value: "10:30 AM", label: "10:30 AM - 11:30 AM" },
+  { value: "12:00 PM", label: "12:00 PM - 1:00 PM" },
+  { value: "1:30 PM", label: "1:30 PM - 2:30 PM" },
+  { value: "3:00 PM", label: "3:00 PM - 4:00 PM" },
+  { value: "4:30 PM", label: "4:30 PM - 5:30 PM" },
+];
+
+const saturdayTimes = [
+  { value: "8:00 AM", label: "8:00 AM - 9:00 AM" },
+  { value: "9:30 AM", label: "9:30 AM - 10:30 AM" },
+];
+
+
+
+const getDayName = (dateValue) => {
+  if (!dateValue) return "";
+
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  return date.toLocaleDateString("en-US", { weekday: "long" });
+};
+
+const getTimesForDate = (dateValue) => {
+  const dayName = getDayName(dateValue);
+
+  if (
+    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].includes(dayName)
+  ) {
+    return weekdayTimes;
+  }
+
+  if (dayName === "Saturday") {
+    return saturdayTimes;
+  }
+
+  return [];
+};
 const packageIcons = {
   Starter: Rocket,
   Acceleration: TrendingUp,
@@ -220,19 +261,1034 @@ function SchedulePage() {
         </h1>
 
         <p className="mt-6 leading-7 text-white/65">
-          Your registration has been submitted successfully. Click below to
-          choose your official training date and time.
+          Your registration and training time have been submitted successfully.
+          Coach Pree will review your registration and follow up with payment
+          and confirmation details.
         </p>
 
         <a
-          href="https://calendar.app.google/PJf4yAtk6BqMYMqa8"
-          target="_blank"
-          rel="noreferrer"
+          href="/"
           className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-sm font-black uppercase"
         >
-          Open Scheduling
+          Back To Home
           <ArrowRight className="h-5 w-5" />
         </a>
+      </div>
+    </main>
+  );
+}
+
+
+const getPurchasedSessionCount = (sessionsText, programName) => {
+  const program = programName || "";
+
+  if (
+    program.includes("Individual") ||
+    program.includes("Partner") ||
+    program.includes("Small Group") ||
+    program.includes("Free Session") ||
+    sessionsText?.includes("Hour")
+  ) {
+    return 1;
+  }
+
+  const match = sessionsText?.match(/\d+/);
+  return match ? Math.max(1, Number(match[0])) : 1;
+};
+
+const getCompletedSessionCount = (signup) => {
+  const completed = Number(signup.sessions_completed || 0);
+  return Number.isNaN(completed) ? 0 : completed;
+};
+
+function DashboardPasswordPage({ onUnlock }) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (password === DASHBOARD_PASSWORD) {
+      localStorage.setItem("thinkwork_dashboard_unlocked", "true");
+      setError("");
+      onUnlock();
+      return;
+    }
+
+    setError("Incorrect password. Please try again.");
+  };
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#02060d] px-6 text-white">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md rounded-[32px] border border-white/10 bg-[#08111c] p-8 shadow-[0_0_60px_rgba(0,132,255,.14)]"
+      >
+        <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-500">
+          Owner Access
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black uppercase leading-none">
+          Dashboard Login
+        </h1>
+
+        <p className="mt-4 text-sm leading-6 text-white/55">
+          Enter the dashboard password to view registrations and manage sessions.
+        </p>
+
+        <div className="mt-7">
+          <label className="mb-2 block text-sm font-bold text-white">
+            Password
+          </label>
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter dashboard password"
+            className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+          />
+        </div>
+
+        {error && (
+          <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          className="mt-6 w-full rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-white shadow-[0_0_35px_rgba(249,115,22,.25)] transition hover:-translate-y-0.5"
+        >
+          Open Dashboard
+        </button>
+      </form>
+    </main>
+  );
+}
+
+function DashboardPage() {
+  const emptyManualSignup = {
+    athleteFirstName: "",
+    athleteLastName: "",
+    athleteAge: "",
+    parentName: "",
+    athletePhone: "",
+    parentPhone: "",
+    parentEmail: "",
+    instagram: "",
+    program: "",
+    programSessions: "",
+    programPrice: "",
+    trainingDate: "",
+    trainingTime: "",
+    notes: "",
+    paymentStatus: "Not Paid",
+  };
+
+  const [signups, setSignups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddSignup, setShowAddSignup] = useState(false);
+  const [manualSignup, setManualSignup] = useState(emptyManualSignup);
+  const [manualSubmitting, setManualSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchSignups = async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("signups")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      alert("Could not load dashboard.");
+      setLoading(false);
+      return;
+    }
+
+    setSignups(data || []);
+    setLoading(false);
+  };
+
+  const updateManualSignup = (field, value) => {
+    setManualSignup((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const addManualSignup = async (e) => {
+    e.preventDefault();
+
+    if (!manualSignup.athleteFirstName || !manualSignup.parentName) {
+      alert("Please add at least the athlete first name and parent name.");
+      return;
+    }
+
+    setManualSubmitting(true);
+
+    const selectedProgramInfo = packageGroups
+      .flatMap((group) => group.items)
+      .find((program) => program.title === manualSignup.program);
+
+    const { error } = await supabase.from("signups").insert({
+      athlete_first_name: manualSignup.athleteFirstName,
+      athlete_last_name: manualSignup.athleteLastName,
+      athlete_age: manualSignup.athleteAge,
+      parent_guardian_name: manualSignup.parentName,
+      phone: manualSignup.athletePhone,
+      parent_phone: manualSignup.parentPhone,
+      email: manualSignup.parentEmail,
+      instagram: manualSignup.instagram,
+      selected_program: manualSignup.program,
+      program_sessions:
+        manualSignup.programSessions || selectedProgramInfo?.sessions || "",
+      program_price: manualSignup.programPrice || selectedProgramInfo?.price || "",
+      training_date: manualSignup.trainingDate,
+      training_time: manualSignup.trainingTime,
+      additional_notes: manualSignup.notes,
+      payment_status: manualSignup.paymentStatus || "Not Paid",
+      confirmation_status:
+        manualSignup.paymentStatus === "Paid"
+          ? "Manual Entry"
+          : "Not Sent",
+      sessions_completed: 0,
+    });
+
+    if (error) {
+      console.error(error);
+      alert("Could not add registration.");
+      setManualSubmitting(false);
+      return;
+    }
+
+    setManualSignup(emptyManualSignup);
+    setShowAddSignup(false);
+    setManualSubmitting(false);
+    await fetchSignups();
+    alert("Manual registration added.");
+  };
+
+  const deleteSignup = async (id) => {
+    const confirmed = window.confirm(
+      "Delete this registration? This cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    const { data, error } = await supabase
+      .from("signups")
+      .delete()
+      .eq("id", id)
+      .select("id");
+
+    if (error) {
+      console.error("Delete error:", error);
+      alert(`Could not delete registration: ${error.message}`);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      alert(
+        "Delete did not go through. Check the Supabase DELETE policy for the signups table."
+      );
+      return;
+    }
+
+    await fetchSignups();
+    alert("Registration deleted.");
+  };
+
+  const updateCompletedSessions = async (signup, change) => {
+    const purchased = getPurchasedSessionCount(
+      signup.program_sessions,
+      signup.selected_program
+    );
+
+    const currentCompleted = getCompletedSessionCount(signup);
+
+    const nextCompleted = Math.max(
+      0,
+      Math.min(purchased, currentCompleted + change)
+    );
+
+    const { error } = await supabase
+      .from("signups")
+      .update({
+        sessions_completed: nextCompleted,
+      })
+      .eq("id", signup.id);
+
+    if (error) {
+      console.error("Session update error:", error);
+      alert(`Could not update sessions: ${error.message}`);
+      return;
+    }
+
+    await fetchSignups();
+  };
+
+ const markPaid = async (signup) => {
+    const confirmed = window.confirm(
+      "Mark this registration as PAID and send the confirmation email?"
+    );
+
+    if (!confirmed) return;
+
+    const emailResponse = await fetch("/api/send-confirmation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        parentEmail: signup.email,
+        athleteName: `${signup.athlete_first_name || ""} ${
+          signup.athlete_last_name || ""
+        }`.trim(),
+        program: signup.selected_program,
+        trainingDate: signup.training_date,
+        trainingTime: signup.training_time,
+      }),
+    });
+
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.json().catch(() => null);
+      console.error(errorData);
+      alert("Payment was not updated because the confirmation email failed.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("signups")
+      .update({
+        payment_status: "Paid",
+        confirmation_status: "Confirmation Sent",
+      })
+      .eq("id", signup.id);
+
+    if (error) {
+      console.error(error);
+      alert("Email sent, but payment status could not be updated.");
+      return;
+    }
+
+    await fetchSignups();
+
+    alert("Payment marked as PAID. Confirmation email sent.");
+  };
+
+  const filteredSignups = signups.filter((signup) => {
+    const search = searchTerm.trim().toLowerCase();
+
+    if (!search) return true;
+
+    const purchased = getPurchasedSessionCount(
+      signup.program_sessions,
+      signup.selected_program
+    );
+    const completed = getCompletedSessionCount(signup);
+    const remaining = Math.max(0, purchased - completed);
+
+    return [
+      signup.athlete_first_name,
+      signup.athlete_last_name,
+      `${signup.athlete_first_name || ""} ${signup.athlete_last_name || ""}`,
+      signup.parent_guardian_name,
+      signup.phone,
+      signup.parent_phone,
+      signup.email,
+      signup.instagram,
+      signup.selected_program,
+      signup.program_sessions,
+      signup.program_price,
+      signup.training_date,
+      signup.training_time,
+      signup.payment_status,
+      signup.confirmation_status,
+      `bought ${purchased}`,
+      `done ${completed}`,
+      `left ${remaining}`,
+      String(purchased),
+      String(completed),
+      String(remaining),
+    ]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(search));
+  });
+
+  useEffect(() => {
+    fetchSignups();
+  }, []);
+
+  return (
+    <main className="min-h-screen bg-[#02060d] px-4 py-8 text-white sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-[1500px]">
+        <div className="mb-8 flex flex-col gap-5 rounded-[28px] border border-white/10 bg-[#08111c] p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-500">
+              Owner Dashboard
+            </p>
+            <h1 className="mt-2 text-3xl font-black uppercase sm:text-4xl">
+              ThinkWork Signups
+            </h1>
+            <p className="mt-2 text-sm text-white/50">
+              View registrations, selected training dates, times, and payment status.
+            </p>
+          </div>
+
+          <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:items-center">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search name, parent, phone, email, program, sessions..."
+              className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500 lg:w-[360px]"
+            />
+
+            <button
+              onClick={() => setShowAddSignup((prev) => !prev)}
+              className="rounded-2xl border border-cyan-400/40 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-cyan-200 transition hover:bg-cyan-400/10"
+            >
+              {showAddSignup ? "Close Add Form" : "Add Signup"}
+            </button>
+
+            <button
+              onClick={fetchSignups}
+              className="rounded-2xl border border-orange-500/40 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] transition hover:bg-orange-500/10"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        {showAddSignup && (
+          <form
+            onSubmit={addManualSignup}
+            className="mb-8 rounded-[28px] border border-cyan-400/20 bg-[#08111c] p-6 shadow-[0_0_35px_rgba(34,211,238,.08)]"
+          >
+            <div className="mb-6">
+              <p className="text-[12px] font-black uppercase tracking-[3px] text-cyan-300">
+                Manual Entry
+              </p>
+              <h2 className="mt-2 text-2xl font-black uppercase">
+                Add Registration
+              </h2>
+              <p className="mt-2 text-sm text-white/45">
+                Use this when Coach Pree gets a signup outside the website.
+              </p>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Athlete First Name
+                </label>
+                <input
+                  value={manualSignup.athleteFirstName}
+                  onChange={(e) =>
+                    updateManualSignup("athleteFirstName", e.target.value)
+                  }
+                  required
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="First name"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Athlete Last Name
+                </label>
+                <input
+                  value={manualSignup.athleteLastName}
+                  onChange={(e) =>
+                    updateManualSignup("athleteLastName", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="Last name"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Athlete Age
+                </label>
+                <input
+                  type="number"
+                  value={manualSignup.athleteAge}
+                  onChange={(e) =>
+                    updateManualSignup("athleteAge", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="Age"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Parent/Guardian Name
+                </label>
+                <input
+                  value={manualSignup.parentName}
+                  onChange={(e) =>
+                    updateManualSignup("parentName", e.target.value)
+                  }
+                  required
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="Parent name"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Athlete Phone
+                </label>
+                <input
+                  type="tel"
+                  value={manualSignup.athletePhone}
+                  onChange={(e) =>
+                    updateManualSignup("athletePhone", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="Optional"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Parent Phone
+                </label>
+                <input
+                  type="tel"
+                  value={manualSignup.parentPhone}
+                  onChange={(e) =>
+                    updateManualSignup("parentPhone", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="Parent phone"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Parent Email
+                </label>
+                <input
+                  type="email"
+                  value={manualSignup.parentEmail}
+                  onChange={(e) =>
+                    updateManualSignup("parentEmail", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="email@example.com"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Instagram
+                </label>
+                <input
+                  value={manualSignup.instagram}
+                  onChange={(e) =>
+                    updateManualSignup("instagram", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="@handle"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Program
+                </label>
+                <select
+                  value={manualSignup.program}
+                  onChange={(e) =>
+                    updateManualSignup("program", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+                >
+                  <option value="">Choose a program</option>
+                  {packageGroups.flatMap((group) =>
+                    group.items.map((program) => (
+                      <option key={`manual-${program.title}`} value={program.title}>
+                        {program.title} - {program.sessions} - {program.price}
+                      </option>
+                    ))
+                  )}
+                  <option value="Individual Single Sessions">
+                    Individual Single Sessions
+                  </option>
+                  <option value="Partner Sessions">Partner Sessions</option>
+                  <option value="Small Group Sessions">
+                    Small Group Sessions
+                  </option>
+                  <option value="Claim Your Free Session">
+                    Claim Your Free Session
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Program Sessions
+                </label>
+                <input
+                  value={manualSignup.programSessions}
+                  onChange={(e) =>
+                    updateManualSignup("programSessions", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="Optional override"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Program Price
+                </label>
+                <input
+                  value={manualSignup.programPrice}
+                  onChange={(e) =>
+                    updateManualSignup("programPrice", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="$"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Payment Status
+                </label>
+                <select
+                  value={manualSignup.paymentStatus}
+                  onChange={(e) =>
+                    updateManualSignup("paymentStatus", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+                >
+                  <option value="Not Paid">Not Paid</option>
+                  <option value="Paid">Paid</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Training Date
+                </label>
+                <input
+                  type="date"
+                  value={manualSignup.trainingDate}
+                  onChange={(e) =>
+                    updateManualSignup("trainingDate", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Training Time
+                </label>
+                <input
+                  value={manualSignup.trainingTime}
+                  onChange={(e) =>
+                    updateManualSignup("trainingTime", e.target.value)
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="9:00 AM - 10:00 AM"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-bold text-white">
+                  Notes
+                </label>
+                <input
+                  value={manualSignup.notes}
+                  onChange={(e) => updateManualSignup("notes", e.target.value)}
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+                  placeholder="Optional notes"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="submit"
+                disabled={manualSubmitting}
+                className="rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {manualSubmitting ? "Adding..." : "Add Registration"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setManualSignup(emptyManualSignup);
+                  setShowAddSignup(false);
+                }}
+                className="rounded-2xl border border-white/10 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-white/70 hover:bg-white/5"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {loading ? (
+          <p className="text-white/60">Loading signups...</p>
+        ) : signups.length === 0 ? (
+          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
+            <p className="text-lg font-bold text-white/70">No signups yet.</p>
+          </div>
+        ) : filteredSignups.length === 0 ? (
+          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
+            <p className="text-lg font-bold text-white/70">No matching registrations found.</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid gap-4 lg:hidden">
+              {filteredSignups.map((signup) => {
+                const purchased = getPurchasedSessionCount(
+                  signup.program_sessions,
+                  signup.selected_program
+                );
+                const completed = getCompletedSessionCount(signup);
+                const remaining = Math.max(0, purchased - completed);
+
+                return (
+                  <article
+                    key={`mobile-${signup.id}`}
+                    className="rounded-[26px] border border-white/10 bg-[#08111c] p-5 shadow-[0_0_30px_rgba(0,132,255,.08)]"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-lg font-black text-white">
+                          {signup.athlete_first_name} {signup.athlete_last_name}
+                        </p>
+                        <p className="mt-1 text-xs font-semibold text-white/45">
+                          Age: {signup.athlete_age || "N/A"}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`inline-flex min-w-[78px] justify-center whitespace-nowrap rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
+                          signup.payment_status === "Paid"
+                            ? "bg-green-500/15 text-green-300"
+                            : "bg-orange-500/15 text-orange-300"
+                        }`}
+                      >
+                        {signup.payment_status || "Not Paid"}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 grid gap-3 text-sm text-white/65">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                          Parent
+                        </p>
+                        <p className="mt-1 font-semibold text-white/80">
+                          {signup.parent_guardian_name || "N/A"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                          Contact
+                        </p>
+                        <p className="mt-1">Athlete: {signup.phone || "N/A"}</p>
+                        <p>Parent: {signup.parent_phone || "N/A"}</p>
+                        <p className="break-all text-xs text-white/45">
+                          {signup.email || "No email"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                          Program
+                        </p>
+                        <p className="mt-1 font-black text-orange-300">
+                          {signup.selected_program || "Not selected"}
+                        </p>
+                        <p className="text-xs text-white/45">
+                          {signup.program_sessions} • {signup.program_price}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                            Date
+                          </p>
+                          <p className="mt-1 font-semibold text-white/80">
+                            {signup.training_date || "N/A"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-white/35">
+                            Time
+                          </p>
+                          <p className="mt-1 font-semibold text-white/80">
+                            {signup.training_time || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mx-auto mt-5 max-w-[260px]">
+                      <div className="grid grid-cols-3 gap-2 text-center">
+                        <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3">
+                          <p className="text-[9px] font-black uppercase text-white/35">
+                            Bought
+                          </p>
+                          <p className="mt-1 text-base font-black text-white">
+                            {purchased}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-3 py-3">
+                          <p className="text-[9px] font-black uppercase text-green-300/70">
+                            Done
+                          </p>
+                          <p className="mt-1 text-base font-black text-green-300">
+                            {completed}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-3">
+                          <p className="text-[9px] font-black uppercase text-orange-300/70">
+                            Left
+                          </p>
+                          <p className="mt-1 text-base font-black text-orange-300">
+                            {remaining}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 flex justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => updateCompletedSessions(signup, -1)}
+                          disabled={completed <= 0}
+                          className="w-14 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-black text-white/70 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          -
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => updateCompletedSessions(signup, 1)}
+                          disabled={completed >= purchased}
+                          className="w-14 rounded-lg border border-cyan-400/30 px-3 py-2 text-[11px] font-black text-cyan-300 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => markPaid(signup)}
+                        disabled={signup.payment_status === "Paid"}
+                        className="rounded-xl bg-gradient-to-b from-orange-500 to-orange-700 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-white disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {signup.payment_status === "Paid" ? "Paid" : "Mark Paid"}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => deleteSignup(signup.id)}
+                        className="rounded-xl border border-red-500/40 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-red-300 hover:bg-red-500/10"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="hidden overflow-hidden rounded-[28px] border border-white/10 bg-[#08111c] lg:block">
+              <div className="overflow-x-auto pb-3">
+                <table className="w-full min-w-[1240px] text-left text-sm">
+                <thead className="border-b border-white/10 bg-black/35 text-[11px] uppercase tracking-[2px] text-white/45">
+                  <tr>
+                    <th className="px-5 py-4">Athlete</th>
+                    <th className="px-5 py-4">Parent</th>
+                    <th className="px-5 py-4">Contact</th>
+                    <th className="px-5 py-4">Program</th>
+                    <th className="px-5 py-4 text-center">Sessions</th>
+                    <th className="px-5 py-4">Date</th>
+                    <th className="px-5 py-4">Time</th>
+                    <th className="px-5 py-4 text-center">Payment</th>
+                    <th className="px-5 py-4">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredSignups.map((signup) => (
+                    <tr
+                      key={signup.id}
+                      className="border-b border-white/10 align-top last:border-b-0"
+                    >
+                      <td className="px-5 py-5">
+                        <p className="font-black text-white">
+                          {signup.athlete_first_name} {signup.athlete_last_name}
+                        </p>
+                        <p className="mt-1 text-xs text-white/45">
+                          Age: {signup.athlete_age || "N/A"}
+                        </p>
+                      </td>
+
+                      <td className="px-5 py-5 text-white/75">
+                        {signup.parent_guardian_name || "N/A"}
+                      </td>
+
+                      <td className="px-5 py-5">
+                        <p className="text-white/75">
+                          Athlete: {signup.phone || "N/A"}
+                        </p>
+                        <p className="mt-1 text-white/75">
+                          Parent: {signup.parent_phone || "N/A"}
+                        </p>
+                        <p className="mt-1 text-xs text-white/45">
+                          {signup.email || "No email"}
+                        </p>
+                      </td>
+
+                      <td className="px-5 py-5">
+                        <p className="font-bold text-orange-300">
+                          {signup.selected_program || "Not selected"}
+                        </p>
+                        <p className="mt-1 text-xs text-white/45">
+                          {signup.program_sessions} • {signup.program_price}
+                        </p>
+                      </td>
+
+                      <td className="px-5 py-5 text-center">
+                        {(() => {
+                          const purchased = getPurchasedSessionCount(
+                            signup.program_sessions,
+                            signup.selected_program
+                          );
+                          const completed = getCompletedSessionCount(signup);
+                          const remaining = Math.max(0, purchased - completed);
+
+                          return (
+                            <div className="mx-auto min-w-[190px] max-w-[210px]">
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="rounded-xl border border-white/10 bg-white/[0.03] px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-white/35">
+                                    Bought
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-white">
+                                    {purchased}
+                                  </p>
+                                </div>
+
+                                <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-green-300/70">
+                                    Done
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-green-300">
+                                    {completed}
+                                  </p>
+                                </div>
+
+                                <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-2 py-2">
+                                  <p className="text-[10px] font-black uppercase text-orange-300/70">
+                                    Left
+                                  </p>
+                                  <p className="mt-1 text-sm font-black text-orange-300">
+                                    {remaining}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="mt-2 flex justify-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => updateCompletedSessions(signup, -1)}
+                                  disabled={completed <= 0}
+                                  className="w-12 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-black text-white/70 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  -
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => updateCompletedSessions(signup, 1)}
+                                  disabled={completed >= purchased}
+                                  className="w-12 rounded-lg border border-cyan-400/30 px-3 py-2 text-[11px] font-black text-cyan-300 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </td>
+
+                      <td className="px-5 py-5 text-white/75">
+                        {signup.training_date || "N/A"}
+                      </td>
+
+                      <td className="px-5 py-5 text-white/75">
+                        {signup.training_time || "N/A"}
+                      </td>
+
+                      <td className="px-5 py-5 text-center">
+                        <span
+                          className={`inline-flex min-w-[78px] justify-center whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[1px] ${
+                            signup.payment_status === "Paid"
+                              ? "bg-green-500/15 text-green-300"
+                              : "bg-orange-500/15 text-orange-300"
+                          }`}
+                        >
+                          {signup.payment_status || "Not Paid"}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-5">
+                        <div className="flex min-w-[112px] flex-col gap-2">
+                          <button
+                            type="button"
+                            onClick={() => markPaid(signup)}
+                            disabled={signup.payment_status === "Paid"}
+                            className="rounded-xl bg-gradient-to-b from-orange-500 to-orange-700 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-white disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            {signup.payment_status === "Paid"
+                              ? "Paid"
+                              : "Mark Paid"}
+                          </button>
+
+                          <button
+  type="button"
+  onClick={() => deleteSignup(signup.id)}
+  className="rounded-xl border border-red-500/40 px-4 py-3 text-[11px] font-black uppercase tracking-[1px] text-red-300 hover:bg-red-500/10"
+>
+  Delete
+</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              </div>
+            </div>
+          </>
+        )}
+
+        <p className="mt-6 text-center text-xs text-white/35">
+          Preview dashboard. Add owner login before final public launch.
+        </p>
       </div>
     </main>
   );
@@ -245,6 +1301,13 @@ export default function App() {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedTestimonials, setExpandedTestimonials] = useState({});
+  const [trainingDate, setTrainingDate] = useState("");
+  const [trainingTime, setTrainingTime] = useState("");
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [dashboardUnlocked, setDashboardUnlocked] = useState(() => {
+    return localStorage.getItem("thinkwork_dashboard_unlocked") === "true";
+  });
 
   const openSignup = (program = null) => {
     setSelectedProgram(program);
@@ -262,6 +1325,51 @@ export default function App() {
   };
 
   const closeSignup = () => setShowSignupModal(false);
+
+ const availableTimes = useMemo(() => {
+  const timesForDate = getTimesForDate(trainingDate);
+
+  return timesForDate.map((slot) => {
+    const isBooked = bookedSlots.some(
+      (booked) =>
+        booked.training_date === trainingDate &&
+        (booked.training_time === slot.label ||
+          booked.training_time === slot.value)
+    );
+
+    return {
+      ...slot,
+      isBooked,
+    };
+  });
+}, [trainingDate, bookedSlots]);
+
+  useEffect(() => {
+    const fetchBookedSlots = async () => {
+      const { data, error } = await supabase
+        .from("signups")
+        .select("training_date, training_time")
+        .not("training_date", "is", null)
+        .not("training_time", "is", null);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setBookedSlots(data || []);
+    };
+
+    fetchBookedSlots();
+  }, []);
+
+  if (window.location.pathname === "/dashboard") {
+    return dashboardUnlocked ? (
+      <DashboardPage />
+    ) : (
+      <DashboardPasswordPage onUnlock={() => setDashboardUnlocked(true)} />
+    );
+  }
 
   if (window.location.pathname === "/schedule") {
     return <SchedulePage />;
@@ -930,7 +2038,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          <p className="mt-4 text-center text-[11px] italic tracking-wide text-white/45">
+          <p className="mt-3 text-center text-[11px] italic tracking-wide text-white/45">
   * Individual Single Sessions, Partner Sessions, and Small Group Sessions are only offered to athletes under 21 years old. Clients over 21 years old may book Individual Training Sessions for <span className="font-semibold text-orange-400">$50/hour</span>.
 </p>
         </div>
@@ -1302,19 +2410,100 @@ export default function App() {
                 onSubmit={async (e) => {
                   e.preventDefault();
 
+                  if (!trainingDate || !trainingTime) {
+                    alert("Please choose a training date and time.");
+                    return;
+                  }
+
+                  setSubmitting(true);
+
                   const form = e.currentTarget;
                   const formData = new FormData(form);
 
-                  await fetch(FORMSPREE_SIGNUP_URL, {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                      Accept: "application/json",
-                    },
+                  const { data: existingBooking, error: checkError } =
+                    await supabase
+                      .from("signups")
+                      .select("id")
+                      .eq("training_date", trainingDate)
+                      .eq("training_time", trainingTime)
+                      .limit(1);
+
+                  if (checkError) {
+                    console.error(checkError);
+                    alert("Could not check booking availability.");
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  if (existingBooking?.length > 0) {
+                    alert("That time was just booked. Please choose another time.");
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  const { error } = await supabase.from("signups").insert({
+                    athlete_first_name: formData.get("Athlete First Name"),
+                    athlete_last_name: formData.get("Athlete Last Name"),
+                    athlete_age: formData.get("Athlete Age"),
+                    parent_guardian_name: formData.get("Parent Guardian Name"),
+                    phone: formData.get("Phone"),
+                    parent_phone: formData.get("Parent Phone"),
+                    email: formData.get("Email"),
+                    instagram: formData.get("Instagram"),
+                    selected_program:
+                      selectedProgram?.title || formData.get("Program Interest"),
+                    program_sessions: selectedProgram?.sessions || "",
+                    program_price: selectedProgram?.price || "",
+                    training_date: trainingDate,
+                    training_time: trainingTime,
+                    additional_notes: formData.get("Additional Notes"),
+                    payment_status: "Not Paid",
+                    confirmation_status: "Not Sent",
+                    sessions_completed: 0,
                   });
 
-                  window.location.href =
-                    "https://calendar.app.google/PJf4yAtk6BqMYMqa8";
+                  if (error) {
+                    console.error(error);
+                    alert("Something went wrong. Please try again.");
+                    setSubmitting(false);
+                    return;
+                  }
+await fetch("/api/new-registration", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    athleteName: `${formData.get("Athlete First Name") || ""} ${
+      formData.get("Athlete Last Name") || ""
+    }`.trim(),
+    parentName: formData.get("Parent Guardian Name"),
+    parentPhone: formData.get("Parent Phone"),
+    parentEmail: formData.get("Email"),
+    program: selectedProgram?.title || formData.get("Program Interest"),
+    trainingDate,
+    trainingTime,
+    instagram: formData.get("Instagram"),
+    notes: formData.get("Additional Notes"),
+  }),
+});
+   
+ await fetch("/api/send-payment-instructions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    parentEmail: formData.get("Email"),
+    athleteName: `${formData.get("Athlete First Name") || ""} ${
+      formData.get("Athlete Last Name") || ""
+    }`.trim(),
+    program: selectedProgram?.title || formData.get("Program Interest"),
+    price: selectedProgram?.price || "",
+  }),
+});              
+                  setSubmitting(false);
+                  window.location.href = "/schedule";
                 }}
               >
                 <input
@@ -1337,114 +2526,111 @@ export default function App() {
                   name="Program Price"
                   value={selectedProgram?.price || ""}
                 />
+<div className="grid gap-5 sm:grid-cols-2">
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete First Name
+    </label>
+    <input
+      type="text"
+      name="Athlete First Name"
+      required
+      placeholder="Enter first name"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Athlete First Name
-                    </label>
-                    <input
-                      name="Athlete First Name"
-                      required
-                      placeholder="Enter first name"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete Last Name
+    </label>
+    <input
+      type="text"
+      name="Athlete Last Name"
+      required
+      placeholder="Enter last name"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Athlete Last Name
-                    </label>
-                    <input
-                      name="Athlete Last Name"
-                      required
-                      placeholder="Enter last name"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
-                </div>
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete Age
+    </label>
+    <input
+      type="number"
+      name="Athlete Age"
+      required
+      placeholder="Enter athlete age"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Athlete Age
-                    </label>
-                    <input
-                      type="number"
-                      name="Athlete Age"
-                      required
-                      placeholder="Enter age"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Parent/Guardian Name
+    </label>
+    <input
+      type="text"
+      name="Parent Guardian Name"
+      required
+      placeholder="Enter parent/guardian name"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Parent/Guardian Name
-                    </label>
-                    <input
-                      name="Parent Guardian Name"
-                      required
-                      placeholder="Enter parent name"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
-                </div>
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Athlete Phone Number (Optional)
+    </label>
+    <input
+      type="tel"
+      name="Phone"
+      placeholder="Enter athlete phone number"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      name="Phone"
-                      required
-                      placeholder="phone number"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      name=" Parent Phone"
-                      required
-                      placeholder="Parent Phone number"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
-                  </div>
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Parent/Guardian Phone Number
+    </label>
+    <input
+      type="tel"
+      name="Parent Phone"
+      required
+      placeholder="Enter parent/guardian phone number"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      name="Email"
-                      required
-                      placeholder="Enter email address"
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                    />
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Parent Email Address
+    </label>
+    <input
+      type="email"
+      name="Email"
+      required
+      placeholder="Enter email address"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 
-                  </div>
-
-
-                  <div>
-  <label className="mb-2 block text-sm font-bold text-white">
-    Instagram (Optional)
-  </label>
-
-  <input
-    type="text"
-    name="Instagram"
-    placeholder="@instagramhandle"
-    className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-  />
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Instagram (Optional)
+    </label>
+    <input
+      type="text"
+      name="Instagram"
+      placeholder="@instagramhandle"
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+    />
+  </div>
 </div>
-                </div>
+             
+             
 
                 {!selectedProgram && (
                   <div>
@@ -1479,10 +2665,101 @@ export default function App() {
                   </p>
 
                   <p className="mt-2 text-sm leading-6 text-white/65">
-                    After submitting this form, you’ll automatically be
-                    redirected to our live scheduling system to select your
-                    official training date and time.
+                    Choose your training date and full session time below.
+                    Sessions are one hour long with 30 minutes of recovery time
+                    between available slots. Available days are Monday - Friday
+                    and Saturday.
                   </p>
+                </div>
+
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">
+                      Training Date
+                    </label>
+
+                    <input
+                      type="date"
+                      name="Training Date"
+                      required
+                      value={trainingDate}
+                      onChange={(e) => {
+                        setTrainingDate(e.target.value);
+                        setTrainingTime("");
+                      }}
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+                    />
+
+                    {trainingDate && availableTimes.length === 0 && (
+                      <p className="mt-2 text-xs font-bold text-orange-300">
+                        Please choose Monday, Tuesday, Wednesday, Thursday,
+                        Friday, or Saturday.
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-bold text-white">
+                      Training Time
+                    </label>
+
+                    <input type="hidden" name="Training Time" value={trainingTime} />
+
+                    {!trainingDate ? (
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-bold text-white/40">
+                        Choose a date first
+                      </div>
+                    ) : availableTimes.length === 0 ? (
+                      <div className="rounded-2xl border border-orange-500/30 bg-orange-500/10 px-5 py-4 text-sm font-bold text-orange-300">
+                        No available sessions for this day.
+                      </div>
+                    ) : (
+                      <div className="grid gap-3">
+                        {availableTimes.map(({ value, label, isBooked }) => (
+                          <button
+                            key={value}
+                            type="button"
+                            disabled={isBooked}
+                            onClick={() => setTrainingTime(label)}
+                            className={`rounded-2xl border px-5 py-4 text-left transition ${
+                              isBooked
+                                ? "cursor-not-allowed border-red-500/30 bg-red-500/10 opacity-60"
+                                : trainingTime === label
+                                ? "border-orange-500 bg-orange-500/15 shadow-[0_0_25px_rgba(249,115,22,.2)]"
+                                : "border-white/10 bg-white/[0.03] hover:border-orange-500/50 hover:bg-orange-500/10"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-4">
+                              <div>
+                                <p className="text-sm font-black text-white">
+                                  {label}
+                                </p>
+                                <p className="mt-1 text-xs font-bold text-white/40">
+                                  Brooklyn Park • 1 hour session
+                                </p>
+                              </div>
+
+                              <span
+                                className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
+                                  isBooked
+                                    ? "bg-red-500/20 text-red-300"
+                                    : trainingTime === label
+                                    ? "bg-orange-500 text-white"
+                                    : "bg-cyan-400/10 text-cyan-300"
+                                }`}
+                              >
+                                {isBooked
+                                  ? "Booked"
+                                  : trainingTime === label
+                                  ? "Selected"
+                                  : "Available"}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -1522,9 +2799,10 @@ export default function App() {
 </div>
                 <button
                   type="submit"
-                  className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1"
+                  disabled={submitting}
+                  className="mt-3 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-orange-500 to-orange-700 px-8 py-5 text-[13px] font-black uppercase tracking-wide text-white shadow-[0_0_35px_rgba(249,115,22,.4)] transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Submit & Continue To Scheduling
+                  {submitting ? "Submitting..." : "Submit Registration"}
                   <ArrowRight className="h-5 w-5" />
                 </button>
 
