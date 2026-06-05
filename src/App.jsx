@@ -2420,6 +2420,11 @@ export default function App() {
                   const form = e.currentTarget;
                   const formData = new FormData(form);
 
+                     
+                const isFreeSession =
+                selectedProgram?.title === "Claim Your Free Session" ||
+                selectedProgram?.price === "Free";
+
                   const { data: existingBooking, error: checkError } =
                     await supabase
                       .from("signups")
@@ -2457,8 +2462,8 @@ export default function App() {
                     training_date: trainingDate,
                     training_time: trainingTime,
                     additional_notes: formData.get("Additional Notes"),
-                    payment_status: "Not Paid",
-                    confirmation_status: "Not Sent",
+                    payment_status: isFreeSession ? "Paid" : "Not Paid",
+confirmation_status: isFreeSession ? "Confirmation Sent" : "Not Sent",
                     sessions_completed: 0,
                   });
 
@@ -2487,26 +2492,41 @@ await fetch("/api/new-registration", {
     notes: formData.get("Additional Notes"),
   }),
 });
-   
-if (
-  signup.selected_program !== "Free Session"
-) {
-  const emailResponse = await fetch("/api/send-confirmation", {
+
+
+if (!isFreeSession) {
+  await fetch("/api/send-payment-instructions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      parentEmail: signup.email,
-      athleteName: `${signup.athlete_first_name || ""} ${
-        signup.athlete_last_name || ""
+      parentEmail: formData.get("Email"),
+      athleteName: `${formData.get("Athlete First Name") || ""} ${
+        formData.get("Athlete Last Name") || ""
       }`.trim(),
-      program: signup.selected_program,
-      trainingDate: signup.training_date,
-      trainingTime: signup.training_time,
+      program: selectedProgram?.title || formData.get("Program Interest"),
+      price: selectedProgram?.price || "",
     }),
   });
-}              
+}    
+if (isFreeSession) {
+  await fetch("/api/send-confirmation", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      parentEmail: formData.get("Email"),
+      athleteName: `${formData.get("Athlete First Name") || ""} ${
+        formData.get("Athlete Last Name") || ""
+      }`.trim(),
+      program: selectedProgram?.title || "Claim Your Free Session",
+      trainingDate,
+      trainingTime,
+    }),
+  });
+}        
                   setSubmitting(false);
                   window.location.href = "/schedule";
                 }}
