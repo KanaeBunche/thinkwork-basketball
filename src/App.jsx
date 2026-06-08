@@ -78,6 +78,97 @@ const getTimesForDate = (dateValue) => {
 
   return [];
 };
+
+const formatDateValue = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const formatDisplayDate = (dateValue) => {
+  if (!dateValue) return "";
+
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+const getProgramScheduleMeta = (programTitle = "") => {
+  const title = programTitle || "";
+
+  if (title === "Starter") {
+    return { slotsPerWeek: 3, weeks: 1, totalSessions: 3, label: "3 sessions • 1 week" };
+  }
+
+  if (title === "Acceleration") {
+    return { slotsPerWeek: 4, weeks: 1, totalSessions: 4, label: "4 sessions • 1 week" };
+  }
+
+  if (title === "Growth") {
+    return { slotsPerWeek: 5, weeks: 1, totalSessions: 5, label: "5 sessions  • 1 week" };
+  }
+
+  if (title === "Consistency") {
+    return { slotsPerWeek: 3, weeks: 2, totalSessions: 6, label: "3 sessions per week • 2 weeks" };
+  }
+
+  if (title === "Foundation") {
+    return { slotsPerWeek: 4, weeks: 2, totalSessions: 8, label: "4 sessions per week • 2 weeks" };
+  }
+
+  if (title === "Transformation") {
+    return { slotsPerWeek: 5, weeks: 2, totalSessions: 10, label: "5 sessions per week • 2 weeks" };
+  }
+
+  if (title === "ThinkWork Growth") {
+    return { slotsPerWeek: 3, weeks: 4, totalSessions: 12, label: "3 sessions per week • 4 weeks" };
+  }
+
+  if (title === "ThinkWork Pro") {
+    return { slotsPerWeek: 4, weeks: 4, totalSessions: 16, label: "4 sessions per week • 4 weeks" };
+  }
+
+  if (title === "ThinkWork Elite") {
+    return { slotsPerWeek: 5, weeks: 4, totalSessions: 20, label: "5 sessions per week • 4 weeks" };
+  }
+
+  if (title.includes("2 Month Summer")) {
+    return { slotsPerWeek: 5, weeks: 8, totalSessions: 40, label: "5 sessions per week • 8 weeks" };
+  }
+
+  return { slotsPerWeek: 1, weeks: 1, totalSessions: 1, label: "1 session" };
+};
+
+const buildRecurringBookings = (weeklySelections, weeks) => {
+  return weeklySelections.flatMap((selection) => {
+    const [year, month, day] = selection.date.split("-").map(Number);
+    const firstDate = new Date(year, month - 1, day);
+
+    return Array.from({ length: weeks }, (_, weekIndex) => {
+      const sessionDate = new Date(firstDate);
+      sessionDate.setDate(firstDate.getDate() + weekIndex * 7);
+
+      return {
+        training_date: formatDateValue(sessionDate),
+        training_time: selection.time,
+        weekly_day: getDayName(selection.date),
+      };
+    });
+  });
+};
+
+const summarizeWeeklySchedule = (weeklySelections) => {
+  return weeklySelections
+    .filter((selection) => selection.date && selection.time)
+    .map((selection) => `${getDayName(selection.date)} • ${selection.time}`)
+    .join("\n");
+};
 const packageIcons = {
   Starter: Rocket,
   Acceleration: TrendingUp,
@@ -99,6 +190,7 @@ const packageGroups = [
         title: "Starter",
         desc: "Great for beginner athletes building confidence and fundamentals",
         sessions: "3 Sessions",
+        scheduleLabel: "3 sessions per week",
         originalPrice: "$120",
         price: "$110",
       },
@@ -106,6 +198,7 @@ const packageGroups = [
         title: "Acceleration",
         desc: "More weekly reps focused on skill growth and basketball IQ",
         sessions: "4 Sessions",
+        scheduleLabel: "4 sessions per week",
         originalPrice: "$160",
         price: "$145",
       },
@@ -113,6 +206,7 @@ const packageGroups = [
         title: "Growth",
         desc: "Consistent development with advanced competitive training",
         sessions: "5 Sessions",
+        scheduleLabel: "5 sessions per week",
         originalPrice: "$200",
         price: "$180",
       },
@@ -125,6 +219,7 @@ const packageGroups = [
         title: "Consistency",
         desc: "Structured athlete development with consistent weekly reps",
         sessions: "6 Sessions",
+        scheduleLabel: "3 sessions per week • 2 weeks",
         originalPrice: "$240",
         price: "$225",
       },
@@ -132,6 +227,7 @@ const packageGroups = [
         title: "Foundation",
         desc: "Strong skill foundation, discipline, and confidence building",
         sessions: "8 Sessions",
+        scheduleLabel: "4 sessions per week • 2 weeks",
         originalPrice: "$320",
         price: "$280",
       },
@@ -139,6 +235,7 @@ const packageGroups = [
         title: "Transformation",
         desc: "High-level development focused on competitive growth",
         sessions: "10 Sessions",
+        scheduleLabel: "5 sessions per week • 2 weeks",
         originalPrice: "$400",
         price: "$370",
         bonus: "1 Exclusive outTHINK Bonus Session",
@@ -153,6 +250,7 @@ const packageGroups = [
         title: "ThinkWork Growth",
         desc: "Advanced training consistency for serious athletes",
         sessions: "12 Sessions",
+        scheduleLabel: "3 sessions per week • 4 weeks",
         originalPrice: "$480",
         price: "$460",
         bonus: "1 Exclusive outTHINK Bonus Session",
@@ -161,6 +259,7 @@ const packageGroups = [
         title: "ThinkWork Pro",
         desc: "High-level player development and leadership growth",
         sessions: "16 Sessions",
+        scheduleLabel: "4 sessions per week • 4 weeks",
         originalPrice: "$640",
         price: "$610",
         bonus: "2 Exclusive outWORK Bonus Sessions",
@@ -169,6 +268,7 @@ const packageGroups = [
         title: "ThinkWork Elite",
         desc: "Elite commitment focused on complete player development",
         sessions: "20 Sessions",
+        scheduleLabel: "5 sessions per week • 4 weeks",
         originalPrice: "$800",
         price: "$750",
         bonus: "3 Exclusive outPLAY Bonus Sessions",
@@ -177,6 +277,7 @@ const packageGroups = [
         title: "2 Month Summer Monthly Commitment - ThinkWork Exclusive",
         desc: "Intensive summer training program for maximum growth",
         sessions: "40 Sessions",
+        scheduleLabel: "5 sessions per week • 8 weeks",
         originalPrice: "$1600",
         price: "$1400",
         featured: true,
@@ -299,6 +400,27 @@ const getPurchasedSessionCount = (sessionsText, programName) => {
 const getCompletedSessionCount = (signup) => {
   const completed = Number(signup.sessions_completed || 0);
   return Number.isNaN(completed) ? 0 : completed;
+};
+
+const getDashboardScheduleSummary = (signup) => {
+  const notes = signup.additional_notes || "";
+  const marker = "Weekly training schedule:";
+  const index = notes.indexOf(marker);
+
+  if (index !== -1) {
+    return notes
+      .slice(index + marker.length)
+      .split("\n\n")[0]
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+  }
+
+  if (signup.training_date && signup.training_time) {
+    return [`${getDayName(signup.training_date)} • ${signup.training_time}`];
+  }
+
+  return [];
 };
 
 function DashboardPasswordPage({ onUnlock }) {
@@ -1017,6 +1139,19 @@ function DashboardPage() {
                         <p className="text-xs text-white/45">
                           {signup.program_sessions} • {signup.program_price}
                         </p>
+
+                        {getDashboardScheduleSummary(signup).length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {getDashboardScheduleSummary(signup).map((item) => (
+                              <span
+                                key={`${signup.id}-${item}`}
+                                className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[1px] text-cyan-300"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
@@ -1169,6 +1304,19 @@ function DashboardPage() {
                         <p className="mt-1 text-xs text-white/45">
                           {signup.program_sessions} • {signup.program_price}
                         </p>
+
+                        {getDashboardScheduleSummary(signup).length > 0 && (
+                          <div className="mt-3 flex max-w-[220px] flex-wrap gap-2">
+                            {getDashboardScheduleSummary(signup).map((item) => (
+                              <span
+                                key={`${signup.id}-${item}`}
+                                className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[1px] text-cyan-300"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </td>
 
                       <td className="px-5 py-5 text-center">
@@ -1303,26 +1451,42 @@ export default function App() {
   const [expandedTestimonials, setExpandedTestimonials] = useState({});
   const [trainingDate, setTrainingDate] = useState("");
   const [trainingTime, setTrainingTime] = useState("");
+  const [trainingSelections, setTrainingSelections] = useState([
+    { date: "", time: "" },
+  ]);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [dashboardUnlocked, setDashboardUnlocked] = useState(() => {
     return localStorage.getItem("thinkwork_dashboard_unlocked") === "true";
   });
 
+  const selectedScheduleMeta = getProgramScheduleMeta(selectedProgram?.title);
+  const usesMultiSessionSchedule = selectedScheduleMeta.slotsPerWeek > 1;
+
   const openSignup = (program = null) => {
+    const scheduleMeta = getProgramScheduleMeta(program?.title);
+
     setSelectedProgram(program);
+    setTrainingDate("");
+    setTrainingTime("");
+    setTrainingSelections(
+      Array.from({ length: scheduleMeta.slotsPerWeek }, () => ({
+        date: "",
+        time: "",
+      }))
+    );
     setShowSignupModal(true);
     setMenuOpen(false);
   };
 
   const openFreeSession = () => {
-  openSignup({
-    title: "Claim Your Free Session",
-    sessions: "1 First-Time Session With Coach Pree",
-    price: "Free",
-    note: "An exclusive complimentary session for first-time ThinkWork Basketball athletes.",
-  });
-}
+    openSignup({
+      title: "Claim Your Free Session",
+      sessions: "1 First-Time Session With Coach Pree",
+      price: "Free",
+      note: "Only for first-time sessions with Coach Pree.",
+    });
+  };
 
   const closeSignup = () => setShowSignupModal(false);
 
@@ -1345,9 +1509,47 @@ export default function App() {
 }, [trainingDate, bookedSlots]);
 
   useEffect(() => {
+    const scheduleMeta = getProgramScheduleMeta(selectedProgram?.title);
+
+    setTrainingSelections(
+      Array.from({ length: scheduleMeta.slotsPerWeek }, () => ({
+        date: "",
+        time: "",
+      }))
+    );
+    setTrainingDate("");
+    setTrainingTime("");
+  }, [selectedProgram]);
+
+  const updateTrainingSelection = (index, field, value) => {
+    setTrainingSelections((prev) => {
+      const next = [...prev];
+      next[index] = {
+        ...next[index],
+        [field]: value,
+        ...(field === "date" ? { time: "" } : {}),
+      };
+      return next;
+    });
+  };
+
+  const getAvailableTimesForSelection = (dateValue) => {
+    return getTimesForDate(dateValue).map((slot) => {
+      const isBooked = bookedSlots.some(
+        (booked) =>
+          booked.training_date === dateValue &&
+          (booked.training_time === slot.label ||
+            booked.training_time === slot.value)
+      );
+
+      return { ...slot, isBooked };
+    });
+  };
+
+  useEffect(() => {
     const fetchBookedSlots = async () => {
       const { data, error } = await supabase
-        .from("signups")
+        .from("session_bookings")
         .select("training_date, training_time")
         .not("training_date", "is", null)
         .not("training_time", "is", null);
@@ -1884,6 +2086,7 @@ export default function App() {
                           desc,
                           sessions,
                           price,
+                          scheduleLabel,
                           originalPrice,
                           bonus,
                           featured,
@@ -1899,6 +2102,7 @@ export default function App() {
                                   title,
                                   sessions,
                                   price,
+                                  scheduleLabel,
                                 })
                               }
                               className={`group relative w-full overflow-hidden rounded-[28px] border p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.12)] ${
@@ -1941,6 +2145,12 @@ export default function App() {
                                     <p className="text-sm font-semibold uppercase tracking-[1px] text-white/65">
                                       {sessions}
                                     </p>
+
+                                    {scheduleLabel && (
+                                      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[1px] text-cyan-300/80">
+                                        {scheduleLabel}
+                                      </p>
+                                    )}
 
                                     <p className="mt-3 text-[11px] font-black uppercase tracking-[3px] text-white/20 transition group-hover:text-orange-300">
                                       Tap To View Details
@@ -1989,11 +2199,13 @@ export default function App() {
                 title: "Partner Sessions",
                 sessions: "$30 Per Athlete / Hour",
                 desc: "Train with a partner and build together",
+                note: "Requires exactly 2 athletes",
               },
               {
                 title: "Small Group Sessions",
                 sessions: "$25 Per Athlete",
                 desc: "3-5 Athletes",
+                note: "Minimum 3 athletes • Maximum 5",
               },
             ].map((option) => (
               <button
@@ -2004,6 +2216,7 @@ export default function App() {
                     title: option.title,
                     sessions: option.desc,
                     price: option.sessions,
+                    note: option.note,
                   })
                 }
                 className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,#050d18_0%,#02060d_100%)] p-6 text-left shadow-[0_0_30px_rgba(0,132,255,.08)] transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.14)]"
@@ -2026,6 +2239,12 @@ export default function App() {
                   <p className="mt-5 text-[15px] font-bold leading-6 text-white">
                     {option.desc}
                   </p>
+
+                  {option.note && (
+                    <p className="mt-3 text-[10px] font-black uppercase tracking-[1px] text-cyan-300/80">
+                      {option.note}
+                    </p>
+                  )}
 
                   <div className="mt-6 flex items-center justify-between gap-4">
                     <p className="text-[11px] font-black uppercase tracking-[3px] text-white/25 transition group-hover:text-orange-300">
@@ -2347,8 +2566,14 @@ export default function App() {
                         {selectedProgram.sessions}
                       </p>
 
+                      {selectedProgram.scheduleLabel && (
+                        <p className="mt-1 text-xs font-bold uppercase tracking-[1px] text-cyan-300/80">
+                          {selectedProgram.scheduleLabel}
+                        </p>
+                      )}
+
                       {selectedProgram.note && (
-                        <p className="mt-3 max-w-[420px] rounded-2xl border border-orange-400/30 bg-orange-500/10 px-4 py-3 text-[11px] font-black uppercase leading-5 tracking-[2px] text-orange-300">
+                        <p className="mt-3 max-w-[360px] rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[2px] text-orange-300">
                           {selectedProgram.note}
                         </p>
                       )}
@@ -2394,6 +2619,12 @@ export default function App() {
                               {program.sessions}
                             </p>
 
+                            {program.scheduleLabel && (
+                              <p className="mt-1 text-[10px] font-bold uppercase tracking-[1px] text-cyan-300/80">
+                                {program.scheduleLabel}
+                              </p>
+                            )}
+
                             <p className="mt-3 text-2xl font-black text-orange-400">
                               {program.price}
                             </p>
@@ -2410,8 +2641,29 @@ export default function App() {
                 onSubmit={async (e) => {
                   e.preventDefault();
 
-                  if (!trainingDate || !trainingTime) {
-                    alert("Please choose a training date and time.");
+                  const scheduleMeta = getProgramScheduleMeta(selectedProgram?.title);
+                  const isMultiSessionSchedule = scheduleMeta.slotsPerWeek > 1;
+                  const completedSelections = isMultiSessionSchedule
+                    ? trainingSelections.filter(
+                        (selection) => selection.date && selection.time
+                      )
+                    : [{ date: trainingDate, time: trainingTime }];
+
+                  if (completedSelections.length !== scheduleMeta.slotsPerWeek) {
+                    alert(
+                      isMultiSessionSchedule
+                        ? `Please choose ${scheduleMeta.slotsPerWeek} training days and times.`
+                        : "Please choose a training date and time."
+                    );
+                    return;
+                  }
+
+                  const selectedSlotKeys = completedSelections.map(
+                    (selection) => `${selection.date}-${selection.time}`
+                  );
+
+                  if (new Set(selectedSlotKeys).size !== selectedSlotKeys.length) {
+                    alert("Please choose different days/times for each training slot.");
                     return;
                   }
 
@@ -2419,13 +2671,16 @@ export default function App() {
 
                   const form = e.currentTarget;
                   const formData = new FormData(form);
-
-                     
-                const isFreeSession =
-                selectedProgram?.title === "Claim Your Free Session" ||
-                selectedProgram?.price === "Free";
-
                   const previousAthlete = formData.get("Previous Athlete");
+                  const primaryTrainingDate = completedSelections[0]?.date || "";
+                  const primaryTrainingTime = completedSelections[0]?.time || "";
+                  const weeklyScheduleSummary = summarizeWeeklySchedule(
+                    completedSelections
+                  );
+
+                  const isFreeSession =
+                    selectedProgram?.title === "Claim Your Free Session" ||
+                    selectedProgram?.price === "Free";
 
                   if (isFreeSession && previousAthlete === "Yes") {
                     alert(
@@ -2436,19 +2691,36 @@ export default function App() {
                   }
 
                   const notesWithPreviousAthlete = [
-                    `Previously trained with ThinkWork Basketball: ${previousAthlete || "Not answered"}`,
+                    `Previously trained with ThinkWork Basketball: ${
+                      previousAthlete || "Not answered"
+                    }`,
+                    weeklyScheduleSummary
+                      ? `Weekly training schedule:
+${weeklyScheduleSummary}`
+                      : null,
                     formData.get("Additional Notes"),
                   ]
                     .filter(Boolean)
                     .join("\n\n");
 
-                  const { data: existingBooking, error: checkError } =
-                    await supabase
-                      .from("signups")
-                      .select("id")
-                      .eq("training_date", trainingDate)
-                      .eq("training_time", trainingTime)
-                      .limit(1);
+                  const recurringBookings = buildRecurringBookings(
+                    completedSelections,
+                    scheduleMeta.weeks
+                  ).map((booking, index) => ({
+                    ...booking,
+                    session_number: index + 1,
+                  }));
+
+                  const bookingDates = [
+                    ...new Set(
+                      recurringBookings.map((booking) => booking.training_date)
+                    ),
+                  ];
+
+                  const { data: existingBooking, error: checkError } = await supabase
+                    .from("session_bookings")
+                    .select("training_date, training_time")
+                    .in("training_date", bookingDates);
 
                   if (checkError) {
                     console.error(checkError);
@@ -2457,13 +2729,25 @@ export default function App() {
                     return;
                   }
 
-                  if (existingBooking?.length > 0) {
-                    alert("That time was just booked. Please choose another time.");
+                  const hasConflict = existingBooking?.some((booked) =>
+                    recurringBookings.some(
+                      (booking) =>
+                        booking.training_date === booked.training_date &&
+                        booking.training_time === booked.training_time
+                    )
+                  );
+
+                  if (hasConflict) {
+                    alert(
+                      "One of those recurring dates/times is already booked. Please choose another schedule."
+                    );
                     setSubmitting(false);
                     return;
                   }
 
-                  const { error } = await supabase.from("signups").insert({
+                  const { data: insertedSignup, error } = await supabase
+                    .from("signups")
+                    .insert({
                     athlete_first_name: formData.get("Athlete First Name"),
                     athlete_last_name: formData.get("Athlete Last Name"),
                     athlete_age: formData.get("Athlete Age"),
@@ -2476,17 +2760,41 @@ export default function App() {
                       selectedProgram?.title || formData.get("Program Interest"),
                     program_sessions: selectedProgram?.sessions || "",
                     program_price: selectedProgram?.price || "",
-                    training_date: trainingDate,
-                    training_time: trainingTime,
+                    training_date: primaryTrainingDate,
+                    training_time: primaryTrainingTime,
                     additional_notes: notesWithPreviousAthlete,
                     payment_status: isFreeSession ? "Paid" : "Not Paid",
 confirmation_status: isFreeSession ? "Confirmation Sent" : "Not Sent",
                     sessions_completed: 0,
-                  });
+                  })
+                  .select("id")
+                  .single();
 
                   if (error) {
                     console.error(error);
                     alert("Something went wrong. Please try again.");
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  const bookingRows = recurringBookings.map((booking) => ({
+                    signup_id: insertedSignup.id,
+                    athlete_name: `${formData.get("Athlete First Name") || ""} ${
+                      formData.get("Athlete Last Name") || ""
+                    }`.trim(),
+                    parent_email: formData.get("Email"),
+                    training_date: booking.training_date,
+                    training_time: booking.training_time,
+                    session_number: booking.session_number,
+                  }));
+
+                  const { error: bookingInsertError } = await supabase
+                    .from("session_bookings")
+                    .insert(bookingRows);
+
+                  if (bookingInsertError) {
+                    console.error(bookingInsertError);
+                    alert("Registration saved, but the training sessions could not be reserved.");
                     setSubmitting(false);
                     return;
                   }
@@ -2503,8 +2811,10 @@ await fetch("/api/new-registration", {
     parentPhone: formData.get("Parent Phone"),
     parentEmail: formData.get("Email"),
     program: selectedProgram?.title || formData.get("Program Interest"),
-    trainingDate,
-    trainingTime,
+    trainingDate: primaryTrainingDate,
+    trainingTime: primaryTrainingTime,
+    weeklySchedule: weeklyScheduleSummary,
+    scheduleLabel: selectedProgram?.scheduleLabel || scheduleMeta.label,
     instagram: formData.get("Instagram"),
     notes: notesWithPreviousAthlete,
   }),
@@ -2539,8 +2849,10 @@ if (isFreeSession) {
         formData.get("Athlete Last Name") || ""
       }`.trim(),
       program: selectedProgram?.title || "Claim Your Free Session",
-      trainingDate,
-      trainingTime,
+      trainingDate: primaryTrainingDate,
+      trainingTime: primaryTrainingTime,
+      weeklySchedule: weeklyScheduleSummary,
+      scheduleLabel: selectedProgram?.scheduleLabel || scheduleMeta.label,
     }),
   });
 }        
@@ -2659,27 +2971,6 @@ if (isFreeSession) {
     />
   </div>
 
- <div>
-  <label className="mb-2 block text-sm font-bold text-white">
-    Has this athlete previously trained with Coach Pree?
-  </label>
-
-  <select
-    name="Previous Athlete"
-    required
-    className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-  >
-    <option value="">Select an option</option>
-    <option value="No">No — First Time Athlete</option>
-    <option value="Yes">Yes — Returning Athlete</option>
-  </select>
-
-  <p className="mt-3 text-xs leading-6 text-white/55">
-    Complimentary sessions are reserved exclusively for first-time
-    ThinkWork Basketball athletes and may only be redeemed once.
-  </p>
-</div>
-
   <div>
     <label className="mb-2 block text-sm font-bold text-white">
       Instagram (Optional)
@@ -2691,6 +2982,31 @@ if (isFreeSession) {
       className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
     />
   </div>
+
+  <div>
+    <label className="mb-2 block text-sm font-bold text-white">
+      Has this athlete previously trained with Coach Pree?
+    </label>
+
+    <select
+      name="Previous Athlete"
+      required
+      className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+    >
+      <option value="">Select an option</option>
+      <option value="No">No — First Time Athlete</option>
+      <option value="Yes">Yes — Returning Athlete</option>
+    </select>
+  </div>
+
+  {selectedProgram?.price === "Free" && (
+    <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 px-5 py-4 sm:col-span-2">
+      <p className="text-sm leading-7 text-white/70">
+        Complimentary sessions are reserved for first-time ThinkWork Basketball
+        athletes and may only be redeemed once.
+      </p>
+    </div>
+  )}
 </div>
              
              
@@ -2722,107 +3038,232 @@ if (isFreeSession) {
                   </div>
                 )}
 
-                <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-5">
-                  <p className="text-sm font-bold text-white">
-                    Training Scheduling
-                  </p>
-
-                  <p className="mt-2 text-sm leading-6 text-white/65">
-                    Choose your training date and full session time below.
-                    Sessions are one hour long with 30 minutes of recovery time
-                    between available slots. Available days are Monday - Friday
-                    and Saturday.
-                  </p>
-                </div>
-
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="rounded-3xl border border-orange-500/20 bg-orange-500/5 p-5">
                   <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Training Date
-                    </label>
+                    <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-400">
+                      Training Selection
+                    </p>
 
-                    <input
-                      type="date"
-                      name="Training Date"
-                      required
-                      value={trainingDate}
-                      onChange={(e) => {
-                        setTrainingDate(e.target.value);
-                        setTrainingTime("");
-                      }}
-                      className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-                    />
+                    <h3 className="mt-2 text-2xl font-black text-white">
+                      Reserve Your Preferred Time
+                    </h3>
 
-                    {trainingDate && availableTimes.length === 0 && (
-                      <p className="mt-2 text-xs font-bold text-orange-300">
-                        Please choose Monday, Tuesday, Wednesday, Thursday,
-                        Friday, or Saturday.
-                      </p>
-                    )}
+                    <p className="mt-3 max-w-[620px] text-sm leading-7 text-white/60">
+                      {usesMultiSessionSchedule
+                        ? `Choose ${selectedScheduleMeta.slotsPerWeek} weekly training slots. These same days and times will repeat for ${selectedScheduleMeta.weeks} ${selectedScheduleMeta.weeks === 1 ? "week" : "weeks"}.`
+                        : "Choose your training date and full session time below."}
+                    </p>
                   </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-bold text-white">
-                      Training Time
-                    </label>
+                  {usesMultiSessionSchedule ? (
+                    <div className="mt-6 grid gap-4">
+                      {trainingSelections.map((selection, index) => {
+                        const availableSelectionTimes = getAvailableTimesForSelection(
+                          selection.date
+                        );
 
-                    <input type="hidden" name="Training Time" value={trainingTime} />
-
-                    {!trainingDate ? (
-                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-bold text-white/40">
-                        Choose a date first
-                      </div>
-                    ) : availableTimes.length === 0 ? (
-                      <div className="rounded-2xl border border-orange-500/30 bg-orange-500/10 px-5 py-4 text-sm font-bold text-orange-300">
-                        No available sessions for this day.
-                      </div>
-                    ) : (
-                      <div className="grid gap-3">
-                        {availableTimes.map(({ value, label, isBooked }) => (
-                          <button
-                            key={value}
-                            type="button"
-                            disabled={isBooked}
-                            onClick={() => setTrainingTime(label)}
-                            className={`rounded-2xl border px-5 py-4 text-left transition ${
-                              isBooked
-                                ? "cursor-not-allowed border-red-500/30 bg-red-500/10 opacity-60"
-                                : trainingTime === label
-                                ? "border-orange-500 bg-orange-500/15 shadow-[0_0_25px_rgba(249,115,22,.2)]"
-                                : "border-white/10 bg-white/[0.03] hover:border-orange-500/50 hover:bg-orange-500/10"
-                            }`}
+                        return (
+                          <div
+                            key={`training-selection-${index}`}
+                            className="rounded-2xl border border-white/10 bg-black/20 p-4"
                           >
-                            <div className="flex items-center justify-between gap-4">
+                            <div className="mb-4 flex items-center justify-between gap-3">
+                              <p className="text-[11px] font-black uppercase tracking-[2px] text-white/50">
+                                Session Slot {index + 1}
+                              </p>
+
+                              {selection.date && selection.time && (
+                                <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[1px] text-cyan-300">
+                                  {getDayName(selection.date)}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2">
                               <div>
-                                <p className="text-sm font-black text-white">
-                                  {label}
-                                </p>
-                                <p className="mt-1 text-xs font-bold text-white/40">
-                                  Brooklyn Park • 1 hour session
-                                </p>
+                                <label className="mb-2 block text-sm font-bold text-white">
+                                  Training Date
+                                </label>
+
+                                <input
+                                  type="date"
+                                  required
+                                  value={selection.date}
+                                  onChange={(e) =>
+                                    updateTrainingSelection(index, "date", e.target.value)
+                                  }
+                                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+                                />
+
+                                {selection.date && availableSelectionTimes.length === 0 && (
+                                  <p className="mt-2 text-xs font-bold text-orange-300">
+                                    Please choose Monday, Tuesday, Wednesday, Thursday,
+                                    Friday, or Saturday.
+                                  </p>
+                                )}
                               </div>
 
-                              <span
-                                className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
+                              <div>
+                                <label className="mb-2 block text-sm font-bold text-white">
+                                  Training Time
+                                </label>
+
+                                {!selection.date ? (
+                                  <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-bold text-white/40">
+                                    Choose a date first
+                                  </div>
+                                ) : availableSelectionTimes.length === 0 ? (
+                                  <div className="rounded-2xl border border-orange-500/30 bg-orange-500/10 px-5 py-4 text-sm font-bold text-orange-300">
+                                    No available sessions for this day.
+                                  </div>
+                                ) : (
+                                  <div className="grid gap-2">
+                                    {availableSelectionTimes.map(({ value, label, isBooked }) => (
+                                      <button
+                                        key={`${index}-${value}`}
+                                        type="button"
+                                        disabled={isBooked}
+                                        onClick={() =>
+                                          updateTrainingSelection(index, "time", label)
+                                        }
+                                        className={`rounded-2xl border px-4 py-3 text-left transition ${
+                                          isBooked
+                                            ? "cursor-not-allowed border-red-500/30 bg-red-500/10 opacity-60"
+                                            : selection.time === label
+                                            ? "border-orange-500 bg-orange-500/15 shadow-[0_0_25px_rgba(249,115,22,.2)]"
+                                            : "border-white/10 bg-white/[0.03] hover:border-orange-500/50 hover:bg-orange-500/10"
+                                        }`}
+                                      >
+                                        <div className="flex items-center justify-between gap-4">
+                                          <p className="text-sm font-black text-white">
+                                            {label}
+                                          </p>
+
+                                          <span
+                                            className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
+                                              isBooked
+                                                ? "bg-red-500/20 text-red-300"
+                                                : selection.time === label
+                                                ? "bg-orange-500 text-white"
+                                                : "bg-cyan-400/10 text-cyan-300"
+                                            }`}
+                                          >
+                                            {isBooked
+                                              ? "Booked"
+                                              : selection.time === label
+                                              ? "Selected"
+                                              : "Available"}
+                                          </span>
+                                        </div>
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-5 py-4">
+                        <p className="text-sm leading-7 text-white/65">
+                          Your selected weekly slots will automatically block the
+                          matching dates for the full package so other athletes cannot
+                          book those times.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-6 grid gap-5 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-2 block text-sm font-bold text-white">
+                          Training Date
+                        </label>
+
+                        <input
+                          type="date"
+                          name="Training Date"
+                          required
+                          value={trainingDate}
+                          onChange={(e) => {
+                            setTrainingDate(e.target.value);
+                            setTrainingTime("");
+                          }}
+                          className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+                        />
+
+                        {trainingDate && availableTimes.length === 0 && (
+                          <p className="mt-2 text-xs font-bold text-orange-300">
+                            Please choose Monday, Tuesday, Wednesday, Thursday,
+                            Friday, or Saturday.
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="mb-2 block text-sm font-bold text-white">
+                          Training Time
+                        </label>
+
+                        <input type="hidden" name="Training Time" value={trainingTime} />
+
+                        {!trainingDate ? (
+                          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-bold text-white/40">
+                            Choose a date first
+                          </div>
+                        ) : availableTimes.length === 0 ? (
+                          <div className="rounded-2xl border border-orange-500/30 bg-orange-500/10 px-5 py-4 text-sm font-bold text-orange-300">
+                            No available sessions for this day.
+                          </div>
+                        ) : (
+                          <div className="grid gap-3">
+                            {availableTimes.map(({ value, label, isBooked }) => (
+                              <button
+                                key={value}
+                                type="button"
+                                disabled={isBooked}
+                                onClick={() => setTrainingTime(label)}
+                                className={`rounded-2xl border px-5 py-4 text-left transition ${
                                   isBooked
-                                    ? "bg-red-500/20 text-red-300"
+                                    ? "cursor-not-allowed border-red-500/30 bg-red-500/10 opacity-60"
                                     : trainingTime === label
-                                    ? "bg-orange-500 text-white"
-                                    : "bg-cyan-400/10 text-cyan-300"
+                                    ? "border-orange-500 bg-orange-500/15 shadow-[0_0_25px_rgba(249,115,22,.2)]"
+                                    : "border-white/10 bg-white/[0.03] hover:border-orange-500/50 hover:bg-orange-500/10"
                                 }`}
                               >
-                                {isBooked
-                                  ? "Booked"
-                                  : trainingTime === label
-                                  ? "Selected"
-                                  : "Available"}
-                              </span>
-                            </div>
-                          </button>
-                        ))}
+                                <div className="flex items-center justify-between gap-4">
+                                  <div>
+                                    <p className="text-sm font-black text-white">
+                                      {label}
+                                    </p>
+                                    <p className="mt-1 text-xs font-bold text-white/40">
+                                      Brooklyn Park • 1 hour session
+                                    </p>
+                                  </div>
+
+                                  <span
+                                    className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
+                                      isBooked
+                                        ? "bg-red-500/20 text-red-300"
+                                        : trainingTime === label
+                                        ? "bg-orange-500 text-white"
+                                        : "bg-cyan-400/10 text-cyan-300"
+                                    }`}
+                                  >
+                                    {isBooked
+                                      ? "Booked"
+                                      : trainingTime === label
+                                      ? "Selected"
+                                      : "Available"}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -2843,17 +3284,28 @@ if (isFreeSession) {
   {/* package cards here */}
 </div>
 
-{/* TRAVEL NOTICE */}
-<div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
-  <p className="text-center text-sm italic leading-7 text-white/70">
-    <span className="font-semibold text-white">
-      Special Travel Requests:
-    </span>{" "}
-    Pricing may vary for sessions held at private locations,
-    residential gyms, or requested off-site facilities.
-    Additional travel fees may apply based on distance,
-    facility access, and scheduling accommodations.
-  </p>
+{/* PAYMENT + TRAVEL NOTICE */}
+<div className="mt-8 grid gap-4 sm:grid-cols-2">
+  <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-5 backdrop-blur-md">
+    <p className="text-[11px] font-black uppercase tracking-[2px] text-cyan-300">
+      Payment Options
+    </p>
+    <p className="mt-3 text-sm font-bold leading-7 text-white/75">
+      Venmo: <span className="text-white">@thinkworkbasketball</span>
+      <br />
+      Zelle: <span className="text-white">thinkworkbasketball@gmail.com</span>
+    </p>
+  </div>
+
+  <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
+    <p className="text-sm italic leading-7 text-white/70">
+      <span className="font-semibold text-white">
+        Special Travel Requests:
+      </span>{" "}
+      Pricing may vary for private locations, residential gyms,
+      or requested off-site facilities.
+    </p>
+  </div>
 </div>
 
 {/* CONTINUE BUTTON / REGISTRATION */}

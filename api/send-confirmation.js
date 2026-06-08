@@ -8,21 +8,38 @@ export default async function handler(req, res) {
   }
 
   try {
-  const {
-  parentEmail,
-  athleteName,
-  program,
-  trainingDate,
-  trainingTime,
-} = req.body;
+    const {
+      parentEmail,
+      athleteName,
+      program,
+      trainingDate,
+      trainingTime,
+      weeklySchedule,
+      scheduleLabel,
+    } = req.body;
+
+    const scheduleLines = weeklySchedule
+      ? weeklySchedule
+          .split("\n")
+          .filter(Boolean)
+          .map(
+            (item) => `
+              <div style="padding:12px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:14px;color:#ffffff;font-weight:800;">
+                ${item}
+              </div>
+            `
+          )
+          .join("")
+      : `
+        <div style="padding:12px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:14px;color:#ffffff;font-weight:800;">
+          ${trainingDate || "N/A"} • ${trainingTime || "N/A"}
+        </div>
+      `;
 
     const data = await resend.emails.send({
-  from: "ThinkWork Basketball <notifications@thinkworkbasketball.com>",
-  to: [parentEmail],
-
-
-  subject: "ThinkWork Basketball Training Confirmation",
-
+      from: "ThinkWork Basketball <notifications@thinkworkbasketball.com>",
+      to: [parentEmail],
+      subject: "ThinkWork Basketball Training Confirmation",
       html: `
         <div style="margin:0;padding:0;background:#02060d;font-family:Arial,Helvetica,sans-serif;color:#ffffff;">
           <div style="max-width:650px;margin:0 auto;padding:40px 18px;">
@@ -48,7 +65,7 @@ export default async function handler(req, res) {
 
                 <div style="border:1px solid rgba(249,115,22,0.35);background:rgba(249,115,22,0.08);border-radius:22px;padding:22px;margin:26px 0;">
                   <p style="margin:0 0 14px;font-size:12px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#fb923c;">
-                    Session Details
+                    Registration Details
                   </p>
 
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
@@ -70,25 +87,50 @@ export default async function handler(req, res) {
                       </td>
                     </tr>
 
+                    ${
+                      scheduleLabel
+                        ? `
                     <tr>
                       <td style="padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:13px;color:rgba(255,255,255,0.5);font-weight:700;">
-                        Date
+                        Schedule
                       </td>
-                      <td style="padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:14px;color:#ffffff;font-weight:800;text-align:right;">
-                        ${trainingDate || "N/A"}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td style="padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:13px;color:rgba(255,255,255,0.5);font-weight:700;">
-                        Time
-                      </td>
-                      <td style="padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:14px;color:#fb923c;font-weight:900;text-align:right;">
-                        ${trainingTime || "N/A"}
+                      <td style="padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);font-size:14px;color:#67e8f9;font-weight:900;text-align:right;">
+                        ${scheduleLabel}
                       </td>
                     </tr>
-                  
+                    `
+                        : ""
+                    }
                   </table>
+                </div>
+
+                <div style="border-radius:22px;background:#02060d;border:1px solid rgba(14,165,233,0.25);padding:22px;margin-top:24px;">
+                  <p style="margin:0 0 14px;font-size:12px;font-weight:900;color:#67e8f9;text-transform:uppercase;letter-spacing:2px;">
+                    Your Training Days
+                  </p>
+
+                  ${scheduleLines}
+
+                  ${
+                    weeklySchedule
+                      ? `
+                      <p style="margin:16px 0 0;font-size:13px;line-height:1.7;color:rgba(255,255,255,0.55);">
+                        These selected days and times will automatically repeat for the duration of your selected package.
+                      </p>
+                    `
+                      : ""
+                  }
+                </div>
+
+                <div style="border-radius:22px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.25);padding:22px;margin-top:24px;">
+                  <p style="margin:0 0 14px;font-size:12px;font-weight:900;color:#fb923c;text-transform:uppercase;letter-spacing:2px;">
+                    Payment Options
+                  </p>
+
+                  <p style="margin:0;font-size:14px;line-height:1.9;color:rgba(255,255,255,0.75);font-weight:700;">
+                    Venmo: <span style="color:#ffffff;">@thinkworkbasketball</span><br />
+                    Zelle: <span style="color:#ffffff;">thinkworkbasketball@gmail.com</span>
+                  </p>
                 </div>
 
                 <div style="border-radius:20px;background:#02060d;border:1px solid rgba(14,165,233,0.25);padding:20px;margin-top:24px;">
@@ -122,8 +164,6 @@ export default async function handler(req, res) {
         </div>
       `,
     });
-
-    console.log("Resend response:", data);
 
     return res.status(200).json({
       success: true,
