@@ -514,6 +514,11 @@ function DashboardPage() {
       Math.min(purchased, currentCompleted + change)
     );
 
+    if (nextCompleted === currentCompleted) return;
+
+    const nextRemaining = Math.max(0, purchased - nextCompleted);
+    const shouldSendNextScheduleEmail = change === 1 && nextRemaining > 0;
+
     const { error } = await supabase
       .from("signups")
       .update({
@@ -525,6 +530,38 @@ function DashboardPage() {
       console.error("Session update error:", error);
       alert(`Could not update sessions: ${error.message}`);
       return;
+    }
+
+    if (shouldSendNextScheduleEmail) {
+      const emailResponse = await fetch("/api/send-session-schedule", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          signupId: signup.id,
+          parentEmail: signup.email,
+          parentName: signup.parent_guardian_name,
+          athleteName: `${signup.athlete_first_name || ""} ${
+            signup.athlete_last_name || ""
+          }`.trim(),
+          program: signup.selected_program,
+          completedSessions: nextCompleted,
+          remainingSessions: nextRemaining,
+        }),
+      });
+
+      if (!emailResponse.ok) {
+        const errorData = await emailResponse.json().catch(() => null);
+        console.error("Next session email error:", errorData);
+        alert(
+          "Session count was updated, but the next-session scheduling email could not be sent."
+        );
+        await fetchSignups();
+        return;
+      }
+
+      alert("Session added. Next-session scheduling email sent to the parent.");
     }
 
     await fetchSignups();
@@ -2658,8 +2695,7 @@ if (isFreeSession) {
       className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
     />
   </div>
-
- <div>
+<div>
   <label className="mb-2 block text-sm font-bold text-white">
     Has this athlete previously trained with Coach Pree?
   </label>
@@ -2673,12 +2709,16 @@ if (isFreeSession) {
     <option value="No">No — First Time Athlete</option>
     <option value="Yes">Yes — Returning Athlete</option>
   </select>
-
-  <p className="mt-3 text-xs leading-6 text-white/55">
-    Complimentary sessions are reserved exclusively for first-time
-    ThinkWork Basketball athletes and may only be redeemed once.
-  </p>
 </div>
+
+{selectedProgram?.price === "Free" && (
+  <div className="md:col-span-2 rounded-2xl border border-orange-500/20 bg-orange-500/5 px-5 py-4">
+    <p className="text-sm leading-7 text-white/70">
+      Complimentary sessions are reserved for first-time ThinkWork Basketball
+      athletes and may only be redeemed once.
+    </p>
+  </div>
+)}
 
   <div>
     <label className="mb-2 block text-sm font-bold text-white">
