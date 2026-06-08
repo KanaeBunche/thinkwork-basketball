@@ -2998,16 +2998,11 @@ if (isFreeSession) {
   </div>
 
   <div>
-   {selectedProgram?.title === "Claim Your Free Session" && (
+{selectedProgram?.title === "Claim Your Free Session" && (
   <div>
     <label className="mb-2 block text-sm font-bold text-white">
       Has this athlete previously trained with Coach Pree?
     </label>
-
-    {/* Yes / No buttons */}
-
-  </div>
-)}
 
     <select
       name="Previous Athlete"
@@ -3018,6 +3013,8 @@ if (isFreeSession) {
       <option value="No">No — First Time Athlete</option>
       <option value="Yes">Yes — Returning Athlete</option>
     </select>
+  </div>
+)}
   </div>
 
   {selectedProgram?.price === "Free" && (
