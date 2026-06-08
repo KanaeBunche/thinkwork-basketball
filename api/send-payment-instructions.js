@@ -51,13 +51,69 @@ export default async function handler(req, res) {
               </div>
 
               <div style="padding:30px;">
-                <p style="font-size:16px;line-height:1.8;color:#ffffff;font-weight:700;">
+                <p style="margin:0 0 14px;font-size:16px;line-height:1.8;color:#ffffff;font-weight:700;">
                   Thank you for registering with ThinkWork Basketball!
                 </p>
 
-                <p style="font-size:15px;line-height:1.8;color:rgba(255,255,255,.75);">
+                <p style="margin:0 0 24px;font-size:15px;line-height:1.8;color:rgba(255,255,255,.75);">
                   Your athlete's registration has been received. To reserve the selected training schedule, payment must be submitted before the first session.
                 </p>
+
+                <div style="margin:24px 0;padding:22px;border-radius:18px;background:rgba(249,115,22,.10);border:1px solid rgba(249,115,22,.35);">
+                  <p style="margin:0 0 10px;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#fb923c;">
+                    Payment Required
+                  </p>
+
+                  <p style="margin:0 0 12px;font-size:15px;line-height:1.8;color:#ffffff;">
+                    To reserve your athlete's training schedule, please send payment of:
+                  </p>
+
+                  <p style="margin:0 0 16px;font-size:32px;font-weight:900;color:#67e8f9;">
+                    ${price || "N/A"}
+                  </p>
+
+                  <div style="padding:16px;background:#02060d;border:1px solid rgba(255,255,255,.12);border-radius:14px;">
+                    <p style="margin:0 0 8px;font-size:14px;color:rgba(255,255,255,.75);font-weight:700;">
+                      Venmo:
+                      <span style="color:#ffffff;font-weight:900;"> @thinkworkbasketball</span>
+                    </p>
+
+                    <p style="margin:0;font-size:14px;color:rgba(255,255,255,.75);font-weight:700;">
+                      Zelle:
+                      <span style="color:#ffffff;font-weight:900;"> thinkworkbasketball@gmail.com</span>
+                    </p>
+                  </div>
+
+                  <p style="margin:16px 0 10px;font-size:14px;color:rgba(255,255,255,.75);">
+                    Please include this memo:
+                  </p>
+
+                  <div style="padding:14px;background:#02060d;border:1px solid rgba(255,255,255,.12);border-radius:12px;font-weight:800;color:#67e8f9;">
+                    ${athleteName || "Athlete"} - ${program || "Program"}
+                  </div>
+
+                  <p style="margin:16px 0 0;font-size:13px;line-height:1.7;color:rgba(255,255,255,.65);">
+                    Once payment has been verified, you will receive a separate <strong>Training Confirmed</strong> email.
+                  </p>
+                </div>
+
+                ${
+                  weeklySchedule
+                    ? `
+                <div style="margin:24px 0;padding:22px;border-radius:18px;background:#02060d;border:1px solid rgba(255,255,255,.10);">
+                  <p style="margin:0 0 12px;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#fb923c;">
+                    Selected Training Days
+                  </p>
+
+                  ${scheduleLines}
+
+                  <p style="margin:16px 0 0;font-size:13px;line-height:1.7;color:rgba(255,255,255,.6);">
+                    These selected days and times will repeat for the duration of the selected package.
+                  </p>
+                </div>
+                `
+                    : ""
+                }
 
                 <div style="margin:24px 0;padding:22px;border-radius:18px;background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.25);">
                   <p style="margin:0 0 12px;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#67e8f9;">
@@ -98,62 +154,6 @@ export default async function handler(req, res) {
                         : ""
                     }
                   </table>
-                </div>
-
-                ${
-                  weeklySchedule
-                    ? `
-                <div style="margin:24px 0;padding:22px;border-radius:18px;background:#02060d;border:1px solid rgba(255,255,255,.10);">
-                  <p style="margin:0 0 12px;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#fb923c;">
-                    Selected Training Days
-                  </p>
-
-                  ${scheduleLines}
-
-                  <p style="margin:16px 0 0;font-size:13px;line-height:1.7;color:rgba(255,255,255,.6);">
-                    These selected days and times will repeat for the duration of the selected package.
-                  </p>
-                </div>
-                `
-                    : ""
-                }
-
-                <div style="margin:28px 0;padding:22px;border-radius:18px;background:rgba(249,115,22,.10);border:1px solid rgba(249,115,22,.35);">
-                  <p style="margin:0 0 10px;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#fb923c;">
-                    Payment Required
-                  </p>
-
-                  <p style="margin:0 0 12px;font-size:15px;line-height:1.8;color:#ffffff;">
-                    To reserve your athlete's training schedule, please send payment of:
-                  </p>
-
-                  <p style="margin:0 0 16px;font-size:32px;font-weight:900;color:#67e8f9;">
-                    ${price || "N/A"}
-                  </p>
-
-                  <div style="padding:16px;background:#02060d;border:1px solid rgba(255,255,255,.12);border-radius:14px;">
-                    <p style="margin:0 0 8px;font-size:14px;color:rgba(255,255,255,.75);font-weight:700;">
-                      Venmo:
-                      <span style="color:#ffffff;font-weight:900;"> @thinkworkbasketball</span>
-                    </p>
-
-                    <p style="margin:0;font-size:14px;color:rgba(255,255,255,.75);font-weight:700;">
-                      Zelle:
-                      <span style="color:#ffffff;font-weight:900;"> thinkworkbasketball@gmail.com</span>
-                    </p>
-                  </div>
-
-                  <p style="margin:16px 0 10px;font-size:14px;color:rgba(255,255,255,.75);">
-                    Please include this memo:
-                  </p>
-
-                  <div style="padding:14px;background:#02060d;border:1px solid rgba(255,255,255,.12);border-radius:12px;font-weight:800;color:#67e8f9;">
-                    ${athleteName || "Athlete"} - ${program || "Program"}
-                  </div>
-
-                  <p style="margin:16px 0 0;font-size:13px;line-height:1.7;color:rgba(255,255,255,.65);">
-                    Once payment has been verified, you will receive a separate <strong>Training Confirmed</strong> email.
-                  </p>
                 </div>
 
                 <p style="font-size:15px;line-height:1.8;color:rgba(255,255,255,.75);">
