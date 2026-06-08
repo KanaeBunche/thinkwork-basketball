@@ -1004,14 +1004,18 @@ function DashboardPage() {
                 <label className="mb-2 block text-sm font-bold text-white">
                   Training Date
                 </label>
-                <input
-                  type="date"
-                  value={manualSignup.trainingDate}
-                  onChange={(e) =>
-                    updateManualSignup("trainingDate", e.target.value)
-                  }
-                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-                />
+               <input
+  type="date"
+  required
+  value={startWeekDate}
+  min={formatDateValue(new Date())}
+  onChange={(e) => {
+    setStartWeekDate(e.target.value);
+    setWeeklySelections([]);
+  }}
+  onClick={(e) => e.currentTarget.showPicker?.()}
+  className="w-full cursor-pointer rounded-xl border border-white/10 bg-[#08111c] px-4 py-3 text-sm text-white outline-none focus:border-orange-500"
+/>
               </div>
 
               <div>
