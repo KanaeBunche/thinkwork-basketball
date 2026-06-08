@@ -2845,13 +2845,16 @@ if (!isFreeSession) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      parentEmail: formData.get("Email"),
-      athleteName: `${formData.get("Athlete First Name") || ""} ${
-        formData.get("Athlete Last Name") || ""
-      }`.trim(),
-      program: selectedProgram?.title || formData.get("Program Interest"),
-      price: selectedProgram?.price || "",
-    }),
+  parentEmail: formData.get("Email"),
+  athleteName: `${formData.get("Athlete First Name") || ""} ${
+    formData.get("Athlete Last Name") || ""
+  }`.trim(),
+  program: selectedProgram?.title || formData.get("Program Interest"),
+  price: selectedProgram?.price || "",
+
+  weeklySchedule: weeklyScheduleSummary,
+  scheduleLabel: selectedProgram?.scheduleLabel || "",
+}),
   });
 }    
 if (isFreeSession) {
