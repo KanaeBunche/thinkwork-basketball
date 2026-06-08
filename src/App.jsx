@@ -659,21 +659,24 @@ function DashboardPage() {
 
     if (!confirmed) return;
 
-    const emailResponse = await fetch("/api/send-confirmation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        parentEmail: signup.email,
-        athleteName: `${signup.athlete_first_name || ""} ${
-          signup.athlete_last_name || ""
-        }`.trim(),
-        program: signup.selected_program,
-        trainingDate: signup.training_date,
-        trainingTime: signup.training_time,
-      }),
-    });
+   const emailResponse = await fetch("/api/send-confirmation", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    parentEmail: signup.email,
+    athleteName: `${signup.athlete_first_name || ""} ${
+      signup.athlete_last_name || ""
+    }`.trim(),
+    program: signup.selected_program,
+    trainingDate: signup.training_date,
+    trainingTime: signup.training_time,
+
+    weeklySchedule: getDashboardScheduleSummary(signup).join("\n"),
+    scheduleLabel: signup.program_sessions || "",
+  }),
+});
 
     if (!emailResponse.ok) {
       const errorData = await emailResponse.json().catch(() => null);
@@ -2858,16 +2861,15 @@ if (isFreeSession) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      parentEmail: formData.get("Email"),
-      athleteName: `${formData.get("Athlete First Name") || ""} ${
-        formData.get("Athlete Last Name") || ""
-      }`.trim(),
-      program: selectedProgram?.title || "Claim Your Free Session",
-      trainingDate: primaryTrainingDate,
-      trainingTime: primaryTrainingTime,
-      weeklySchedule: weeklyScheduleSummary,
-      scheduleLabel: selectedProgram?.scheduleLabel || scheduleMeta.label,
-    }),
+  parentEmail: formData.get("Email"),
+  athleteName: `${formData.get("Athlete First Name") || ""} ${
+    formData.get("Athlete Last Name") || ""
+  }`.trim(),
+  program: selectedProgram?.title || formData.get("Program Interest"),
+  price: selectedProgram?.price || "",
+  weeklySchedule: weeklyScheduleSummary,
+  scheduleLabel: selectedProgram?.scheduleLabel || scheduleMeta.label,
+}),
   });
 }        
                   setSubmitting(false);
