@@ -104,6 +104,13 @@ export default async function handler(req, res) {
                   </table>
                 </div>
 
+                <div style="border-radius:22px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.25);padding:22px;margin-top:24px;">
+                  <p style="margin:0 0 14px;font-size:12px;font-weight:900;color:#fb923c;text-transform:uppercase;letter-spacing:2px;">
+                    Payment Options
+                  </p>
+
+        
+                </div>
                 <div style="border-radius:22px;background:#02060d;border:1px solid rgba(14,165,233,0.25);padding:22px;margin-top:24px;">
                   <p style="margin:0 0 14px;font-size:12px;font-weight:900;color:#67e8f9;text-transform:uppercase;letter-spacing:2px;">
                     Your Training Days
@@ -122,16 +129,6 @@ export default async function handler(req, res) {
                   }
                 </div>
 
-                <div style="border-radius:22px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.25);padding:22px;margin-top:24px;">
-                  <p style="margin:0 0 14px;font-size:12px;font-weight:900;color:#fb923c;text-transform:uppercase;letter-spacing:2px;">
-                    Payment Options
-                  </p>
-
-                  <p style="margin:0;font-size:14px;line-height:1.9;color:rgba(255,255,255,0.75);font-weight:700;">
-                    Venmo: <span style="color:#ffffff;">@thinkworkbasketball</span><br />
-                    Zelle: <span style="color:#ffffff;">thinkworkbasketball@gmail.com</span>
-                  </p>
-                </div>
 
                 <div style="border-radius:20px;background:#02060d;border:1px solid rgba(14,165,233,0.25);padding:20px;margin-top:24px;">
                   <p style="margin:0 0 8px;font-size:14px;font-weight:900;color:#67e8f9;text-transform:uppercase;letter-spacing:1.5px;">
