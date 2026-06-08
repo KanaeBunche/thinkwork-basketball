@@ -1450,34 +1450,26 @@ export default function App() {
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedTestimonials, setExpandedTestimonials] = useState({});
   const [trainingDate, setTrainingDate] = useState("");
-  const [trainingTime, setTrainingTime] = useState("");
-  const [trainingSelections, setTrainingSelections] = useState([
-    { date: "", time: "" },
-  ]);
+const [trainingTime, setTrainingTime] = useState("");
+const [startWeekDate, setStartWeekDate] = useState("");
+const [weeklySelections, setWeeklySelections] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [dashboardUnlocked, setDashboardUnlocked] = useState(() => {
     return localStorage.getItem("thinkwork_dashboard_unlocked") === "true";
   });
 
-  const selectedScheduleMeta = getProgramScheduleMeta(selectedProgram?.title);
-  const usesMultiSessionSchedule = selectedScheduleMeta.slotsPerWeek > 1;
+const selectedScheduleMeta = getProgramScheduleMeta(selectedProgram?.title);
 
-  const openSignup = (program = null) => {
-    const scheduleMeta = getProgramScheduleMeta(program?.title);
-
-    setSelectedProgram(program);
-    setTrainingDate("");
-    setTrainingTime("");
-    setTrainingSelections(
-      Array.from({ length: scheduleMeta.slotsPerWeek }, () => ({
-        date: "",
-        time: "",
-      }))
-    );
-    setShowSignupModal(true);
-    setMenuOpen(false);
-  };
+const openSignup = (program = null) => {
+  setSelectedProgram(program);
+  setTrainingDate("");
+  setTrainingTime("");
+  setStartWeekDate("");
+  setWeeklySelections([]);
+  setShowSignupModal(true);
+  setMenuOpen(false);
+};
 
   const openFreeSession = () => {
     openSignup({
@@ -1508,30 +1500,14 @@ export default function App() {
   });
 }, [trainingDate, bookedSlots]);
 
-  useEffect(() => {
-    const scheduleMeta = getProgramScheduleMeta(selectedProgram?.title);
+ useEffect(() => {
+  setStartWeekDate("");
+  setWeeklySelections([]);
+  setTrainingDate("");
+  setTrainingTime("");
+}, [selectedProgram]);
 
-    setTrainingSelections(
-      Array.from({ length: scheduleMeta.slotsPerWeek }, () => ({
-        date: "",
-        time: "",
-      }))
-    );
-    setTrainingDate("");
-    setTrainingTime("");
-  }, [selectedProgram]);
-
-  const updateTrainingSelection = (index, field, value) => {
-    setTrainingSelections((prev) => {
-      const next = [...prev];
-      next[index] = {
-        ...next[index],
-        [field]: value,
-        ...(field === "date" ? { time: "" } : {}),
-      };
-      return next;
-    });
-  };
+ 
 
   const getAvailableTimesForSelection = (dateValue) => {
     return getTimesForDate(dateValue).map((slot) => {
@@ -1545,6 +1521,47 @@ export default function App() {
       return { ...slot, isBooked };
     });
   };
+  const getWeekDates = (startDate) => {
+  const [year, month, day] = startDate.split("-").map(Number);
+  const start = new Date(year, month - 1, day);
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const current = new Date(start);
+    current.setDate(start.getDate() + i);
+
+    const value = formatDateValue(current);
+
+    return {
+      date: value,
+      displayDate: formatDisplayDate(value),
+      dayName: getDayName(value),
+    };
+  });
+};
+
+const toggleWeeklyDay = (date) => {
+  setWeeklySelections((prev) => {
+    const exists = prev.find((item) => item.date === date);
+
+    if (exists) {
+      return prev.filter((item) => item.date !== date);
+    }
+
+    if (prev.length >= selectedScheduleMeta.slotsPerWeek) {
+      return prev;
+    }
+
+    return [...prev, { date, time: "" }];
+  });
+};
+
+const updateWeeklySelectionTime = (date, time) => {
+  setWeeklySelections((prev) =>
+    prev.map((item) =>
+      item.date === date ? { ...item, time } : item
+    )
+  );
+};
 
   useEffect(() => {
     const fetchBookedSlots = async () => {
@@ -2643,20 +2660,17 @@ export default function App() {
 
                   const scheduleMeta = getProgramScheduleMeta(selectedProgram?.title);
                   const isMultiSessionSchedule = scheduleMeta.slotsPerWeek > 1;
-                  const completedSelections = isMultiSessionSchedule
-                    ? trainingSelections.filter(
-                        (selection) => selection.date && selection.time
-                      )
-                    : [{ date: trainingDate, time: trainingTime }];
+                 const completedSelections =
+  weeklySelections.filter(
+    (selection) => selection.date && selection.time
+  );
 
-                  if (completedSelections.length !== scheduleMeta.slotsPerWeek) {
-                    alert(
-                      isMultiSessionSchedule
-                        ? `Please choose ${scheduleMeta.slotsPerWeek} training days and times.`
-                        : "Please choose a training date and time."
-                    );
-                    return;
-                  }
+                  if (completedSelections.length !== selectedScheduleMeta.slotsPerWeek) {
+  alert(
+    `Please choose ${selectedScheduleMeta.slotsPerWeek} training days and times.`
+  );
+  return;
+}
 
                   const selectedSlotKeys = completedSelections.map(
                     (selection) => `${selection.date}-${selection.time}`
@@ -3037,235 +3051,145 @@ if (isFreeSession) {
                     </select>
                   </div>
                 )}
+<div className="rounded-3xl border border-orange-500/20 bg-orange-500/5 p-5">
+  <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-400">
+    Training Selection
+  </p>
+<h3 className="mt-2 text-2xl font-black text-white">
+  Build Your Weekly Training Schedule
+</h3>
 
-                <div className="rounded-3xl border border-orange-500/20 bg-orange-500/5 p-5">
-                  <div>
-                    <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-400">
-                      Training Selection
-                    </p>
+<p className="mt-3 text-sm leading-7 text-white/60">
+  Choose your first training week, then select{" "}
+  {selectedScheduleMeta.slotsPerWeek} different training days. One time per
+  day. This schedule repeats for {selectedScheduleMeta.weeks}{" "}
+  {selectedScheduleMeta.weeks === 1 ? "week" : "weeks"}.
+</p>
 
-                    <h3 className="mt-2 text-2xl font-black text-white">
-                      Reserve Your Preferred Time
-                    </h3>
+<div className="mt-6 rounded-2xl border border-white/10 bg-black/25 p-4">
+  <label className="mb-2 block text-sm font-bold text-white">
+    Start Week
+  </label>
 
-                    <p className="mt-3 max-w-[620px] text-sm leading-7 text-white/60">
-                      {usesMultiSessionSchedule
-                        ? `Choose ${selectedScheduleMeta.slotsPerWeek} weekly training slots. These same days and times will repeat for ${selectedScheduleMeta.weeks} ${selectedScheduleMeta.weeks === 1 ? "week" : "weeks"}.`
-                        : "Choose your training date and full session time below."}
-                    </p>
-                  </div>
+  <input
+    type="date"
+    required
+    value={startWeekDate}
+    min={new Date().toISOString().split("T")[0]}
+    onChange={(e) => {
+      setStartWeekDate(e.target.value);
+      setWeeklySelections([]);
+    }}
+    className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white outline-none focus:border-orange-500"
+  />
 
-                  {usesMultiSessionSchedule ? (
-                    <div className="mt-6 grid gap-4">
-                      {trainingSelections.map((selection, index) => {
-                        const availableSelectionTimes = getAvailableTimesForSelection(
-                          selection.date
-                        );
+  <p className="mt-2 text-xs font-semibold text-white/45">
+    This date begins the week your recurring schedule will start.
+  </p>
+</div>
 
-                        return (
-                          <div
-                            key={`training-selection-${index}`}
-                            className="rounded-2xl border border-white/10 bg-black/20 p-4"
-                          >
-                            <div className="mb-4 flex items-center justify-between gap-3">
-                              <p className="text-[11px] font-black uppercase tracking-[2px] text-white/50">
-                                Session Slot {index + 1}
-                              </p>
+{startWeekDate && (
+  <div className="mt-5 grid gap-3">
+    {getWeekDates(startWeekDate).map((day) => {
+      const selectedDay = weeklySelections.find(
+        (selection) => selection.date === day.date
+      );
+const availableSelectionTimes =
+  getAvailableTimesForSelection(day.date);
+     
+      const isDaySelected = Boolean(selectedDay);
+      const isAtLimit =
+        weeklySelections.length >= selectedScheduleMeta.slotsPerWeek &&
+        !isDaySelected;
 
-                              {selection.date && selection.time && (
-                                <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[1px] text-cyan-300">
-                                  {getDayName(selection.date)}
-                                </span>
-                              )}
-                            </div>
 
-                            <div className="grid gap-4 sm:grid-cols-2">
-                              <div>
-                                <label className="mb-2 block text-sm font-bold text-white">
-                                  Training Date
-                                </label>
+      
+      return (
+        <div
+          key={day.date}
+          className={`rounded-2xl border p-4 transition ${
+            isDaySelected
+              ? "border-orange-500/50 bg-orange-500/10"
+              : "border-white/10 bg-black/25"
+          }`}
+        >
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <button
+              type="button"
+              disabled={isAtLimit}
+              onClick={() => toggleWeeklyDay(day.date)}
+              className="flex items-center gap-3 text-left disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <span
+                className={`grid h-7 w-7 place-items-center rounded-lg border text-xs font-black ${
+                  isDaySelected
+                    ? "border-orange-500 bg-orange-500 text-white"
+                    : "border-white/20 bg-white/[0.03] text-white/40"
+                }`}
+              >
+                {isDaySelected ? "✓" : ""}
+              </span>
 
-                                <input
-                                  type="date"
-                                  required
-                                  value={selection.date}
-                                  onChange={(e) =>
-                                    updateTrainingSelection(index, "date", e.target.value)
-                                  }
-                                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-                                />
+              <span>
+                <span className="block text-sm font-black uppercase text-white">
+                  {day.dayName}
+                </span>
+                <span className="text-xs font-semibold text-white/40">
+                  {day.displayDate}
+                </span>
+              </span>
+            </button>
 
-                                {selection.date && availableSelectionTimes.length === 0 && (
-                                  <p className="mt-2 text-xs font-bold text-orange-300">
-                                    Please choose Monday, Tuesday, Wednesday, Thursday,
-                                    Friday, or Saturday.
-                                  </p>
-                                )}
-                              </div>
+            <select
+              disabled={!isDaySelected}
+              value={selectedDay?.time || ""}
+              onChange={(e) => updateWeeklySelectionTime(day.date, e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-[#08111c] px-4 py-3 text-sm font-bold text-white outline-none focus:border-orange-500 disabled:cursor-not-allowed disabled:opacity-40 sm:w-[240px]"
+            >
+              <option value="">Select time</option>
+              {availableSelectionTimes.map(({ label, isBooked }) => (
+                <option key={label} value={label} disabled={isBooked}>
+                  {isBooked ? `${label} — Booked` : label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+)}
 
-                              <div>
-                                <label className="mb-2 block text-sm font-bold text-white">
-                                  Training Time
-                                </label>
+{weeklySelections.length > 0 && (
+  <div className="mt-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-5">
+    <p className="text-[11px] font-black uppercase tracking-[2px] text-cyan-300">
+      Your Weekly Schedule
+    </p>
 
-                                {!selection.date ? (
-                                  <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-bold text-white/40">
-                                    Choose a date first
-                                  </div>
-                                ) : availableSelectionTimes.length === 0 ? (
-                                  <div className="rounded-2xl border border-orange-500/30 bg-orange-500/10 px-5 py-4 text-sm font-bold text-orange-300">
-                                    No available sessions for this day.
-                                  </div>
-                                ) : (
-                                  <div className="grid gap-2">
-                                    {availableSelectionTimes.map(({ value, label, isBooked }) => (
-                                      <button
-                                        key={`${index}-${value}`}
-                                        type="button"
-                                        disabled={isBooked}
-                                        onClick={() =>
-                                          updateTrainingSelection(index, "time", label)
-                                        }
-                                        className={`rounded-2xl border px-4 py-3 text-left transition ${
-                                          isBooked
-                                            ? "cursor-not-allowed border-red-500/30 bg-red-500/10 opacity-60"
-                                            : selection.time === label
-                                            ? "border-orange-500 bg-orange-500/15 shadow-[0_0_25px_rgba(249,115,22,.2)]"
-                                            : "border-white/10 bg-white/[0.03] hover:border-orange-500/50 hover:bg-orange-500/10"
-                                        }`}
-                                      >
-                                        <div className="flex items-center justify-between gap-4">
-                                          <p className="text-sm font-black text-white">
-                                            {label}
-                                          </p>
+    <div className="mt-4 grid gap-2">
+      {weeklySelections.map((selection) => (
+        <div
+          key={selection.date}
+          className="flex items-center justify-between gap-4 rounded-xl bg-black/25 px-4 py-3"
+        >
+          <p className="text-sm font-black text-white">
+            {getDayName(selection.date)}
+          </p>
+          <p className="text-sm font-bold text-orange-300">
+            {selection.time || "Select time"}
+          </p>
+        </div>
+      ))}
+    </div>
 
-                                          <span
-                                            className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
-                                              isBooked
-                                                ? "bg-red-500/20 text-red-300"
-                                                : selection.time === label
-                                                ? "bg-orange-500 text-white"
-                                                : "bg-cyan-400/10 text-cyan-300"
-                                            }`}
-                                          >
-                                            {isBooked
-                                              ? "Booked"
-                                              : selection.time === label
-                                              ? "Selected"
-                                              : "Available"}
-                                          </span>
-                                        </div>
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
+    <p className="mt-4 text-xs font-semibold leading-6 text-white/50">
+      {weeklySelections.length} of {selectedScheduleMeta.slotsPerWeek} days
+      selected. This schedule will repeat automatically.
+    </p>
+  </div>
+)}
 
-                      <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-5 py-4">
-                        <p className="text-sm leading-7 text-white/65">
-                          Your selected weekly slots will automatically block the
-                          matching dates for the full package so other athletes cannot
-                          book those times.
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                      <div>
-                        <label className="mb-2 block text-sm font-bold text-white">
-                          Training Date
-                        </label>
-
-                        <input
-                          type="date"
-                          name="Training Date"
-                          required
-                          value={trainingDate}
-                          onChange={(e) => {
-                            setTrainingDate(e.target.value);
-                            setTrainingTime("");
-                          }}
-                          className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-                        />
-
-                        {trainingDate && availableTimes.length === 0 && (
-                          <p className="mt-2 text-xs font-bold text-orange-300">
-                            Please choose Monday, Tuesday, Wednesday, Thursday,
-                            Friday, or Saturday.
-                          </p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="mb-2 block text-sm font-bold text-white">
-                          Training Time
-                        </label>
-
-                        <input type="hidden" name="Training Time" value={trainingTime} />
-
-                        {!trainingDate ? (
-                          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-bold text-white/40">
-                            Choose a date first
-                          </div>
-                        ) : availableTimes.length === 0 ? (
-                          <div className="rounded-2xl border border-orange-500/30 bg-orange-500/10 px-5 py-4 text-sm font-bold text-orange-300">
-                            No available sessions for this day.
-                          </div>
-                        ) : (
-                          <div className="grid gap-3">
-                            {availableTimes.map(({ value, label, isBooked }) => (
-                              <button
-                                key={value}
-                                type="button"
-                                disabled={isBooked}
-                                onClick={() => setTrainingTime(label)}
-                                className={`rounded-2xl border px-5 py-4 text-left transition ${
-                                  isBooked
-                                    ? "cursor-not-allowed border-red-500/30 bg-red-500/10 opacity-60"
-                                    : trainingTime === label
-                                    ? "border-orange-500 bg-orange-500/15 shadow-[0_0_25px_rgba(249,115,22,.2)]"
-                                    : "border-white/10 bg-white/[0.03] hover:border-orange-500/50 hover:bg-orange-500/10"
-                                }`}
-                              >
-                                <div className="flex items-center justify-between gap-4">
-                                  <div>
-                                    <p className="text-sm font-black text-white">
-                                      {label}
-                                    </p>
-                                    <p className="mt-1 text-xs font-bold text-white/40">
-                                      Brooklyn Park • 1 hour session
-                                    </p>
-                                  </div>
-
-                                  <span
-                                    className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] ${
-                                      isBooked
-                                        ? "bg-red-500/20 text-red-300"
-                                        : trainingTime === label
-                                        ? "bg-orange-500 text-white"
-                                        : "bg-cyan-400/10 text-cyan-300"
-                                    }`}
-                                  >
-                                    {isBooked
-                                      ? "Booked"
-                                      : trainingTime === label
-                                      ? "Selected"
-                                      : "Available"}
-                                  </span>
-                                </div>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
+   </div>
                 <div>
                   <label className="mb-2 block text-sm font-bold text-white">
                     Additional Notes
@@ -3286,16 +3210,7 @@ if (isFreeSession) {
 
 {/* PAYMENT + TRAVEL NOTICE */}
 <div className="mt-8 grid gap-4 sm:grid-cols-2">
-  <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-5 backdrop-blur-md">
-    <p className="text-[11px] font-black uppercase tracking-[2px] text-cyan-300">
-      Payment Options
-    </p>
-    <p className="mt-3 text-sm font-bold leading-7 text-white/75">
-      Venmo: <span className="text-white">@thinkworkbasketball</span>
-      <br />
-      Zelle: <span className="text-white">thinkworkbasketball@gmail.com</span>
-    </p>
-  </div>
+ 
 
   <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
     <p className="text-sm italic leading-7 text-white/70">
