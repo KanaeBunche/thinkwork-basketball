@@ -1316,13 +1316,13 @@ export default function App() {
   };
 
   const openFreeSession = () => {
-    openSignup({
-      title: "Claim Your Free Session",
-      sessions: "1 First-Time Session With Coach Pree",
-      price: "Free",
-      note: "Only for first-time sessions with Coach Pree.",
-    });
-  };
+  openSignup({
+    title: "Claim Your Free Session",
+    sessions: "1 First-Time Session With Coach Pree",
+    price: "Free",
+    note: "An exclusive complimentary session for first-time ThinkWork Basketball athletes.",
+  });
+}
 
   const closeSignup = () => setShowSignupModal(false);
 
@@ -2348,7 +2348,7 @@ export default function App() {
                       </p>
 
                       {selectedProgram.note && (
-                        <p className="mt-3 max-w-[360px] rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[2px] text-orange-300">
+                        <p className="mt-3 max-w-[420px] rounded-2xl border border-orange-400/30 bg-orange-500/10 px-4 py-3 text-[11px] font-black uppercase leading-5 tracking-[2px] text-orange-300">
                           {selectedProgram.note}
                         </p>
                       )}
@@ -2420,6 +2420,28 @@ export default function App() {
                   const form = e.currentTarget;
                   const formData = new FormData(form);
 
+                     
+                const isFreeSession =
+                selectedProgram?.title === "Claim Your Free Session" ||
+                selectedProgram?.price === "Free";
+
+                  const previousAthlete = formData.get("Previous Athlete");
+
+                  if (isFreeSession && previousAthlete === "Yes") {
+                    alert(
+                      "Free sessions are only available for athletes who have never trained with Coach Pree and have never received a free ThinkWork Basketball session before."
+                    );
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  const notesWithPreviousAthlete = [
+                    `Previously trained with ThinkWork Basketball: ${previousAthlete || "Not answered"}`,
+                    formData.get("Additional Notes"),
+                  ]
+                    .filter(Boolean)
+                    .join("\n\n");
+
                   const { data: existingBooking, error: checkError } =
                     await supabase
                       .from("signups")
@@ -2456,9 +2478,9 @@ export default function App() {
                     program_price: selectedProgram?.price || "",
                     training_date: trainingDate,
                     training_time: trainingTime,
-                    additional_notes: formData.get("Additional Notes"),
-                    payment_status: "Not Paid",
-                    confirmation_status: "Not Sent",
+                    additional_notes: notesWithPreviousAthlete,
+                    payment_status: isFreeSession ? "Paid" : "Not Paid",
+confirmation_status: isFreeSession ? "Confirmation Sent" : "Not Sent",
                     sessions_completed: 0,
                   });
 
@@ -2484,24 +2506,44 @@ await fetch("/api/new-registration", {
     trainingDate,
     trainingTime,
     instagram: formData.get("Instagram"),
-    notes: formData.get("Additional Notes"),
+    notes: notesWithPreviousAthlete,
   }),
 });
-   
- await fetch("/api/send-payment-instructions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    parentEmail: formData.get("Email"),
-    athleteName: `${formData.get("Athlete First Name") || ""} ${
-      formData.get("Athlete Last Name") || ""
-    }`.trim(),
-    program: selectedProgram?.title || formData.get("Program Interest"),
-    price: selectedProgram?.price || "",
-  }),
-});              
+
+
+if (!isFreeSession) {
+  await fetch("/api/send-payment-instructions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      parentEmail: formData.get("Email"),
+      athleteName: `${formData.get("Athlete First Name") || ""} ${
+        formData.get("Athlete Last Name") || ""
+      }`.trim(),
+      program: selectedProgram?.title || formData.get("Program Interest"),
+      price: selectedProgram?.price || "",
+    }),
+  });
+}    
+if (isFreeSession) {
+  await fetch("/api/send-confirmation", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      parentEmail: formData.get("Email"),
+      athleteName: `${formData.get("Athlete First Name") || ""} ${
+        formData.get("Athlete Last Name") || ""
+      }`.trim(),
+      program: selectedProgram?.title || "Claim Your Free Session",
+      trainingDate,
+      trainingTime,
+    }),
+  });
+}        
                   setSubmitting(false);
                   window.location.href = "/schedule";
                 }}
@@ -2616,6 +2658,27 @@ await fetch("/api/new-registration", {
       className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
     />
   </div>
+
+ <div>
+  <label className="mb-2 block text-sm font-bold text-white">
+    Has this athlete previously trained with Coach Pree?
+  </label>
+
+  <select
+    name="Previous Athlete"
+    required
+    className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+  >
+    <option value="">Select an option</option>
+    <option value="No">No — First Time Athlete</option>
+    <option value="Yes">Yes — Returning Athlete</option>
+  </select>
+
+  <p className="mt-3 text-xs leading-6 text-white/55">
+    Complimentary sessions are reserved exclusively for first-time
+    ThinkWork Basketball athletes and may only be redeemed once.
+  </p>
+</div>
 
   <div>
     <label className="mb-2 block text-sm font-bold text-white">
