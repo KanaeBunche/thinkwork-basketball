@@ -2732,8 +2732,7 @@ ${weeklyScheduleSummary}`
                     ...new Set(
                       recurringBookings.map((booking) => booking.training_date)
                     ),
-                  ];
-                  console.log("Checking:", trainingDate, trainingTime);
+                  ];  console.log("Checking:", trainingDate, trainingTime);
                   const { data: existingBooking, error: checkError } = await supabase
                     .from("session_bookings")
                     .select("training_date, training_time")
