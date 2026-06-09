@@ -3089,8 +3089,6 @@ if (isFreeSession) {
     setStartWeekDate(e.target.value);
     setWeeklySelections([]);
   }}
-  onFocus={(e) => e.currentTarget.showPicker?.()}
-  onClick={(e) => e.currentTarget.showPicker?.()}
   className="w-full cursor-pointer rounded-xl border border-white/10 bg-[#08111c] px-4 py-3 text-sm text-white outline-none focus:border-orange-500"
 />
 
