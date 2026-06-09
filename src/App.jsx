@@ -1578,7 +1578,7 @@ const updateWeeklySelectionTime = (date, time) => {
         console.error(error);
         return;
       }
-
+      console.log("Booked slots loaded:", data);
       setBookedSlots(data || []);
     };
 
