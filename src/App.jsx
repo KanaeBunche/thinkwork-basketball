@@ -51,7 +51,49 @@ const saturdayTimes = [
   { value: "8:00 AM", label: "8:00 AM - 9:00 AM" },
   { value: "9:30 AM", label: "9:30 AM - 10:30 AM" },
 ];
+const coachBlockedDates = [
+  // Full unavailable days
+  "2026-06-22",
+  "2026-06-23",
+  "2026-06-26",
+  "2026-07-27",
+  "2026-07-28",
+  "2026-07-29",
+  "2026-07-30",
+  "2026-08-21",
+  "2026-08-22",
+];
 
+const coachBlockedTimeRanges = [
+  {
+    date: "2026-07-06",
+    blockedTimes: [
+      "9:00 AM - 10:00 AM",
+      "10:30 AM - 11:30 AM",
+      "12:00 PM - 1:00 PM",
+      "1:30 PM - 2:30 PM",
+    ],
+  },
+  {
+    date: "2026-07-08",
+    blockedTimes: [
+      "9:00 AM - 10:00 AM",
+      "10:30 AM - 11:30 AM",
+      "12:00 PM - 1:00 PM",
+      "1:30 PM - 2:30 PM",
+    ],
+  },
+  {
+    date: "2026-07-24",
+    blockedTimes: [
+      "9:00 AM - 10:00 AM",
+      "10:30 AM - 11:30 AM",
+      "12:00 PM - 1:00 PM",
+      "1:30 PM - 2:30 PM",
+      "3:00 PM - 4:00 PM",
+    ],
+  },
+];
 
 
 const getDayName = (dateValue) => {
@@ -1512,18 +1554,31 @@ const openSignup = (program = null) => {
 
  
 
-  const getAvailableTimesForSelection = (dateValue) => {
-    return getTimesForDate(dateValue).map((slot) => {
-      const isBooked = bookedSlots.some(
-        (booked) =>
-          booked.training_date === dateValue &&
-          (booked.training_time === slot.label ||
-            booked.training_time === slot.value)
-      );
+ const getAvailableTimesForSelection = (dateValue) => {
+  const isFullDayBlocked = coachBlockedDates.includes(dateValue);
 
-      return { ...slot, isBooked };
-    });
-  };
+  if (isFullDayBlocked) return [];
+
+  const blockedRange = coachBlockedTimeRanges.find(
+    (item) => item.date === dateValue
+  );
+
+  return getTimesForDate(dateValue).map((slot) => {
+    const isBooked = bookedSlots.some(
+      (booked) =>
+        booked.training_date === dateValue &&
+        (booked.training_time === slot.label ||
+          booked.training_time === slot.value)
+    );
+
+    const isCoachBlocked = blockedRange?.blockedTimes.includes(slot.label);
+
+    return {
+      ...slot,
+      isBooked: isBooked || isCoachBlocked,
+    };
+  });
+};
   const getWeekDates = (startDate) => {
   const [year, month, day] = startDate.split("-").map(Number);
   const start = new Date(year, month - 1, day);
@@ -2707,18 +2762,31 @@ const updateWeeklySelectionTime = (date, time) => {
                     return;
                   }
 
-                  const notesWithPreviousAthlete = [
-                    `Previously trained with ThinkWork Basketball: ${
-                      previousAthlete || "Not answered"
-                    }`,
-                    weeklyScheduleSummary
-                      ? `Weekly training schedule:
+                 const notesWithPreviousAthlete = [
+  `Previously trained with ThinkWork Basketball: ${
+    previousAthlete || "Not answered"
+  }`,
+
+  weeklyScheduleSummary
+    ? `Weekly training schedule:
 ${weeklyScheduleSummary}`
-                      : null,
-                    formData.get("Additional Notes"),
-                  ]
-                    .filter(Boolean)
-                    .join("\n\n");
+    : null,
+
+  formData.get("Partner Athlete Name")
+    ? `Partner Athlete:
+Name: ${formData.get("Partner Athlete Name")}
+Age: ${formData.get("Partner Athlete Age")}`
+    : null,
+
+  formData.get("Small Group Athletes")
+    ? `Small Group Athletes:
+${formData.get("Small Group Athletes")}`
+    : null,
+
+  formData.get("Additional Notes"),
+]
+  .filter(Boolean)
+  .join("\n\n");
 
                   const recurringBookings = buildRecurringBookings(
                     completedSelections,
@@ -3002,25 +3070,79 @@ if (isFreeSession) {
     />
   </div>
 
-  <div>
-{selectedProgram?.title === "Claim Your Free Session" && (
-  <div>
-    <label className="mb-2 block text-sm font-bold text-white">
-      Has this athlete previously trained with Coach Pree?
-    </label>
+  {selectedProgram?.title === "Claim Your Free Session" && (
+    <div className="sm:col-span-2">
+      <label className="mb-2 block text-sm font-bold text-white">
+        Has this athlete previously trained with Coach Pree?
+      </label>
 
-    <select
-      name="Previous Athlete"
-      required
-      className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
-    >
-      <option value="">Select an option</option>
-      <option value="No">No — First Time Athlete</option>
-      <option value="Yes">Yes — Returning Athlete</option>
-    </select>
-  </div>
-)}
-  </div>
+      <select
+        name="Previous Athlete"
+        required
+        className="w-full rounded-2xl border border-white/10 bg-[#08111c] px-5 py-4 text-sm text-white outline-none focus:border-orange-500"
+      >
+        <option value="">Select an option</option>
+        <option value="No">No — First Time Athlete</option>
+        <option value="Yes">Yes — Returning Athlete</option>
+      </select>
+    </div>
+  )}
+
+  {selectedProgram?.title === "Partner Sessions" && (
+    <div className="rounded-3xl border border-cyan-400/20 bg-cyan-400/5 p-5 sm:col-span-2">
+      <p className="text-[12px] font-black uppercase tracking-[3px] text-cyan-300">
+        Partner Athlete Information
+      </p>
+
+      <p className="mt-2 text-sm leading-6 text-white/60">
+        Partner Sessions require exactly 2 athletes. Add the second athlete
+        below.
+      </p>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <input
+          type="text"
+          name="Partner Athlete Name"
+          required
+          placeholder="Second athlete full name"
+          className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+        />
+
+        <input
+          type="number"
+          name="Partner Athlete Age"
+          required
+          placeholder="Second athlete age"
+          className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+        />
+      </div>
+    </div>
+  )}
+
+  {selectedProgram?.title === "Small Group Sessions" && (
+    <div className="rounded-3xl border border-cyan-400/20 bg-cyan-400/5 p-5 sm:col-span-2">
+      <p className="text-[12px] font-black uppercase tracking-[3px] text-cyan-300">
+        Small Group Athlete Information
+      </p>
+
+      <p className="mt-2 text-sm leading-6 text-white/60">
+        Small Group Sessions require 3–5 athletes. The main athlete is listed
+        above. Add the other athletes and ages below.
+      </p>
+
+      <textarea
+        name="Small Group Athletes"
+        required
+        rows="5"
+        placeholder={`Example:
+Athlete 2: Jayden Smith, Age 14
+Athlete 3: Marcus Lee, Age 15
+Athlete 4: Optional
+Athlete 5: Optional`}
+        className="mt-5 w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+      />
+    </div>
+  )}
 
   {selectedProgram?.price === "Free" && (
     <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 px-5 py-4 sm:col-span-2">
@@ -3102,20 +3224,24 @@ if (isFreeSession) {
 {startWeekDate && (
   <div className="mt-5 grid gap-3">
     {getWeekDates(startWeekDate).map((day) => {
-      const selectedDay = weeklySelections.find(
-        (selection) => selection.date === day.date
-      );
-const availableSelectionTimes =
-  getAvailableTimesForSelection(day.date);
-     
-      const isDaySelected = Boolean(selectedDay);
+  const selectedDay = weeklySelections.find(
+    (selection) => selection.date === day.date
+  );
+
+  const isCoachUnavailableDay =
+    coachBlockedDates.includes(day.date);
+
+  const availableSelectionTimes =
+    getAvailableTimesForSelection(day.date);
+
+  const isDaySelected = Boolean(selectedDay);
       const isAtLimit =
         weeklySelections.length >= selectedScheduleMeta.slotsPerWeek &&
         !isDaySelected;
 
-
+  return (
       
-      return (
+   
         <div
           key={day.date}
           className={`rounded-2xl border p-4 transition ${
@@ -3151,19 +3277,32 @@ const availableSelectionTimes =
               </span>
             </button>
 
-            <select
-              disabled={!isDaySelected}
-              value={selectedDay?.time || ""}
-              onChange={(e) => updateWeeklySelectionTime(day.date, e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-[#08111c] px-4 py-3 text-sm font-bold text-white outline-none focus:border-orange-500 disabled:cursor-not-allowed disabled:opacity-40 sm:w-[240px]"
-            >
-              <option value="">Select time</option>
-              {availableSelectionTimes.map(({ label, isBooked }) => (
-                <option key={label} value={label} disabled={isBooked}>
-                  {isBooked ? `${label} — Booked` : label}
-                </option>
-              ))}
-            </select>
+           {isCoachUnavailableDay || availableSelectionTimes.length === 0 ? (
+  <div className="w-full rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm font-bold text-orange-200 sm:w-[240px]">
+    Coach Pree is unavailable this day.
+  </div>
+) : (
+  <select
+    disabled={!isDaySelected}
+    value={selectedDay?.time || ""}
+    onChange={(e) =>
+      updateWeeklySelectionTime(day.date, e.target.value)
+    }
+    className="w-full rounded-xl border border-white/10 bg-[#08111c] px-4 py-3 text-sm font-bold text-white outline-none focus:border-orange-500 disabled:cursor-not-allowed disabled:opacity-40 sm:w-[240px]"
+  >
+    <option value="">Select time</option>
+
+    {availableSelectionTimes.map(({ label, isBooked }) => (
+      <option
+        key={label}
+        value={label}
+        disabled={isBooked}
+      >
+        {isBooked ? `${label} — Unavailable` : label}
+      </option>
+    ))}
+  </select>
+)}
           </div>
         </div>
       );
