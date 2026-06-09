@@ -2744,7 +2744,8 @@ ${weeklyScheduleSummary}`
                     setSubmitting(false);
                     return;
                   }
-
+                  console.log("Recurring bookings checking:", recurringBookings);
+                  console.log("Existing bookings found:", existingBooking);
                   const hasConflict = existingBooking?.some((booked) =>
                     recurringBookings.some(
                       (booking) =>
