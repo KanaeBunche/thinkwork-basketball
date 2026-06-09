@@ -1569,8 +1569,8 @@ const updateWeeklySelectionTime = (date, time) => {
   useEffect(() => {
     const fetchBookedSlots = async () => {
       const { data, error } = await supabase
-        .from("session_bookings")
-        .select("training_date, training_time")
+  .from("signups")
+  .select("training_date, training_time")
         .not("training_date", "is", null)
         .not("training_time", "is", null);
 
