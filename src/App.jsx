@@ -3079,12 +3079,14 @@ if (isFreeSession) {
   <label className="mb-2 block text-sm font-bold text-white">
     Start Week
   </label>
-
- <input
+<input
   type="date"
   required
   value={startWeekDate}
   min={formatDateValue(new Date())}
+  onMouseDown={(e) => {
+    e.currentTarget.showPicker?.();
+  }}
   onChange={(e) => {
     setStartWeekDate(e.target.value);
     setWeeklySelections([]);
