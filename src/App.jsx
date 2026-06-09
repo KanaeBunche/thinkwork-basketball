@@ -45,6 +45,8 @@ const weekdayTimes = [
   { value: "1:30 PM", label: "1:30 PM - 2:30 PM" },
   { value: "3:00 PM", label: "3:00 PM - 4:00 PM" },
   { value: "4:30 PM", label: "4:30 PM - 5:30 PM" },
+  { value: "5:30 PM", label: "5:30 PM - 6:30 PM" },
+  { value: "6:30 PM", label: "6:30 PM - 7:30 PM" },
 ];
 
 const saturdayTimes = [
@@ -93,8 +95,15 @@ const coachBlockedTimeRanges = [
       "3:00 PM - 4:00 PM",
     ],
   },
-];
+];const manuallyBlockedTimes = {
+  "2026-06-09": ["5:30 PM - 6:30 PM"],
+  "2026-06-11": ["5:30 PM - 6:30 PM"],
+  "2026-06-12": ["5:30 PM - 6:30 PM"],
 
+  "2026-06-16": ["5:30 PM - 6:30 PM"],
+  "2026-06-18": ["5:30 PM - 6:30 PM"],
+  "2026-06-19": ["5:30 PM - 6:30 PM"],
+};
 
 const getDayName = (dateValue) => {
   if (!dateValue) return "";
@@ -1554,7 +1563,7 @@ const openSignup = (program = null) => {
 
  
 
- const getAvailableTimesForSelection = (dateValue) => {
+const getAvailableTimesForSelection = (dateValue) => {
   const isFullDayBlocked = coachBlockedDates.includes(dateValue);
 
   if (isFullDayBlocked) return [];
@@ -1573,9 +1582,12 @@ const openSignup = (program = null) => {
 
     const isCoachBlocked = blockedRange?.blockedTimes.includes(slot.label);
 
+    const manuallyBlocked =
+      manuallyBlockedTimes[dateValue]?.includes(slot.label);
+
     return {
       ...slot,
-      isBooked: isBooked || isCoachBlocked,
+      isBooked: isBooked || isCoachBlocked || manuallyBlocked,
     };
   });
 };
