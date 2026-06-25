@@ -30,12 +30,12 @@ import image4 from "./assets/images/image4.png";
 import image5 from "./assets/images/image5.jpeg";
 import image6 from "./assets/images/image6.png";
 import image7 from "./assets/images/image7.png";
+import ThreePillars from "./ThreePillars";
 
 import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
 
-const navItems = ["Home", "Programs", "About", "Schedule", "Media", "Contact"];
-
+const navItems = ["Home", "Programs", "About", "Three Pillars", "Schedule", "Media", "Contact"];
 const DASHBOARD_PASSWORD = "ThinkWork123";
 
 const weekdayTimes = [
@@ -1692,7 +1692,7 @@ const updateWeeklySelectionTime = (date, time) => {
             {navItems.map((item, index) => (
               <a
                 key={item}
-                href={`#${item.toLowerCase()}`}
+                href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
                 className={`relative transition hover:text-orange-400 ${
                   index === 0 ? "text-orange-400" : ""
                 }`}
@@ -1732,7 +1732,7 @@ const updateWeeklySelectionTime = (date, time) => {
               {navItems.map((item) => (
                 <a
                   key={item}
-                  href={`#${item.toLowerCase()}`}
+                 href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
                   onClick={() => setMenuOpen(false)}
                   className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-black uppercase tracking-wide text-white/90"
                 >
@@ -2115,8 +2115,10 @@ const updateWeeklySelectionTime = (date, time) => {
         </div>
       ))}
     </div>
-  </div>
-</section>
+        </div>
+        </section> 
+  <ThreePillars />
+   
       {/* PROGRAMS */}
       <section
         id="programs"
