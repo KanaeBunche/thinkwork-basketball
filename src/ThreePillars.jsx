@@ -52,9 +52,9 @@ const pillars = [
 export default function ThreePillars() {
   return (
     <section
-      id="three-pillars"
-      className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020611] px-4 py-24 sm:px-6 lg:px-8 xl:px-24"
-      >
+  id="the-ecosystem"
+  className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020611] px-4 py-24 sm:px-6 lg:px-8 xl:px-24"
+>
        <div className="relative z-10 mx-auto mb-12 max-w-[1500px] text-center">
 
   <div className="mb-3 flex items-center justify-center gap-5">
