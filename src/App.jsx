@@ -37,7 +37,7 @@ import ThreePillars from "./ThreePillars";
 import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
 
-const navItems = ["Home", "Programs", "About", "Three Pillars", "Schedule", "Media", "Contact"];
+const navItems = ["Home", "Programs", "About", "The Ecosystem", "Schedule", "Media", "Contact"];
 
 
 const weekdayTimes = [
