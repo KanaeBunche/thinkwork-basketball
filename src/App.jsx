@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import Legal from "./Legal";
+
 import {
   ArrowRight,
   CalendarDays,
@@ -36,7 +38,7 @@ import vid3 from "./assets/videos/vid3.mp4";
 import vid5 from "./assets/videos/vid5.mp4";
 
 const navItems = ["Home", "Programs", "About", "Three Pillars", "Schedule", "Media", "Contact"];
-const DASHBOARD_PASSWORD = "ThinkWork123";
+
 
 const weekdayTimes = [
   { value: "9:00 AM", label: "9:00 AM - 10:00 AM" },
@@ -104,6 +106,7 @@ const coachBlockedTimeRanges = [
   "2026-06-18": ["5:30 PM - 6:30 PM"],
   "2026-06-19": ["5:30 PM - 6:30 PM"],
 };
+
 
 const getDayName = (dateValue) => {
   if (!dateValue) return "";
@@ -474,21 +477,36 @@ const getDashboardScheduleSummary = (signup) => {
   return [];
 };
 
-function DashboardPasswordPage({ onUnlock }) {
+function DashboardPasswordPage({ onUnlock = () => window.location.reload() }) {
+  const [email, setEmail] = useState("thinkworkbasketball@gmail.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const allowedEmail = "thinkworkbasketball@gmail.com";
 
-    if (password === DASHBOARD_PASSWORD) {
-      localStorage.setItem("thinkwork_dashboard_unlocked", "true");
-      setError("");
-      onUnlock();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    });
+
+    if (error) {
+      console.error(error);
+      setError("Incorrect email or password.");
       return;
     }
 
-    setError("Incorrect password. Please try again.");
+    if (data.user?.email !== allowedEmail) {
+      await supabase.auth.signOut();
+      setError("You are not authorized to access this dashboard.");
+      return;
+    }
+
+   
+    onUnlock();
   };
 
   return (
@@ -506,10 +524,24 @@ function DashboardPasswordPage({ onUnlock }) {
         </h1>
 
         <p className="mt-4 text-sm leading-6 text-white/55">
-          Enter the dashboard password to view registrations and manage sessions.
+          Login with the authorized ThinkWork Basketball owner account.
         </p>
 
         <div className="mt-7">
+          <label className="mb-2 block text-sm font-bold text-white">
+            Email
+          </label>
+
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="thinkworkbasketball@gmail.com"
+            className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
+          />
+        </div>
+
+        <div className="mt-5">
           <label className="mb-2 block text-sm font-bold text-white">
             Password
           </label>
@@ -566,6 +598,7 @@ function DashboardPage() {
   const [manualSubmitting, setManualSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+  
   const fetchSignups = async () => {
     setLoading(true);
 
@@ -836,6 +869,15 @@ function DashboardPage() {
             >
               Refresh
             </button>
+            <button
+  onClick={async () => {
+    await supabase.auth.signOut();
+window.location.href = "/dashboard";
+  }}
+  className="rounded-2xl border border-red-500/40 px-6 py-4 text-[12px] font-black uppercase tracking-[2px] text-red-300 transition hover:bg-red-500/10"
+>
+  Logout
+</button>
           </div>
         </div>
 
@@ -1507,11 +1549,18 @@ export default function App() {
 const [trainingTime, setTrainingTime] = useState("");
 const [startWeekDate, setStartWeekDate] = useState("");
 const [weeklySelections, setWeeklySelections] = useState([]);
+const [user, setUser] = useState(null);
+
+useEffect(() => {
+  supabase.auth.getUser().then(({ data }) => {
+    setUser(data.user);
+  });
+}, []);
+  
   const [bookedSlots, setBookedSlots] = useState([]);
   const [submitting, setSubmitting] = useState(false);
-  const [dashboardUnlocked, setDashboardUnlocked] = useState(() => {
-    return localStorage.getItem("thinkwork_dashboard_unlocked") === "true";
-  });
+  const [legalOpen, setLegalOpen] = useState(null);
+ 
 
 const selectedScheduleMeta = getProgramScheduleMeta(selectedProgram?.title);
 
@@ -1645,20 +1694,32 @@ const updateWeeklySelectionTime = (date, time) => {
         console.error(error);
         return;
       }
-      console.log("Booked slots loaded:", data);
+      
       setBookedSlots(data || []);
     };
 
     fetchBookedSlots();
   }, []);
 
-  if (window.location.pathname === "/dashboard") {
-    return dashboardUnlocked ? (
-      <DashboardPage />
-    ) : (
-      <DashboardPasswordPage onUnlock={() => setDashboardUnlocked(true)} />
+if (window.location.pathname === "/dashboard") {
+  if (user === null) {
+    return (
+      <DashboardPasswordPage
+        onUnlock={() => window.location.reload()}
+      />
     );
   }
+
+  if (user?.email !== "thinkworkbasketball@gmail.com") {
+    return (
+      <DashboardPasswordPage
+        onUnlock={() => window.location.reload()}
+      />
+    );
+  }
+
+  return <DashboardPage />;
+}
 
   if (window.location.pathname === "/schedule") {
     return <SchedulePage />;
@@ -2598,22 +2659,58 @@ const updateWeeklySelectionTime = (date, time) => {
           </a>
         </div>
 
-        {/* Footer Credit */}
-        <div className="mt-10 border-t border-white/10 pt-6 text-center">
-          <p className="text-xs font-medium tracking-wide text-white/35">
-            Website by{" "}
-            <a
-              href="https://www.kodedbykanae.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-cyan-300 transition hover:text-orange-400"
-            >
-              Koded by Kanae
-            </a>
-          </p>
-        </div>
-      </footer>
+       {/* Footer Credit */}
+<div className="mt-10 border-t border-white/10 pt-6 text-center">
+  <div className="mb-5 flex flex-wrap justify-center gap-6 text-[11px] font-black uppercase tracking-[2px] text-white/35">
+    <button
+      type="button"
+      onClick={() => setLegalOpen("privacy")}
+      className="transition hover:text-orange-400"
+    >
+      Privacy Policy
+    </button>
 
+    <button
+      type="button"
+      onClick={() => setLegalOpen("refund")}
+      className="transition hover:text-orange-400"
+    >
+      Refund Policy
+    </button>
+    <button
+      type="button"
+      onClick={() => setLegalOpen("accessibility")}
+      className="transition hover:text-orange-400"
+    >
+     Accessibility
+    </button>
+            
+    <button
+      type="button"
+      onClick={() => setLegalOpen("waiver")}
+      className="transition hover:text-orange-400"
+    >
+      Waiver
+    </button>
+  </div>
+
+  <p className="text-xs font-medium tracking-wide text-white/35">
+    Website by{" "}
+    <a
+      href="https://www.kodedbykanae.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-semibold text-cyan-300 transition hover:text-orange-400"
+    >
+      Koded by Kanae
+    </a>
+  </p>
+</div>
+      </footer>
+<Legal
+  legalOpen={legalOpen}
+  setLegalOpen={setLegalOpen}
+/>
       {/* SIGNUP MODAL */}
       {showSignupModal && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
