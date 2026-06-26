@@ -205,7 +205,6 @@ export default function ThreePillars() {
         {/* Bottom Line */}
         <div className="mt-8 flex items-center gap-6 rounded-[22px] border border-white/10 bg-white/[0.03] px-8 py-6">
           <div className="h-px flex-1 bg-cyan-400/45" />
-          <div className="h-12 w-12 rounded-full border border-cyan-400/40 bg-[#06101d] shadow-[0_0_35px_rgba(0,132,255,.35)]" />
           <p className="hidden text-center text-[12px] font-black uppercase tracking-[8px] text-white/50 sm:block">
             One Foundation. One Vision.
           </p>
