@@ -70,10 +70,8 @@ export default function ThreePillars() {
   <h2 className="text-[52px] font-black uppercase leading-none tracking-[-3px] text-white drop-shadow-[0_0_30px_rgba(255,255,255,.18)] sm:text-[78px] lg:text-[92px]">
     The Ecosystem
   </h2>
-
-  <p className="mt-4 text-[12px] font-black uppercase tracking-[7px] text-white/55 sm:text-sm">
-    One Foundation. One Vision. One Mind.
-    <span className="text-orange-500"> The Mission.</span>
+<p className="mt-4 text-[12px] font-black uppercase tracking-[7px] text-white/55 sm:text-sm">
+    One Foundation. One Vision.
   </p>
 
 </div>
