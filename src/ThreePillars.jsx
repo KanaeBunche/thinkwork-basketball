@@ -138,11 +138,7 @@ export default function ThreePillars() {
                   }`}
                 />
 
-                <div
-                  className={`absolute inset-x-8 top-[105px] h-px ${
-                    isOrange ? "bg-orange-500/40" : "bg-cyan-400/40"
-                  }`}
-                />
+                
 
                 <p className="absolute bottom-5 right-7 text-[84px] font-black leading-none text-white/[0.04]">
                   {pillar.number}
