@@ -40,20 +40,29 @@ import vid5 from "./assets/videos/vid5.mp4";
 const navItems = ["Home", "Programs", "About", "The Ecosystem", "Schedule", "Media", "Contact"];
 
 
+// Mon, Tue, Wed, Fri — 1 hr sessions, 1 hr gap, 8am–7pm
 const weekdayTimes = [
-  { value: "9:00 AM", label: "9:00 AM - 10:00 AM" },
-  { value: "10:30 AM", label: "10:30 AM - 11:30 AM" },
+  { value: "8:00 AM", label: "8:00 AM - 9:00 AM" },
+  { value: "10:00 AM", label: "10:00 AM - 11:00 AM" },
   { value: "12:00 PM", label: "12:00 PM - 1:00 PM" },
-  { value: "1:30 PM", label: "1:30 PM - 2:30 PM" },
-  { value: "3:00 PM", label: "3:00 PM - 4:00 PM" },
-  { value: "4:30 PM", label: "4:30 PM - 5:30 PM" },
-  { value: "5:30 PM", label: "5:30 PM - 6:30 PM" },
-  { value: "6:30 PM", label: "6:30 PM - 7:30 PM" },
+  { value: "2:00 PM", label: "2:00 PM - 3:00 PM" },
+  { value: "4:00 PM", label: "4:00 PM - 5:00 PM" },
+  { value: "6:00 PM", label: "6:00 PM - 7:00 PM" },
 ];
 
-const saturdayTimes = [
+// Thursday — same as weekdays but stops after the 2pm slot
+const thursdayTimes = [
   { value: "8:00 AM", label: "8:00 AM - 9:00 AM" },
-  { value: "9:30 AM", label: "9:30 AM - 10:30 AM" },
+  { value: "10:00 AM", label: "10:00 AM - 11:00 AM" },
+  { value: "12:00 PM", label: "12:00 PM - 1:00 PM" },
+  { value: "2:00 PM", label: "2:00 PM - 3:00 PM" },
+];
+
+// Saturday — 9am–2pm
+const saturdayTimes = [
+  { value: "9:00 AM", label: "9:00 AM - 10:00 AM" },
+  { value: "11:00 AM", label: "11:00 AM - 12:00 PM" },
+  { value: "1:00 PM", label: "1:00 PM - 2:00 PM" },
 ];
 const coachBlockedDates = [
   // Full unavailable days
@@ -98,13 +107,48 @@ const coachBlockedTimeRanges = [
     ],
   },
 ];const manuallyBlockedTimes = {
+  // --- Past June blocks (kept as-is, harmless) ---
   "2026-06-09": ["5:30 PM - 6:30 PM"],
   "2026-06-11": ["5:30 PM - 6:30 PM"],
   "2026-06-12": ["5:30 PM - 6:30 PM"],
-
   "2026-06-16": ["5:30 PM - 6:30 PM"],
   "2026-06-18": ["5:30 PM - 6:30 PM"],
   "2026-06-19": ["5:30 PM - 6:30 PM"],
+
+  // --- Standing single bookings (snapped to new grid) ---
+  // Sat 8am (old) -> 9–10am (earliest new Sat slot)
+  // Mon 9am (old) -> 8–9am (earliest new weekday slot)
+  "2026-07-04": ["9:00 AM - 10:00 AM"],                       // Sat
+  "2026-07-06": ["8:00 AM - 9:00 AM", "12:00 PM - 1:00 PM"],  // Mon (+ M/W/F 12–1)
+  "2026-07-13": ["8:00 AM - 9:00 AM"],                        // Mon
+  "2026-07-20": ["8:00 AM - 9:00 AM"],                        // Mon
+  "2026-07-25": ["9:00 AM - 10:00 AM"],                       // Sat
+  "2026-08-01": ["9:00 AM - 10:00 AM"],                       // Sat
+  "2026-08-10": ["8:00 AM - 9:00 AM"],                        // Mon
+  "2026-08-17": ["8:00 AM - 9:00 AM"],                        // Mon
+  "2026-08-22": ["9:00 AM - 10:00 AM"],                       // Sat (also full-day blocked)
+  "2026-08-29": ["9:00 AM - 10:00 AM"],                       // Sat
+
+  // --- July recurring: Tue/Thu/Fri 10–11am ---
+  "2026-07-02": ["10:00 AM - 11:00 AM"],
+  "2026-07-03": ["10:00 AM - 11:00 AM", "12:00 PM - 1:00 PM"], // + M/W/F 12–1
+  "2026-07-07": ["10:00 AM - 11:00 AM"],
+  "2026-07-09": ["10:00 AM - 11:00 AM"],
+  "2026-07-10": ["10:00 AM - 11:00 AM", "12:00 PM - 1:00 PM"], // + M/W/F 12–1
+  "2026-07-14": ["10:00 AM - 11:00 AM"],
+  "2026-07-16": ["10:00 AM - 11:00 AM"],
+  "2026-07-17": ["10:00 AM - 11:00 AM"],
+  "2026-07-21": ["10:00 AM - 11:00 AM"],
+  "2026-07-23": ["10:00 AM - 11:00 AM"],
+  "2026-07-24": ["10:00 AM - 11:00 AM"],
+  "2026-07-28": ["10:00 AM - 11:00 AM"], // (also full-day blocked)
+  "2026-07-30": ["10:00 AM - 11:00 AM"], // (also full-day blocked)
+  "2026-07-31": ["10:00 AM - 11:00 AM"],
+
+  // --- M/W/F 12–1pm (this week + next week) ---
+  "2026-07-01": ["12:00 PM - 1:00 PM"],
+  "2026-07-08": ["12:00 PM - 1:00 PM"],
+  // 07-03, 07-06, 07-10 12–1 blocks merged into their entries above
 };
 
 
@@ -120,9 +164,11 @@ const getDayName = (dateValue) => {
 const getTimesForDate = (dateValue) => {
   const dayName = getDayName(dateValue);
 
-  if (
-    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].includes(dayName)
-  ) {
+  if (dayName === "Thursday") {
+    return thursdayTimes;
+  }
+
+  if (["Monday", "Tuesday", "Wednesday", "Friday"].includes(dayName)) {
     return weekdayTimes;
   }
 
@@ -192,7 +238,12 @@ const getProgramScheduleMeta = (programTitle = "") => {
     return { slotsPerWeek: 5, weeks: 4, totalSessions: 20, label: "5 sessions per week • 4 weeks" };
   }
 
+  if (title === "ThinkWork Basketball 2 Month Summer Exclusive") {
+    return { slotsPerWeek: 3, weeks: 8, totalSessions: 24, label: "3 sessions per week • 8 weeks" };
+  }
+
   if (title.includes("2 Month Summer")) {
+    // Elite Commitment (and any legacy 2 Month Summer package)
     return { slotsPerWeek: 5, weeks: 8, totalSessions: 40, label: "5 sessions per week • 8 weeks" };
   }
 
@@ -233,7 +284,8 @@ const packageIcons = {
   "ThinkWork Pro": Crown,
   "ThinkWork Growth": TrendingUp,
   "ThinkWork Elite": Star,
-  "2 Month Summer Monthly Commitment - ThinkWork Exclusive": Flame,
+  "ThinkWork Basketball 2 Month Summer Exclusive": Flame,
+  "ThinkWork Basketball 2 Month Summer Elite Commitment": Crown,
 };
 
 const packageGroups = [
@@ -328,7 +380,15 @@ const packageGroups = [
         bonus: "3 Exclusive outPLAY Bonus Sessions",
       },
       {
-        title: "2 Month Summer Monthly Commitment - ThinkWork Exclusive",
+        title: "ThinkWork Basketball 2 Month Summer Exclusive",
+        desc: "Summer commitment with steady 3x-per-week development",
+        sessions: "24 Sessions",
+        scheduleLabel: "3 sessions per week • 8 weeks",
+        originalPrice: "$960",
+        price: "$900",
+      },
+      {
+        title: "ThinkWork Basketball 2 Month Summer Elite Commitment",
         desc: "Intensive summer training program for maximum growth",
         sessions: "40 Sessions",
         scheduleLabel: "5 sessions per week • 8 weeks",
@@ -1117,7 +1177,7 @@ window.location.href = "/dashboard";
                     updateManualSignup("trainingTime", e.target.value)
                   }
                   className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-orange-500"
-                  placeholder="9:00 AM - 10:00 AM"
+                  placeholder="8:00 AM - 9:00 AM"
                 />
               </div>
 
@@ -2100,84 +2160,8 @@ if (window.location.pathname === "/dashboard") {
         </div>
       </section>
 
-      {/* CORE VALUES PLACEHOLDER */}
-      {/* THINKWORK DNA */}
-<section className="relative overflow-hidden border-b border-cyan-400/10 bg-[#020812] px-4 py-20 sm:px-6 lg:px-8 xl:px-28">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(249,115,22,.10),transparent_34%)]" />
-
-  <div className="relative z-10 mx-auto max-w-[1450px]">
-    <div className="mb-12 text-center">
-      <p className="text-[13px] font-black uppercase tracking-[4px] text-orange-500">
-        ThinkWork Basketball
-      </p>
-
-      <h2 className="mt-3 text-[42px] font-black uppercase leading-none tracking-[-2px] text-white sm:text-[58px]">
-        ThinkWork DNA 🧬
-      </h2>
-
-      <p className="mx-auto mt-5 max-w-[760px] text-base font-medium leading-8 text-white/65 sm:text-lg">
-        The core values that shape every athlete inside the ThinkWork
-        Basketball program.
-      </p>
-    </div>
-
-    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-      {[
-        {
-          title: "Faith",
-          desc: "Honor God through character, purpose, humility, and leadership.",
-        },
-        {
-          title: "Intelligence",
-          desc: "Learn the game beyond talent and develop a high basketball IQ.",
-        },
-        {
-          title: "Discipline",
-          desc: "Build consistent habits, focus, and accountability.",
-        },
-        {
-          title: "Work Ethic",
-          desc: "Embrace purposeful reps and relentless improvement.",
-        },
-        {
-          title: "Confidence",
-          desc: "Develop belief through preparation and growth.",
-        },
-        {
-          title: "Leadership",
-          desc: "Lead through attitude, effort, and character.",
-        },
-        {
-          title: "Mentorship",
-          desc: "Grow on and off the court through guidance and support.",
-        },
-        {
-          title: "Competitive Growth",
-          desc: "Commit to outTHINK, outWORK, and outPLAY into your DNA.",
-        },
-      ].map((item) => (
-        <div
-          key={item.title}
-          className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,#07111d_0%,#02060d_100%)] p-7 shadow-[0_0_35px_rgba(0,132,255,.08)] transition duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-[0_0_45px_rgba(249,115,22,.14)]"
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,132,255,.10),transparent_38%)]" />
-
-          <div className="relative z-10">
-            <p className="text-[12px] font-black uppercase tracking-[3px] text-orange-400">
-              {item.title}
-            </p>
-
-            <div className="mt-5 h-[1px] w-14 bg-orange-500" />
-
-            <p className="mt-5 text-[15px] font-medium leading-7 text-white/70">
-              {item.desc}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-        </div>
-        </section> 
+   
+     
   <ThreePillars />
    
       {/* PROGRAMS */}
